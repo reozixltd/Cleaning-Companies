@@ -1,0 +1,26 @@
+---
+/** A section's h2 and its one-line point. */
+interface Props {
+  id: string;
+  title: string;
+  intro?: string;
+}
+const { id, title, intro } = Astro.props;
+---
+
+<div class="head">
+  <h2 id={id}>{title}</h2>
+  {intro && <p>{intro}</p>}
+</div>
+
+<style>
+  .head {
+    display: grid;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+  }
+  p {
+    font-size: var(--text-18);
+    color: var(--color-ink-muted);
+  }
+</style>

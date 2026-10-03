@@ -1,0 +1,114 @@
+---
+/** Where we clean: the coverage map, every suburb, and the waitlist for suburbs we don't clean yet. */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import SectionHead from '@/sections/SectionHead.astro';
+import CtaBand from '@/sections/CtaBand.astro';
+import CoverageMap from '@/features/areas/CoverageMap.astro';
+import SuburbCheck from '@/features/areas/SuburbCheck.astro';
+import WaitlistForm from '@/features/forms/WaitlistForm.astro';
+import { business } from '@/config/business';
+
+const suburbs = [...business.areas].sort((a, b) => a.suburb.localeCompare(b.suburb));
+---
+
+<BaseLayout
+  title={`Areas we clean in ${business.region} | ${business.shortName}`}
+  description={`House cleaning in ${business.areas.length} suburbs across ${business.region}, from our base in ${business.base.suburb}. Check your suburb or join the waitlist.`}
+>
+  <PageHeader
+    title="Where we clean"
+    intro={`${business.areas.length} suburbs across ${business.region}, all within 20 minutes of our base in ${business.base.suburb}.`}
+  >
+    <div class="check"><SuburbCheck /></div>
+  </PageHeader>
+
+  <section class="band coverage" aria-labelledby="suburbs-title">
+    <div class="wrap coverage__grid">
+      <div>
+        <SectionHead id="suburbs-title" title="Every suburb we clean" />
+        <table class="suburbs">
+          <thead>
+            <tr><th scope="col">Suburb</th><th scope="col">Postcode</th></tr>
+          </thead>
+          <tbody>
+            {suburbs.map((a) => (
+              <tr data-suburb-row>
+                <th scope="row">{a.page ? <a href={`/areas/${a.page}/`}>{a.suburb}</a> : a.suburb}</th>
+                <td class="tabular">{a.postcode}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <CoverageMap />
+    </div>
+  </section>
+
+  <section class="band waitlist" id="waitlist" aria-labelledby="waitlist-title">
+    <div class="wrap waitlist__grid">
+      <SectionHead
+        id="waitlist-title"
+        title="Not on the list yet?"
+        intro="Tell us where you live. When enough neighbours ask, we add the suburb, and we'll email you the day we do."
+      />
+      <WaitlistForm />
+    </div>
+  </section>
+
+  <CtaBand title="In one of our suburbs?" text="Add your rooms on the floor plan for an exact price, then choose a time." />
+</BaseLayout>
+
+<style>
+  .check {
+    max-width: 30rem;
+    margin-top: var(--space-2);
+  }
+  .coverage {
+    background: var(--color-surface);
+    border-block: var(--hairline) solid var(--color-line);
+  }
+  .coverage__grid,
+  .waitlist__grid {
+    display: grid;
+    align-items: start;
+    gap: var(--space-6);
+  }
+  .suburbs {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  th,
+  td {
+    height: var(--target);
+    padding: var(--space-1) var(--space-2) var(--space-1) 0;
+    border-bottom: var(--hairline) solid var(--color-line);
+    text-align: left;
+  }
+  thead th {
+    color: var(--color-ink-muted);
+    font-size: var(--text-16);
+    font-weight: var(--weight-medium);
+  }
+  tbody th {
+    font-weight: var(--weight-medium);
+  }
+  td {
+    color: var(--color-ink-muted);
+  }
+  .waitlist {
+    scroll-margin-top: var(--space-8);
+  }
+  @media (min-width: 900px) {
+    .coverage__grid {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: var(--space-8);
+      align-items: start;
+    }
+    .waitlist__grid {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: var(--space-8);
+    }
+  }
+</style>

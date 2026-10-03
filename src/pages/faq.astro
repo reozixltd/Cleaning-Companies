@@ -1,0 +1,77 @@
+---
+/** Every question from content/faqs.json, grouped by topic, with FAQPage JSON-LD. */
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import Questions from '@/sections/Questions.astro';
+import CtaBand from '@/sections/CtaBand.astro';
+import { business } from '@/config/business';
+import { formatPhoneHref } from '@/core/format';
+import { faqSchema } from '@/core/schema';
+import { groupFaqs } from '@/features/faq/groups';
+
+const faqs = (await getCollection('faqs')).map((f) => f.data);
+const titles: Record<string, string> = {
+  home: 'Your home and your cleaner',
+  keys: 'Keys and alarm codes',
+  booking: 'Booking, changes and pets',
+  payment: 'Paying',
+  offices: 'Office cleaning',
+};
+const groups = groupFaqs(faqs, Object.keys(titles));
+---
+
+<BaseLayout
+  title={`Questions about house cleaning | ${business.shortName}`}
+  description="Answers about keys and alarm codes, being home, cancelling, pets, supplies, insurance and paying for your clean."
+  schema={faqSchema(faqs)}
+>
+  <PageHeader title="Questions people ask">
+    <p class="page-intro">
+      Can't find your question? Call <a href={formatPhoneHref(business.phone)}>{business.phone}</a> or email <a href={`mailto:${business.email}`}>{business.email}</a>.
+    </p>
+    <nav aria-label="Topics" class="topics">
+      <ul role="list">
+        {groups.map((g) => <li><a href={`#topic-${g.tag}`}>{titles[g.tag] ?? g.tag}</a></li>)}
+      </ul>
+    </nav>
+  </PageHeader>
+
+  <div class="wrap groups">
+    {groups.map((g) => (
+      <div class="group" id={`topic-${g.tag}`}>
+        <Questions id={`topic-${g.tag}-title`} title={titles[g.tag] ?? g.tag} items={g.items} />
+      </div>
+    ))}
+  </div>
+
+  <CtaBand title="Ready when you are" text="Price your home on the floor plan and choose a time. No phone call needed." />
+</BaseLayout>
+
+<style>
+  .page-intro {
+    font-size: var(--text-18);
+    color: var(--color-ink-muted);
+  }
+  .topics ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+  .topics a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+  }
+  .groups {
+    display: grid;
+    gap: var(--space-7);
+    padding-bottom: var(--space-8);
+  }
+  .group {
+    max-width: 48rem;
+    scroll-margin-top: var(--space-8);
+  }
+</style>

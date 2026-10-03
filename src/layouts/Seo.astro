@@ -1,0 +1,27 @@
+---
+/** Title, description, canonical URL, Open Graph and JSON-LD for one page. */
+import { serialiseJsonLd } from '@/core/schema';
+
+interface Props {
+  title: string;
+  description: string;
+  schema?: object | object[];
+  noindex?: boolean;
+}
+
+const { title, description, schema, noindex = false } = Astro.props;
+/** `site` in astro.config.mjs: Vercel's address, a custom domain or SITE_URL. */
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const blocks = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content="en_AU" />
+{noindex && <meta name="robots" content="noindex" />}
+{blocks.map((block) => <script type="application/ld+json" set:html={serialiseJsonLd(block)} />)}

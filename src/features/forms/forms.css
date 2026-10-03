@@ -1,0 +1,52 @@
+/* Layout shared by the simple lead forms (waitlist, job application). Tokens only. */
+.lead-form {
+  display: grid;
+  gap: var(--space-5);
+  max-width: 40rem;
+}
+.lead-form__pair {
+  display: grid;
+  gap: var(--space-5);
+}
+.lead-form__note {
+  color: var(--color-ink-muted);
+  font-size: var(--text-16);
+}
+.lead-form__check {
+  display: grid;
+  gap: var(--space-1);
+}
+.lead-form__check label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  min-height: var(--target);
+  padding-top: var(--space-2);
+  cursor: pointer;
+}
+.lead-form__check input {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  accent-color: var(--color-ink);
+}
+.lead-form__check [aria-invalid='true'] {
+  outline: var(--wall) solid var(--color-danger);
+  outline-offset: 2px;
+}
+.lead-form__error {
+  color: var(--color-danger);
+  font-size: var(--text-16);
+}
+.lead-form > .btn {
+  justify-self: start;
+}
+@media (min-width: 600px) {
+  .lead-form__pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lead-form__pair--short {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}

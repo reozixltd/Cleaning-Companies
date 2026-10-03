@@ -1,0 +1,119 @@
+---
+/**
+ * Owner console (demo). A static shell; _app.ts signs in, lists requests, and
+ * draws the selected one with the messages it triggers. The templates at the
+ * end let scripts reuse the Button and Badge components' markup and styles.
+ */
+import '@/styles/console.css';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Logo from '@/layouts/Logo.astro';
+import Button from '@/core/ui/Button.astro';
+import Badge from '@/core/ui/Badge.astro';
+import { business } from '@/config/business';
+import { LEAD_STATUSES, STATUS_LABELS, type LeadStatus } from '@/core/leads/types';
+import { DEMO_LOGIN, KIND_TABS } from './_demo';
+
+const tones: Record<LeadStatus, 'warning' | 'success' | 'neutral'> = { new: 'warning', confirmed: 'success', declined: 'neutral', done: 'neutral' };
+const place = business.timeZone.split('/').at(-1)?.replace(/_/g, ' ');
+---
+
+<BaseLayout title="Owner console" description={`Booking requests and messages for ${business.tradingName}.`} noindex bare>
+  <div class="console" data-console>
+    <section class="signin" data-view="signin" aria-labelledby="signin-title">
+      <Logo />
+      <h1 id="signin-title">Owner console</h1>
+      <p class="signin__lead">See every booking request, confirm it, and check the messages it sends.</p>
+      <div class="signin__demo">
+        <p>This is a demo. Sign in with these details:</p>
+        <dl>
+          <div><dt>Email</dt><dd data-demo-email>{DEMO_LOGIN.email}</dd></div>
+          <div><dt>Password</dt><dd data-demo-password>{DEMO_LOGIN.password}</dd></div>
+        </dl>
+      </div>
+      <form class="signin__form" data-signin novalidate>
+        <div class="console-field">
+          <label for="signin-email">Email</label>
+          <input id="signin-email" name="email" type="email" autocomplete="username" value={DEMO_LOGIN.email} required aria-describedby="signin-error" />
+        </div>
+        <div class="console-field">
+          <label for="signin-password">Password</label>
+          <input id="signin-password" name="password" type="password" autocomplete="current-password" value={DEMO_LOGIN.password} required aria-describedby="signin-error" />
+        </div>
+        <p class="signin__error" id="signin-error" role="alert" data-signin-error hidden></p>
+        <Button type="submit" size="lg" block>Sign in</Button>
+      </form>
+      <a class="signin__back" href="/">Back to the website</a>
+    </section>
+
+    <div class="app" data-view="app" hidden>
+      <header class="bar">
+        <Logo />
+        <span class="bar__title">Owner console</span>
+        <a class="bar__link" href="/">View website</a>
+        <Button variant="quiet" data-signout>Sign out</Button>
+      </header>
+
+      <div class="workspace" data-workspace data-showing="list">
+        <div class="toolbar">
+          <div class="toolbar__head">
+            <h1 tabindex="-1" data-focus-on-show>Requests</h1>
+            <p class="toolbar__summary" data-summary></p>
+          </div>
+          {business.demoMode && <p class="toolbar__demo">Sample requests. Messages are previews and are never sent.</p>}
+          <div class="tabs" role="tablist" aria-label="Kind of request" data-kind-tabs>
+            {
+              KIND_TABS.map((t, i) => (
+                <button type="button" role="tab" id={`tab-${t.id}`} aria-controls="inbox-panel" aria-selected={i === 0 ? 'true' : 'false'} data-tab={t.id}>
+                  {t.label} <span class="tabs__count tabular" data-count={t.id} />
+                </button>
+              ))
+            }
+          </div>
+          <div class="toolbar__tools">
+            <div class="console-field console-field--inline">
+              <label for="status-filter">Status</label>
+              <select id="status-filter" data-status-filter>
+                <option value="all">All</option>
+                {LEAD_STATUSES.map((s) => <option value={s}>{STATUS_LABELS[s]}</option>)}
+              </select>
+            </div>
+            <Button variant="secondary" data-export>Export CSV</Button>
+          </div>
+        </div>
+
+        <section class="inbox" aria-label="Request list">
+          <div id="inbox-panel" role="tabpanel" aria-labelledby="tab-all" class="inbox__panel">
+            <ul class="inbox__list" role="list" data-lead-list></ul>
+            <div class="inbox__empty" data-empty hidden>
+              <p>Booking requests will appear here. Send one from the booking page to see how it looks.</p>
+              <a href="/book/">Open the booking page</a>
+            </div>
+            <p class="inbox__empty" data-no-match hidden>No requests match this filter.</p>
+          </div>
+          <div class="demo-tools">
+            <p>Demo data</p>
+            <Button variant="quiet" data-load-samples>Load sample leads</Button>
+            <Button variant="quiet" data-clear>Clear leads</Button>
+          </div>
+        </section>
+
+        <article class="detail" data-detail aria-label="Selected request" hidden></article>
+        <div class="detail detail--placeholder" data-detail-empty>
+          <h2>Pick a request</h2>
+          <p>You'll see what was asked for, the price, the consent given and the messages it sends: confirmation, a reminder the day before, on the way, and a review request.</p>
+          <p class="muted">Times are {place} time.</p>
+        </div>
+      </div>
+      <p class="visually-hidden" role="status" data-announce></p>
+    </div>
+  </div>
+
+  <template data-tpl="btn-primary"><Button><span data-tpl-text></span></Button></template>
+  <template data-tpl="btn-secondary"><Button variant="secondary"><span data-tpl-text></span></Button></template>
+  <template data-tpl="btn-quiet"><Button variant="quiet"><span data-tpl-text></span></Button></template>
+  {LEAD_STATUSES.map((s) => <template data-tpl={`badge-${s}`}><Badge tone={tones[s]}><span data-tpl-text></span></Badge></template>)}
+
+  <script>
+    import './_app';
+  </script>
+</BaseLayout>

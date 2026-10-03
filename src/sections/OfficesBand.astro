@@ -1,0 +1,41 @@
+---
+/** One line for facility managers, in their own voice, pointing to the offices page. */
+import Button from '@/core/ui/Button.astro';
+import Icon from '@/core/ui/Icon.astro';
+---
+
+<section class="offices" aria-labelledby="offices-title">
+  <div class="wrap offices__inner">
+    <Icon name="building" size={32} />
+    <div>
+      <h2 id="offices-title">Managing an office, clinic or strata building?</h2>
+      <p>We price commercial cleaning after a walk-through of your site, and send insurance certificates on request.</p>
+    </div>
+    <Button href="/offices/#walkthrough" variant="secondary">Request a walk-through</Button>
+  </div>
+</section>
+
+<style>
+  .offices {
+    padding-block: var(--space-6);
+    border-block: var(--wall) solid var(--color-ink);
+  }
+  .offices__inner {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+  h2 {
+    font-size: var(--text-22);
+  }
+  p {
+    color: var(--color-ink-muted);
+  }
+  @media (min-width: 900px) {
+    .offices__inner {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--space-6);
+    }
+  }
+</style>

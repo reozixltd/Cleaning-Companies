@@ -1,0 +1,46 @@
+---
+/** Visible only in demo mode: says the business is a sample and lets a partner switch colours. */
+import { business } from '@/config/business';
+
+const names: Record<string, string> = { floorplan: 'Floor plan', eucalyptus: 'Eucalyptus' };
+---
+
+{
+  business.demoMode && (
+    <aside class="ribbon" aria-label="About this demo" data-demo-ribbon>
+      <div class="wrap ribbon__inner">
+        <p>Sample business. Prices, reviews and messages are examples.</p>
+        <p class="ribbon__themes">
+          Colours:
+          {business.themes.map((t) => <a href={`?theme=${t}`} data-theme-link={t}>{names[t] ?? t}</a>)}
+        </p>
+      </div>
+    </aside>
+  )
+}
+
+<style>
+  .ribbon {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    font-size: var(--text-14);
+  }
+  .ribbon__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 var(--space-4);
+    padding-block: var(--space-1);
+  }
+  .ribbon__themes {
+    display: flex;
+    gap: var(--space-3);
+  }
+  .ribbon a {
+    color: inherit;
+  }
+  /* The usual ink ring would vanish on the ink ribbon. */
+  .ribbon a:focus-visible {
+    outline-color: var(--color-on-ink);
+  }
+</style>

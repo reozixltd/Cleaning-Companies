@@ -1,0 +1,47 @@
+---
+/** Desktop: a compact copy of the price tag pinned under the header once the hero scrolls away. */
+---
+
+<aside class="pin" data-booking-tag hidden aria-label="Your clean">
+  <span class="pin__summary" data-price-summary></span>
+  <strong class="pin__price tabular" data-price-per-visit></strong>
+  <a class="pin__book" href="/book/" data-choose-time>Choose a time</a>
+</aside>
+
+<style>
+  .pin {
+    position: fixed;
+    top: 76px;
+    right: var(--gutter);
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+    background: var(--color-highlight);
+    border-radius: var(--radius-control);
+    box-shadow: 0 8px 24px var(--color-shadow);
+  }
+  .pin[hidden] {
+    display: none;
+  }
+  .pin__price {
+    font-size: var(--text-18);
+  }
+  .pin__book {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+    padding-inline: var(--space-4);
+    border-radius: var(--radius-control);
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+  }
+  @media (max-width: 767px) {
+    .pin {
+      display: none !important;
+    }
+  }
+</style>

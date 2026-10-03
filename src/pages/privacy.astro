@@ -1,0 +1,13 @@
+---
+/** Privacy: rendered from src/content/policies/privacy.md. */
+import { getEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PolicyPage from '@/sections/PolicyPage.astro';
+import { business } from '@/config/business';
+
+const policy = (await getEntry('policies', 'privacy'))!.data;
+---
+
+<BaseLayout title={`${policy.title} | ${business.tradingName}`} description={policy.description}>
+  <PolicyPage id="privacy" />
+</BaseLayout>

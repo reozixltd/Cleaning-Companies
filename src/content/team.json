@@ -1,0 +1,7 @@
+[
+  { "id": "mel", "name": "Mel Hartigan", "role": "Founder", "since": 2016, "note": "Started Clearday after ten years cleaning for other companies, to run one where cleaners are employed properly and clients get the same person each visit." },
+  { "id": "grace", "name": "Grace Liufau", "role": "Team lead", "since": 2018, "note": "Trains every new cleaner and does the final walk-through on end of lease cleans." },
+  { "id": "luis", "name": "Luis Moreno", "role": "Cleaner", "since": 2020, "note": "Looks after most of our Aspley and Carseldine regulars." },
+  { "id": "sandeep", "name": "Sandeep Gill", "role": "Cleaner", "since": 2022, "note": "Our bond-clean specialist. Knows the REIQ list by heart." },
+  { "id": "tui", "name": "Tui Walker", "role": "Office cleaning", "since": 2023, "note": "Runs our early-morning office cleans." }
+]

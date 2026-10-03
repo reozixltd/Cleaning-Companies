@@ -1,0 +1,10 @@
+node_modules/
+dist/
+dist-static/
+.astro/
+.superpowers/
+*.png
+!public/**/*.png
+!src/assets/**/*.png
+.DS_Store
+.claude/worktrees/

@@ -1,0 +1,91 @@
+---
+/**
+ * Phone-width bar pinned to the bottom once the visitor has a selection:
+ * their summary and price, Choose a time, and a call button. Filled by
+ * features/pricing/price-tag.ts. Pads for the home indicator (safe area).
+ */
+import { business } from '@/config/business';
+import { formatPhoneHref } from '@/core/format';
+import Icon from '@/core/ui/Icon.astro';
+---
+
+<div class="bar" data-booking-bar hidden>
+  <div class="bar__text">
+    <span class="bar__summary" data-price-summary></span>
+    <strong class="bar__price tabular" data-price-per-visit></strong>
+  </div>
+  <a class="bar__book" href="/book/" data-choose-time>Choose a time</a>
+  <a class="bar__call" href={formatPhoneHref(business.phone)}>
+    <Icon name="phone" size={20} label={`Call ${business.shortName}`} />
+  </a>
+</div>
+
+<script>
+  import { initPriceTags } from '@/features/pricing/price-tag';
+  initPriceTags();
+</script>
+
+<style>
+  .bar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--gutter) calc(var(--space-2) + env(safe-area-inset-bottom));
+    background: var(--color-surface);
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  .bar[hidden] {
+    display: none;
+  }
+  .bar__text {
+    display: grid;
+    min-width: 0;
+    flex: 1;
+    line-height: 1.3;
+  }
+  .bar__summary {
+    overflow: hidden;
+    font-size: var(--text-14);
+    color: var(--color-ink-muted);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .bar__book,
+  .bar__call {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--target);
+    border-radius: var(--radius-control);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+  .bar__book {
+    padding-inline: var(--space-4);
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+  .bar__call {
+    width: var(--target);
+    border: var(--hairline) solid var(--color-ink);
+  }
+  .bar__book:active,
+  .bar__call:active {
+    transform: scale(0.97);
+  }
+  @media (min-width: 768px) {
+    .bar {
+      display: none !important;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bar__book:active,
+    .bar__call:active {
+      transform: none;
+    }
+  }
+</style>

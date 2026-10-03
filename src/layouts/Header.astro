@@ -1,0 +1,152 @@
+---
+/** Sticky header: logo, main links, tap-to-call and Book a clean. Below 1024px the links move into a menu. */
+import { business } from '@/config/business';
+import { navigation } from '@/config/navigation';
+import { formatPhoneHref } from '@/core/format';
+import Button from '@/core/ui/Button.astro';
+import Icon from '@/core/ui/Icon.astro';
+import Logo from './Logo.astro';
+
+const path = Astro.url.pathname;
+const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
+---
+
+<header class="header">
+  <div class="wrap header__inner">
+    <Logo />
+    <nav class="header__nav" aria-label="Main">
+      <ul role="list">
+        {navigation.header.map((l) => <li><a href={l.href} aria-current={current(l.href)}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="header__actions">
+      <a class="header__phone" href={formatPhoneHref(business.phone)}>
+        <Icon name="phone" size={20} />
+        <span class="header__phone-text">{business.phone}</span>
+        <span class="visually-hidden">Call {business.shortName}</span>
+      </a>
+      <Button href="/book/" class="header__book">Book a clean</Button>
+      <button class="header__toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
+        <Icon name="menu" size={22} label="Menu" />
+      </button>
+    </div>
+  </div>
+  <nav id="mobile-menu" class="mobile-menu" aria-label="Main" hidden data-menu>
+    <ul role="list" class="wrap">
+      {navigation.header.map((l) => <li><a href={l.href} aria-current={current(l.href)}>{l.label}</a></li>)}
+      <li><a href="/book/">Book a clean</a></li>
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--color-paper);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  .header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    min-height: 64px;
+  }
+  .header__nav {
+    display: none;
+    margin-left: auto;
+  }
+  .header__nav ul {
+    display: flex;
+    gap: var(--space-1);
+    padding: 0;
+    list-style: none;
+  }
+  .header__nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+    padding-inline: var(--space-3);
+    text-decoration: none;
+    font-weight: var(--weight-medium);
+  }
+  .header__nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-thickness: var(--wall);
+    text-underline-offset: 0.4em;
+  }
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-left: auto;
+  }
+  .header__phone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-width: var(--target);
+    min-height: var(--target);
+    text-decoration: none;
+    font-weight: var(--weight-medium);
+  }
+  /* .header__actions raises specificity above Button's own .btn display rule,
+     whose order in the bundled CSS changes as pages are added. */
+  .header__phone-text,
+  .header__actions .header__book {
+    display: none;
+  }
+  .header__toggle {
+    display: inline-grid;
+    place-items: center;
+    width: var(--target);
+    height: var(--target);
+    border: 0;
+    border-radius: var(--radius-control);
+    background: transparent;
+    cursor: pointer;
+  }
+  .mobile-menu {
+    border-top: var(--hairline) solid var(--color-line);
+  }
+  .mobile-menu ul {
+    display: grid;
+    padding-block: var(--space-2) var(--space-4);
+    list-style: none;
+  }
+  .mobile-menu a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    font-size: var(--text-18);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  @media (min-width: 768px) {
+    .header__phone-text,
+    .header__actions .header__book {
+      display: inline-flex;
+    }
+  }
+  @media (min-width: 1024px) {
+    .header__nav {
+      display: block;
+    }
+    .header__actions {
+      margin-left: var(--space-4);
+    }
+    .header__toggle,
+    .mobile-menu {
+      display: none;
+    }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .header__nav a:hover,
+    .header__phone:hover {
+      text-decoration: underline;
+    }
+  }
+</style>

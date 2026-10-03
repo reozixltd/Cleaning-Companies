@@ -1,0 +1,60 @@
+---
+/** Kitchen-sink page for the UI primitives in both themes. Not linked, not indexed. */
+import '@/styles/global.css';
+import Button from '@/core/ui/Button.astro';
+import Field from '@/core/ui/Field.astro';
+import ErrorSummary from '@/core/ui/ErrorSummary.astro';
+import Badge from '@/core/ui/Badge.astro';
+import Icon from '@/core/ui/Icon.astro';
+import Photo from '@/core/ui/Photo.astro';
+import { icons, type IconName } from '@/core/ui/icons';
+
+const themes = ['floorplan', 'eucalyptus'];
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>UI primitives</title>
+  </head>
+  <body>
+    {
+      themes.map((theme) => (
+        <section data-theme={theme} class="sheet">
+          <div class="wrap stack">
+            <h1>{theme}</h1>
+            <div class="row">
+              <Button>Book a clean</Button>
+              <Button variant="secondary" icon="phone">07 5550 1234</Button>
+              <Button variant="quiet">Add extras</Button>
+              <Button size="lg">Send booking request</Button>
+            </div>
+            <div class="row">
+              <Badge>New</Badge>
+              <Badge tone="success">Confirmed</Badge>
+              <Badge tone="warning">Waits for confirmation</Badge>
+              <Badge tone="highlight">$179 a visit</Badge>
+            </div>
+            <div class="row">{(Object.keys(icons) as IconName[]).map((n) => <Icon name={n} size={24} />)}</div>
+            <ErrorSummary />
+            <form class="stack">
+              <Field name={`first-${theme}`} label="First name" required autocomplete="given-name" />
+              <Field name={`email-${theme}`} label="Email" type="email" hint="We'll send your confirmation here." required />
+              <Field name={`notes-${theme}`} label="Anything we should know?" type="textarea" />
+              <Field name={`area-${theme}`} label="Floor area" type="select" options={[{ value: 'a', label: 'Under 200 m²' }]} />
+            </form>
+            <Photo slot="does-not-exist" alt="A sunlit living room after a clean" ratio="16 / 9" />
+          </div>
+        </section>
+      ))
+    }
+    <style>
+      .sheet { padding-block: var(--space-7); background: var(--color-paper); }
+      .stack { display: grid; gap: var(--space-5); }
+      .row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+    </style>
+  </body>
+</html>

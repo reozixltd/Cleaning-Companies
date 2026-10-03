@@ -1,0 +1,79 @@
+---
+/**
+ * The visitor's referral code with a Copy button. The code is made in the
+ * browser (referral.ts) and saved, so it stays the same on every visit.
+ * Without JavaScript the box asks the visitor to call for a code.
+ */
+import Icon from '@/core/ui/Icon.astro';
+import { business } from '@/config/business';
+---
+
+<div class="referral" data-referral>
+  <p class="referral__code tabular" data-referral-code aria-live="polite">Call {business.phone} for your code</p>
+  <button class="referral__copy" type="button" data-copy-code hidden>
+    <Icon name="copy" size={20} />
+    <span>Copy code</span>
+  </button>
+  <p class="referral__status" data-copy-status role="status"></p>
+</div>
+
+<script>
+  import { initReferral } from './referral-ui';
+  initReferral();
+</script>
+
+<style>
+  .referral {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+  }
+  .referral__code {
+    padding: var(--space-2) var(--space-4);
+    border: var(--wall) dashed var(--color-ink);
+    border-radius: var(--radius-control);
+    background: var(--color-highlight);
+    font-size: var(--text-36);
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+  }
+  .referral__code:not([data-ready]) {
+    font-size: var(--text-18);
+    letter-spacing: 0;
+  }
+  .referral__copy {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--target);
+    padding: 0 var(--space-5);
+    border: var(--hairline) solid var(--color-ink);
+    border-radius: var(--radius-control);
+    background: transparent;
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+    transition:
+      transform var(--dur-press) var(--ease-out),
+      background-color var(--dur-colour) ease;
+  }
+  .referral__copy:active {
+    transform: scale(0.97);
+  }
+  .referral__status {
+    flex-basis: 100%;
+    min-height: 1.6em;
+    color: var(--color-ink-muted);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .referral__copy:hover {
+      background: var(--color-shade);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .referral__copy:active {
+      transform: none;
+    }
+  }
+</style>

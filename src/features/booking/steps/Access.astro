@@ -1,0 +1,52 @@
+---
+/** Step 3, getting in: someone home, a key or lockbox, or a door code; parking and notes. */
+import Field from '@/core/ui/Field.astro';
+import { ACCESS_OPTIONS } from '../lead';
+import Step from './Step.astro';
+
+const parking = ['Driveway or carport', 'Street parking nearby', 'Visitor parking', 'Not sure'].map((p) => ({ value: p, label: p }));
+---
+
+<Step id="access" n={3} title="Getting in">
+  <fieldset class="group" id="field-method" role="radiogroup" tabindex="-1" aria-labelledby="legend-method" aria-describedby="field-method-error">
+    <legend id="legend-method">How will your cleaner get in?</legend>
+    <p class="field-error" id="field-method-error" data-error-for="method" hidden></p>
+    <ul class="choices" role="list">
+      {ACCESS_OPTIONS.map((o) => (
+        <li>
+          <label class="choice">
+            <input type="radio" name="method" value={o.id} />
+            <span>
+              {o.label}
+              <span class="choice__hint">{o.hint}</span>
+            </span>
+          </label>
+        </li>
+      ))}
+    </ul>
+  </fieldset>
+
+  <div data-access-detail hidden>
+    <Field name="detail" label="Where will the key or lockbox be?" required autocomplete="off" maxlength={200} />
+  </div>
+
+  <div class="pair">
+    <Field name="parking" label="Parking" type="select" options={parking} />
+  </div>
+  <Field
+    name="notes"
+    label="Anything else we should know?"
+    type="textarea"
+    hint="An alarm, a gate that sticks, rooms to skip."
+    maxlength={500}
+  />
+</Step>
+
+<style>
+  .pair {
+    max-width: 24rem;
+  }
+  fieldset:focus-visible {
+    outline-offset: 4px;
+  }
+</style>

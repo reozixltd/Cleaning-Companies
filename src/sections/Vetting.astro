@@ -1,0 +1,73 @@
+---
+/** "Who comes to your home": the answer to the stranger-in-my-house worry, with the founder's face and words. */
+import { getEntry } from 'astro:content';
+import { business } from '@/config/business';
+import Photo from '@/core/ui/Photo.astro';
+import Icon from '@/core/ui/Icon.astro';
+import SectionHead from './SectionHead.astro';
+
+const founder = (await getEntry('team', 'mel'))!.data;
+const checks = [
+  `${business.policeChecked}, renewed every three years.`,
+  'Each one passes an interview and a paid trial clean with a team lead.',
+  'They are our employees, not subcontractors, covered by our insurance and workers’ compensation.',
+  'You get the same cleaner each visit whenever we can, with notes on how you like things done.',
+];
+---
+
+<section class="band vetting" id="team" aria-labelledby="team-title">
+  <div class="wrap vetting__grid">
+    <div>
+      <SectionHead id="team-title" title="Who comes to your home" />
+      <ul class="checks" role="list">
+        {checks.map((c) => <li><Icon name="check" size={22} />{c}</li>)}
+      </ul>
+    </div>
+    <figure class="founder">
+      <Photo slot="founder" alt={`${founder.name}, ${founder.role}`} label={`${founder.name}, ${founder.role}`} ratio="4 / 5" sizes="(min-width: 900px) 320px, 100vw" />
+      <blockquote>{founder.note}</blockquote>
+      <figcaption>{founder.name}, {founder.role.toLowerCase()} since {founder.since}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .vetting {
+    background: var(--color-surface);
+    border-block: var(--hairline) solid var(--color-line);
+  }
+  .vetting__grid {
+    display: grid;
+    gap: var(--space-7);
+  }
+  .checks {
+    display: grid;
+    gap: var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+  .checks li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3);
+    font-size: var(--text-18);
+  }
+  .founder {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 360px;
+  }
+  .founder blockquote {
+    margin: 0;
+    font-size: var(--text-18);
+  }
+  .founder figcaption {
+    color: var(--color-ink-muted);
+  }
+  @media (min-width: 900px) {
+    .vetting__grid {
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: var(--space-8);
+    }
+  }
+</style>

@@ -1,0 +1,186 @@
+/*
+ * Controls shared by the booking steps. Day tiles are created by script, so these
+ * rules are plain (unscoped) CSS under .book. Segments copy the floor plan
+ * controls' look (features/plan/PlanControls.astro) without importing it.
+ */
+.book fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.book input,
+.book select,
+.book textarea,
+.book fieldset {
+  /* Keeps a focused field clear of the sticky header. */
+  scroll-margin-top: 6rem;
+  scroll-margin-bottom: var(--space-6);
+}
+.book legend {
+  padding: 0;
+  margin-bottom: var(--space-2);
+  font-weight: var(--weight-medium);
+}
+.book .optional,
+.book .note {
+  color: var(--color-ink-muted);
+  font-weight: var(--weight-regular);
+}
+.book .field-error {
+  margin-bottom: var(--space-2);
+  color: var(--color-danger);
+}
+
+/* Segmented choices: radios and pressed buttons that read as one row of options. */
+.book .segments {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+@media (min-width: 480px) {
+  .book .segments--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.book .segments--days {
+  grid-template-columns: repeat(auto-fill, minmax(5.25rem, 1fr));
+}
+.book .segment {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  min-height: var(--target);
+  padding: var(--space-1) var(--space-2);
+  border: var(--hairline) solid var(--color-ink);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  font-size: var(--text-16);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  line-height: 1.25;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-colour) ease,
+    color var(--dur-colour) ease,
+    transform var(--dur-press) var(--ease-out);
+}
+.book .segment:active {
+  transform: scale(0.97);
+}
+.book .segment input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.book .segment:has(input:checked),
+.book .segment[aria-pressed='true'] {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+.book .segment:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.book [aria-invalid='true'] .segment {
+  border-color: var(--color-danger);
+}
+.book [aria-invalid='true'] .choice input {
+  outline: var(--wall) solid var(--color-danger);
+  outline-offset: 1px;
+}
+.book .segment--tall {
+  min-height: 3.75rem;
+}
+.book .segment__sub {
+  font-size: var(--text-14);
+  font-weight: var(--weight-regular);
+}
+
+/* Rows with a native radio or checkbox: extras, getting in, consents. */
+.book .choices {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--hairline) solid var(--color-line);
+}
+.book .choices > li {
+  border-bottom: var(--hairline) solid var(--color-line);
+}
+.book .choice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  min-height: var(--target);
+  padding-block: var(--space-3);
+  cursor: pointer;
+}
+.book .choice input {
+  width: 20px;
+  height: 20px;
+  margin: 0.15rem 0 0;
+  accent-color: var(--color-ink);
+  cursor: pointer;
+}
+.book .choice__hint {
+  display: block;
+  color: var(--color-ink-muted);
+  font-size: var(--text-16);
+}
+.book .choice__price {
+  color: var(--color-ink-muted);
+}
+
+/* Bedroom and bathroom steppers (step 1). */
+.book .stepper {
+  display: grid;
+  grid-template-columns: 1fr var(--target) 3ch var(--target);
+  align-items: center;
+  gap: var(--space-2);
+}
+.book .stepper__label {
+  font-weight: var(--weight-medium);
+}
+.book .stepper__button {
+  display: grid;
+  place-items: center;
+  width: var(--target);
+  height: var(--target);
+  border: var(--hairline) solid var(--color-ink);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: transform var(--dur-press) var(--ease-out);
+}
+.book .stepper__button:active {
+  transform: scale(0.97);
+}
+.book .stepper__button:disabled {
+  border-color: var(--color-line);
+  color: var(--color-line);
+  cursor: default;
+  transform: none;
+}
+.book .stepper__count {
+  font-size: var(--text-22);
+  font-weight: var(--weight-bold);
+  text-align: center;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .book .segment:not(:has(input:checked)):not([aria-pressed='true']):hover {
+    background: var(--color-room);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book .stepper__button:active,
+  .book .segment:active {
+    transform: none;
+  }
+}

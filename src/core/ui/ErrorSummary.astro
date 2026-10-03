@@ -1,0 +1,31 @@
+---
+/** Empty error summary. core/forms.ts fills the list with links to fields and focuses it. */
+interface Props {
+  title?: string;
+}
+const { title = 'Check these and try again:' } = Astro.props;
+---
+
+<div class="error-summary" role="alert" tabindex="-1" data-error-summary hidden>
+  <p class="error-summary__title">{title}</p>
+  <ul></ul>
+</div>
+
+<style>
+  .error-summary {
+    padding: var(--space-4);
+    border: var(--wall) solid var(--color-danger);
+    border-radius: var(--radius-control);
+    background: var(--color-danger-soft);
+  }
+  .error-summary__title {
+    font-weight: var(--weight-bold);
+  }
+  .error-summary :global(ul) {
+    margin-top: var(--space-2);
+    padding-left: var(--space-5);
+  }
+  .error-summary :global(a) {
+    color: var(--color-danger);
+  }
+</style>

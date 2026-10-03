@@ -1,0 +1,151 @@
+---
+/**
+ * Step 5, check and send: everything in plain words, how the price adds up, the
+ * proof that matters next to the button, and Send booking request.
+ * booking.ts fills the rows and the price lines from the visitor's answers.
+ */
+import { business } from '@/config/business';
+import { formatPhoneHref } from '@/core/format';
+import Button from '@/core/ui/Button.astro';
+import Icon from '@/core/ui/Icon.astro';
+import Step from './Step.astro';
+
+const proof = [
+  'Nothing to pay now. We charge after each clean.',
+  `${business.policeChecked}.`,
+  `${business.guarantee.short}.`,
+];
+---
+
+<Step id="check" n={5} title="Check and send" last>
+  <p class="tag" data-check-tag></p>
+  <dl class="rows" data-check-rows></dl>
+
+  <table class="lines">
+    <caption class="visually-hidden">How the price adds up</caption>
+    <tbody data-check-lines></tbody>
+    <tfoot>
+      <tr>
+        <th scope="row" data-check-total-label>A visit</th>
+        <td class="tabular" data-check-total></td>
+      </tr>
+      <tr data-check-first-row hidden>
+        <th scope="row">First visit, priced as a deep clean</th>
+        <td class="tabular" data-check-first></td>
+      </tr>
+    </tfoot>
+  </table>
+  <p class="note">GST included.{business.demoMode && ' Sample prices.'}</p>
+
+  <div class="send">
+    <ul class="proof" role="list">
+      {proof.map((p) => (
+        <li><Icon name="check" size={18} />{p}</li>
+      ))}
+    </ul>
+    <Button type="submit" size="lg" data-send>Send booking request</Button>
+    <a class="call" href={formatPhoneHref(business.phone)} data-call-fallback hidden>
+      <Icon name="phone" size={18} />Call {business.phone}
+    </a>
+  </div>
+</Step>
+
+<style>
+  .tag {
+    justify-self: start;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-control);
+    background: var(--color-highlight);
+    color: var(--color-ink);
+    font-weight: var(--weight-medium);
+  }
+  .rows {
+    display: grid;
+    margin: 0;
+    border-top: var(--hairline) solid var(--color-line);
+  }
+  .rows :global(div) {
+    display: grid;
+    gap: 0 var(--space-4);
+    padding-block: var(--space-2);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  .rows :global(dt) {
+    color: var(--color-ink-muted);
+  }
+  .rows :global(dd) {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  @media (min-width: 600px) {
+    .rows :global(div) {
+      grid-template-columns: 8rem minmax(0, 1fr);
+    }
+  }
+  .lines {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .lines :global(th),
+  .lines :global(td) {
+    padding-block: var(--space-2);
+    vertical-align: top;
+    text-align: left;
+    font-weight: var(--weight-regular);
+  }
+  .lines :global(td) {
+    padding-left: var(--space-4);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .lines tfoot tr:first-child :global(th),
+  .lines tfoot tr:first-child :global(td) {
+    border-top: var(--wall) solid var(--color-ink);
+    font-size: var(--text-22);
+    font-weight: var(--weight-bold);
+  }
+  .note {
+    margin-top: calc(-1 * var(--space-4));
+    color: var(--color-ink-muted);
+    font-size: var(--text-16);
+  }
+  .send {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+    padding: var(--space-5);
+    border-radius: var(--radius-control);
+    background: var(--color-room);
+  }
+  .proof {
+    display: grid;
+    gap: var(--space-1);
+    padding: 0;
+    list-style: none;
+  }
+  .proof li {
+    display: flex;
+    gap: var(--space-2);
+    align-items: baseline;
+  }
+  .proof :global(.icon) {
+    position: relative;
+    top: 0.2em;
+  }
+  .send :global([data-form-failure]) {
+    justify-self: stretch;
+    background: var(--color-surface);
+  }
+  .call {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--target);
+    font-weight: var(--weight-medium);
+  }
+  @media (max-width: 479px) {
+    .send :global(.btn) {
+      width: 100%;
+    }
+  }
+</style>

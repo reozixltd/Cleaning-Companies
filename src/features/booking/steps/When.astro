@@ -1,0 +1,58 @@
+---
+/**
+ * Step 2, when: a day and an arrival window. Days depend on today's date in the
+ * business's time zone, so booking.ts fills them in the browser (a build-time
+ * list would go stale).
+ */
+import { booking } from '@/config/booking';
+import { business } from '@/config/business';
+import { formatPhoneHref } from '@/core/format';
+import Step from './Step.astro';
+
+const [first, ...rest] = booking.windows;
+const split = (label: string) => {
+  const [name, ...detail] = label.split(', ');
+  return { name, detail: detail.join(', ') };
+};
+---
+
+<Step id="when" n={2} title="When" intro="Pick a day that suits. This is a request: we'll confirm the exact time by SMS.">
+  <fieldset class="group" id="field-day" role="radiogroup" tabindex="-1" aria-labelledby="legend-day" aria-describedby="field-day-error">
+    <legend id="legend-day">Day</legend>
+    <p class="field-error" id="field-day-error" data-error-for="day" hidden></p>
+    <div class="segments segments--days" data-days></div>
+    <p class="none" data-no-days hidden>
+      No times are open in the next {booking.horizonDays} days. Call us and we'll find one.
+      <a href={formatPhoneHref(business.phone)}>{business.phone}</a>
+    </p>
+  </fieldset>
+
+  <fieldset class="group" id="field-window" role="radiogroup" tabindex="-1" aria-labelledby="legend-window" aria-describedby="field-window-error">
+    <legend id="legend-window">Arrival time</legend>
+    <p class="field-error" id="field-window-error" data-error-for="window" hidden></p>
+    <div class="segments">
+      {[first, ...rest].map((w) => (
+        <label class="segment segment--tall">
+          <input type="radio" name="window" value={w.id} />
+          <span>{split(w.label).name}</span>
+          <span class="segment__sub">{split(w.label).detail}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+</Step>
+
+<style>
+  .none {
+    padding: var(--space-4);
+    border-left: var(--wall) solid var(--color-ink);
+    background: var(--color-surface);
+  }
+  .none a {
+    font-weight: var(--weight-medium);
+    white-space: nowrap;
+  }
+  fieldset:focus-visible {
+    outline-offset: 4px;
+  }
+</style>

@@ -1,0 +1,139 @@
+---
+/**
+ * Every room's checklist for one service, all on the page at once (a service
+ * page is where people read the whole list). `printable` adds a print button
+ * and a print stylesheet that prints this section and nothing else, with an
+ * empty box beside each item to tick at the inspection.
+ */
+import { business } from '@/config/business';
+import type { ServiceId } from '@/config/pricing';
+import { ROOM_KINDS, rooms } from '@/config/rooms';
+import { checklistFor } from '@/domain/checklist';
+import Button from '@/core/ui/Button.astro';
+import Icon from '@/core/ui/Icon.astro';
+import SectionHead from './SectionHead.astro';
+
+interface Props {
+  service: ServiceId;
+  title: string;
+  intro?: string;
+  printable?: boolean;
+}
+const { service, title, intro, printable = false } = Astro.props;
+---
+
+<section class="band checklist" id="checklist" aria-labelledby="checklist-title" data-print-area={printable ? '' : undefined}>
+  <div class="wrap">
+    <p class="checklist__letterhead">{business.tradingName}, {business.phone}</p>
+    <SectionHead id="checklist-title" title={title} intro={intro} />
+    {printable && (
+      <div class="checklist__print" data-print-hide>
+        <Button variant="secondary" data-print-checklist>Print this checklist</Button>
+      </div>
+    )}
+    <div class="checklist__rooms">
+      {ROOM_KINDS.map((kind) => (
+        <div class="room" data-room-list={kind}>
+          <h3>{rooms.rooms[kind].label}</h3>
+          <ul role="list">
+            {checklistFor(kind, service, rooms).map((item) => (
+              <li><Icon name="check" size={20} class="room__tick" /><span>{item}</span></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('[data-print-checklist]').forEach((b) => b.addEventListener('click', () => window.print()));
+</script>
+
+<style>
+  .checklist {
+    background: var(--color-surface);
+    border-block: var(--hairline) solid var(--color-line);
+  }
+  .checklist__letterhead {
+    display: none;
+  }
+  .checklist__print {
+    margin: calc(var(--space-6) * -0.5) 0 var(--space-6);
+  }
+  .checklist__rooms {
+    display: grid;
+    gap: var(--space-6) var(--space-7);
+  }
+  .room {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  .room h3 {
+    font-size: var(--text-18);
+  }
+  ul {
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  @media (min-width: 768px) {
+    .checklist__rooms {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1100px) {
+    .checklist__rooms {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<style is:global>
+  @media print {
+    body:has([data-print-area]) > :not(main),
+    main:has(> [data-print-area]) > :not([data-print-area]),
+    [data-print-area] [data-print-hide] {
+      display: none !important;
+    }
+    [data-print-area] {
+      padding: 0 !important;
+      border: 0 !important;
+      background: none !important;
+      font-size: 11pt;
+    }
+    /* body raises specificity over the scoped screen rule that hides it. */
+    body [data-print-area] .checklist__letterhead {
+      display: block;
+      font-weight: var(--weight-bold);
+      margin-bottom: 4mm;
+    }
+    [data-print-area] .checklist__rooms {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6mm 10mm;
+    }
+    [data-print-area] .room {
+      break-inside: avoid;
+    }
+    /* An empty box to tick at the inspection, in place of the screen tick. */
+    [data-print-area] .room__tick {
+      display: none;
+    }
+    [data-print-area] li::before {
+      content: '';
+      width: 3.5mm;
+      height: 3.5mm;
+      margin-top: 1mm;
+      border: 1px solid currentColor;
+    }
+  }
+</style>

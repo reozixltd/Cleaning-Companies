@@ -1,0 +1,86 @@
+---
+/**
+ * Labelled form field with hint and error slot. Scripts write errors into
+ * [data-error-for=<name>] (see core/forms.ts). Input id is `field-<name>`.
+ */
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  name: string;
+  label: string;
+  type?: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'number';
+  required?: boolean;
+  autocomplete?: string;
+  inputmode?: 'text' | 'tel' | 'email' | 'numeric';
+  hint?: string;
+  options?: Option[];
+  value?: string;
+  placeholder?: string;
+  maxlength?: number;
+}
+
+const { name, label, type = 'text', required = false, autocomplete, inputmode, hint, options = [], value, placeholder, maxlength } = Astro.props;
+const id = `field-${name}`;
+const describedBy = [hint && `${id}-hint`, `${id}-error`].filter(Boolean).join(' ');
+const common = { id, name, required, 'aria-describedby': describedBy, autocomplete, placeholder };
+---
+
+<div class="field">
+  <label for={id}>{label}{!required && <span class="field__optional"> (optional)</span>}</label>
+  {hint && <p class="field__hint" id={`${id}-hint`}>{hint}</p>}
+  {
+    type === 'textarea' ? (
+      <textarea {...common} rows="3" maxlength={maxlength}>{value}</textarea>
+    ) : type === 'select' ? (
+      <select {...common}>
+        <option value="">Choose one</option>
+        {options.map((o) => <option value={o.value} selected={o.value === value}>{o.label}</option>)}
+      </select>
+    ) : (
+      <input {...common} type={type} inputmode={inputmode} value={value} maxlength={maxlength} />
+    )
+  }
+  <p class="field__error" id={`${id}-error`} data-error-for={name} hidden></p>
+</div>
+
+<style>
+  .field {
+    display: grid;
+    gap: var(--space-1);
+  }
+  label {
+    font-weight: var(--weight-medium);
+  }
+  .field__optional,
+  .field__hint {
+    color: var(--color-ink-muted);
+    font-weight: var(--weight-regular);
+    font-size: var(--text-16);
+  }
+  input,
+  textarea,
+  select {
+    width: 100%;
+    min-height: var(--target);
+    padding: var(--space-2) var(--space-3);
+    border: var(--hairline) solid var(--color-field-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    transition: border-color var(--dur-colour) ease;
+  }
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    border-color: var(--color-ink);
+  }
+  [aria-invalid='true'] {
+    border-color: var(--color-danger);
+  }
+  .field__error {
+    color: var(--color-danger);
+    font-size: var(--text-16);
+  }
+</style>

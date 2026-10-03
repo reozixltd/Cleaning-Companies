@@ -1,0 +1,51 @@
+---
+/** Job application: contact details, where you live, when you can work, experience. Creates an `application` lead. */
+import './forms.css';
+import Button from '@/core/ui/Button.astro';
+import ErrorSummary from '@/core/ui/ErrorSummary.astro';
+import Field from '@/core/ui/Field.astro';
+import { AVAILABILITY } from './lead-inputs';
+
+interface Props {
+  success?: string;
+}
+const { success = "Application sent. We'll call you within 3 business days to talk it through." } = Astro.props;
+---
+
+<form class="lead-form" data-application-form data-success={success} novalidate>
+  <ErrorSummary />
+  <div class="lead-form__pair">
+    <Field name="firstName" label="First name" required autocomplete="given-name" maxlength={40} />
+    <Field name="lastName" label="Last name" required autocomplete="family-name" maxlength={40} />
+  </div>
+  <div class="lead-form__pair">
+    <Field name="phone" label="Mobile" type="tel" inputmode="tel" required autocomplete="tel" />
+    <Field name="email" label="Email" type="email" inputmode="email" required autocomplete="email" />
+  </div>
+  <div class="lead-form__pair lead-form__pair--short">
+    <Field name="suburb" label="Suburb you live in" required autocomplete="address-level2" maxlength={60} />
+    <Field name="postcode" label="Postcode" required autocomplete="postal-code" inputmode="numeric" maxlength={4} />
+  </div>
+  <Field name="availability" label="When can you work?" type="select" required options={AVAILABILITY.map((a) => ({ value: a.value, label: a.label }))} />
+  <Field
+    name="experience"
+    label="Cleaning or work experience"
+    type="textarea"
+    hint="A few lines is plenty. No experience is fine; we train you."
+    maxlength={1000}
+  />
+  <div class="lead-form__check">
+    <label for="field-requirements">
+      <input id="field-requirements" name="requirements" type="checkbox" required aria-describedby="field-requirements-error" />
+      <span>I have the right to work in Australia, my own car and a full driver licence.</span>
+    </label>
+    <p class="lead-form__error" id="field-requirements-error" data-error-for="requirements" hidden></p>
+  </div>
+  <input name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <Button type="submit" size="lg">Send application</Button>
+</form>
+
+<script>
+  import { initApplicationForms } from './application';
+  initApplicationForms();
+</script>

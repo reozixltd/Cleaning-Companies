@@ -1,0 +1,51 @@
+---
+/** Closing call to action for inner pages: book, or call. */
+import { business } from '@/config/business';
+import { formatPhoneHref } from '@/core/format';
+import Button from '@/core/ui/Button.astro';
+
+interface Props {
+  title: string;
+  text?: string;
+}
+const { title, text } = Astro.props;
+---
+
+<section class="cta" aria-labelledby="cta-title">
+  <div class="wrap cta__inner">
+    <div>
+      <h2 id="cta-title">{title}</h2>
+      {text && <p>{text}</p>}
+    </div>
+    <div class="cta__actions">
+      <Button href="/book/" size="lg" data-choose-time>Book a clean</Button>
+      <Button href={formatPhoneHref(business.phone)} variant="secondary" size="lg" icon="phone">{business.phone}</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-block: var(--space-7);
+    background: var(--color-room);
+  }
+  .cta__inner {
+    display: grid;
+    gap: var(--space-5);
+  }
+  p {
+    margin-top: var(--space-2);
+    color: var(--color-ink-muted);
+  }
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  @media (min-width: 900px) {
+    .cta__inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+  }
+</style>

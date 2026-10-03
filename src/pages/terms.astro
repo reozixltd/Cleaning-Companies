@@ -1,0 +1,13 @@
+---
+/** Service terms: rendered from src/content/policies/terms.md. */
+import { getEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PolicyPage from '@/sections/PolicyPage.astro';
+import { business } from '@/config/business';
+
+const policy = (await getEntry('policies', 'terms'))!.data;
+---
+
+<BaseLayout title={`${policy.title} | ${business.tradingName}`} description={policy.description}>
+  <PolicyPage id="terms" />
+</BaseLayout>

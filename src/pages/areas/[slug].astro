@@ -1,0 +1,109 @@
+---
+/**
+ * One suburb: why we're local, reviews from neighbours, nearby suburbs (and
+ * which of them we don't clean yet), and a way to price the home on the plan.
+ */
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import Prose from '@/sections/Prose.astro';
+import Reviews from '@/sections/Reviews.astro';
+import CtaBand from '@/sections/CtaBand.astro';
+import Button from '@/core/ui/Button.astro';
+import Photo from '@/core/ui/Photo.astro';
+import { business } from '@/config/business';
+import { photoSlots, type PhotoSlotName } from '@/config/photo-slots';
+import { findArea } from '@/core/geo';
+
+export async function getStaticPaths() {
+  const areas = await getCollection('areas');
+  return areas.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const a = entry.data;
+const { Content } = await render(entry);
+const slot = `area-${entry.id}` as PhotoSlotName;
+const nearby = a.nearby.map((name) => ({ name, area: findArea(name, business.areas).matches[0] }));
+---
+
+<BaseLayout title={`House cleaning in ${a.suburb} ${a.postcode} | ${business.shortName}`} description={a.seoDescription}>
+  <PageHeader title={`House cleaning in ${a.suburb}`} intro={a.intro} />
+
+  <section class="wrap local" aria-label={`Cleaning in ${a.suburb}`}>
+    <div class="local__text">
+      <Prose><Content /></Prose>
+      <div class="actions">
+        <Button href="/#plan" size="lg">Price your home</Button>
+        <Button href="/services/" variant="quiet" size="lg">See the cleans we do</Button>
+      </div>
+      <div class="nearby" data-nearby>
+        <h2 id="nearby-title">Nearby suburbs</h2>
+        <ul role="list" aria-labelledby="nearby-title">
+          {nearby.map(({ name, area }) => (
+            <li data-not-yet={area ? undefined : ''}>
+              <span class="nearby__name">{area?.page ? <a href={`/areas/${area.page}/`}>{name}</a> : name}</span>
+              {area ? (
+                <span class="muted">We clean here</span>
+              ) : (
+                <span><span class="muted">Not yet. </span><a href={`/areas/?suburb=${encodeURIComponent(name)}#waitlist`}>Tell me when you do</a></span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    <Photo slot={slot} alt={photoSlots[slot]?.alt ?? a.suburb} priority ratio="4 / 3" sizes="(min-width: 900px) 45vw, 100vw" />
+  </section>
+
+  <Reviews suburb={a.suburb} limit={2} />
+
+  <CtaBand title={`Book a clean in ${a.suburb}`} text={`Choose a morning or afternoon. We confirm by SMS ${business.confirmPromise}.`} />
+</BaseLayout>
+
+<style>
+  .local {
+    display: grid;
+    gap: var(--space-6);
+    padding-bottom: var(--space-7);
+  }
+  .local__text {
+    display: grid;
+    gap: var(--space-6);
+    align-content: start;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+  }
+  .nearby h2 {
+    margin-bottom: var(--space-3);
+    font-size: var(--text-22);
+  }
+  .nearby ul {
+    padding: 0;
+    list-style: none;
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  .nearby li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0 var(--space-4);
+    min-height: var(--target);
+    padding-block: var(--space-1);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  .nearby__name {
+    font-weight: var(--weight-medium);
+  }
+  @media (min-width: 900px) {
+    .local {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      gap: var(--space-8);
+      align-items: start;
+    }
+  }
+</style>

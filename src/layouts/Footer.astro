@@ -1,0 +1,113 @@
+---
+/** Footer: who we are (legal name and ABN on every page), how to reach us, where we clean, policies. */
+import { business } from '@/config/business';
+import { navigation } from '@/config/navigation';
+import { formatPhoneHref } from '@/core/format';
+import Logo from './Logo.astro';
+
+const hours = (opens: string, closes: string) => `${to12(opens)} to ${to12(closes)}`;
+function to12(time: string): string {
+  const [h, m] = time.split(':').map(Number);
+  const suffix = h >= 12 ? 'pm' : 'am';
+  const hour = h % 12 || 12;
+  return m ? `${hour}:${String(m).padStart(2, '0')}${suffix}` : `${hour}${suffix}`;
+}
+---
+
+<footer class="footer">
+  <div class="wrap footer__grid">
+    <div class="footer__about">
+      <Logo />
+      <p>{business.legalName}, <span class="nowrap">ABN {business.abn}</span></p>
+      <p>
+        <a href={formatPhoneHref(business.phone)}>{business.phone}</a><br />
+        <a href={`mailto:${business.email}`}>{business.email}</a>
+      </p>
+      <dl class="footer__hours">
+        {business.hours.map((h) => (
+          <div>
+            <dt>{h.label}</dt>
+            <dd>{hours(h.opens, h.closes)}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+    {
+      navigation.footer.map((group) => (
+        <nav aria-label={group.title}>
+          <h2 class="footer__title">{group.title}</h2>
+          <ul role="list">
+            {group.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          </ul>
+        </nav>
+      ))
+    }
+    <div class="footer__areas">
+      <h2 class="footer__title">Where we clean</h2>
+      <p>{business.areas.map((a) => a.suburb).join(', ')}.</p>
+    </div>
+  </div>
+  <div class="wrap footer__base">
+    <p>© {new Date().getFullYear()} {business.legalName}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: var(--space-8);
+    padding-block: var(--space-7) var(--space-5);
+    border-top: var(--wall) solid var(--color-ink);
+    font-size: var(--text-16);
+  }
+  .footer__grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .footer__about {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+  }
+  .footer__title {
+    margin-bottom: var(--space-2);
+    font-size: var(--text-16);
+  }
+  ul {
+    padding: 0;
+    list-style: none;
+  }
+  li a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+  }
+  .footer__hours div {
+    display: flex;
+    gap: var(--space-2);
+  }
+  dd {
+    margin: 0;
+    color: var(--color-ink-muted);
+  }
+  .nowrap {
+    white-space: nowrap;
+  }
+  .footer__base {
+    margin-top: var(--space-6);
+    color: var(--color-ink-muted);
+    font-size: var(--text-14);
+  }
+  @media (min-width: 768px) {
+    .footer__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .footer__grid {
+      grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr));
+    }
+    .footer__areas {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

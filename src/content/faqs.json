@@ -1,0 +1,15 @@
+[
+  { "id": "home-1", "q": "Do I need to be home?", "a": "No. Most clients leave a key, a lockbox code or a door code when they book. You can also be home if you'd rather.", "tags": ["home", "keys", "booking"] },
+  { "id": "keys-1", "q": "How do you look after my key?", "a": "Keys live in a locked key safe at our base. Each one has a coded tag with no name or address, so a lost key can't be traced to your home.", "tags": ["keys"] },
+  { "id": "keys-2", "q": "What happens to my alarm or door code?", "a": "It's stored with your booking, seen only by your cleaner and our office, and deleted when your service ends.", "tags": ["keys"] },
+  { "id": "home-2", "q": "Who will come to my home?", "a": "One of our own employed cleaners, not a subcontractor. Every cleaner holds a current national police check and has passed an interview and a paid trial clean.", "tags": ["home"] },
+  { "id": "home-3", "q": "Do you bring your own supplies?", "a": "Yes, all products and equipment, including a vacuum and mop. If you'd like us to use your own products, leave them out and add a note.", "tags": ["home", "booking"] },
+  { "id": "booking-1", "q": "Can I cancel or move a clean?", "a": "Yes. With at least 48 hours' notice there's no charge. With less notice there's a $50 late-change fee, because your cleaner has set aside the time.", "tags": ["booking", "home"] },
+  { "id": "booking-2", "q": "What if you can't get in?", "a": "Your cleaner calls you and waits 20 minutes. After that there's a $60 lockout fee and we rebook the clean.", "tags": ["booking", "keys"] },
+  { "id": "home-4", "q": "What if something is missed?", "a": "Tell us within 24 hours and we'll come back and re-clean it free.", "tags": ["home"] },
+  { "id": "booking-3", "q": "Are you OK with pets?", "a": "Yes. Tell us about them when you book. We ask that dogs who aren't comfortable with visitors are kept outside or in another room.", "tags": ["booking"] },
+  { "id": "payment-1", "q": "When do I pay?", "a": "We charge the card on file after each clean and email a tax invoice. Prices include GST.", "tags": ["payment", "booking"] },
+  { "id": "home-5", "q": "Are you insured?", "a": "Yes. We carry public liability insurance of $20 million, and every cleaner is covered by workers' compensation.", "tags": ["home", "offices"] },
+  { "id": "offices-1", "q": "Do you clean offices after hours?", "a": "Yes. Most office cleans happen early morning or after 5pm. Request a walk-through and we'll price your site properly.", "tags": ["offices"] },
+  { "id": "offices-2", "q": "Can you provide an insurance certificate?", "a": "Yes. We send a current certificate of currency on request, usually the same day.", "tags": ["offices"] }
+]

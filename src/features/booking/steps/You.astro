@@ -1,0 +1,93 @@
+---
+/**
+ * Step 4, about you: contact details, the address (inside the service area),
+ * and three consents. Marketing boxes are separate and start unticked (Spam Act).
+ */
+import Field from '@/core/ui/Field.astro';
+import Step from './Step.astro';
+---
+
+<Step id="you" n={4} title="About you">
+  <div class="fields">
+    <div class="pair">
+      <Field name="firstName" label="First name" required autocomplete="given-name" maxlength={60} />
+      <Field name="lastName" label="Last name" required autocomplete="family-name" maxlength={60} />
+    </div>
+    <Field name="phone" label="Mobile" type="tel" required autocomplete="tel" inputmode="tel" hint="We'll text you to confirm." maxlength={20} />
+    <Field name="email" label="Email" type="email" required autocomplete="email" inputmode="email" maxlength={120} />
+    <Field name="address" label="Street address" required autocomplete="address-line1" maxlength={120} />
+    <div class="pair pair--place">
+      <Field name="suburb" label="Suburb" required autocomplete="address-level2" maxlength={60} />
+      <Field name="postcode" label="Postcode" required autocomplete="postal-code" inputmode="numeric" maxlength={4} />
+    </div>
+  </div>
+
+  <fieldset class="group">
+    <legend class="visually-hidden">Terms and messages</legend>
+    <ul class="choices" role="list">
+      <li>
+        <label class="choice">
+          <input type="checkbox" id="field-terms" name="terms" aria-describedby="field-terms-more field-terms-error" />
+          <span>I agree to the service terms</span>
+        </label>
+        <p class="choice__more" id="field-terms-more">
+          <a href="/terms/" target="_blank">Read the service terms<span class="visually-hidden"> (opens in a new tab)</span></a>:
+          cancelling, lockouts, keys and codes.
+        </p>
+        <p class="field-error" id="field-terms-error" data-error-for="terms" hidden></p>
+      </li>
+      <li>
+        <label class="choice">
+          <input type="checkbox" name="marketingSms" />
+          <span>Send me offers and reminders to rebook by SMS <span class="optional">(optional)</span></span>
+        </label>
+      </li>
+      <li>
+        <label class="choice">
+          <input type="checkbox" name="marketingEmail" />
+          <span>Send me offers by email <span class="optional">(optional)</span></span>
+        </label>
+      </li>
+    </ul>
+    <p class="note">Your confirmation and reminders come by SMS either way. Opt out of offers any time.</p>
+  </fieldset>
+</Step>
+
+<style>
+  .fields {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .pair {
+    display: grid;
+    gap: var(--space-4);
+  }
+  @media (min-width: 600px) {
+    .pair {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .pair--place {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+  }
+  .choice__more {
+    margin: calc(-1 * var(--space-2)) 0 0;
+    padding: 0 0 var(--space-3) calc(20px + var(--space-3));
+    color: var(--color-ink-muted);
+    font-size: var(--text-16);
+  }
+  .choice__more a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+    color: var(--color-ink);
+    font-weight: var(--weight-medium);
+  }
+  .choices .field-error:not([hidden]) {
+    padding: 0 0 var(--space-3) calc(20px + var(--space-3));
+  }
+  .note {
+    margin-top: var(--space-3);
+    font-size: var(--text-16);
+  }
+</style>

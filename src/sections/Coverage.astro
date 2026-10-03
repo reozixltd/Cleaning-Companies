@@ -1,0 +1,54 @@
+---
+/** Where we clean: the coverage map and the full suburb list, linked to area pages. */
+import { business } from '@/config/business';
+import CoverageMap from '@/features/areas/CoverageMap.astro';
+import SectionHead from './SectionHead.astro';
+---
+
+<section class="band" id="areas" aria-labelledby="areas-title">
+  <div class="wrap coverage">
+    <div>
+      <SectionHead id="areas-title" title="Where we clean" intro={`${business.areas.length} suburbs across ${business.region}, all within 20 minutes of our base in ${business.base.suburb}.`} />
+      <ul class="suburbs" role="list">
+        {business.areas.map((a) => (
+          <li>{a.page ? <a href={`/areas/${a.page}/`}>{a.suburb}</a> : a.suburb} <span class="muted">{a.postcode}</span></li>
+        ))}
+      </ul>
+      <p class="coverage__more"><a href="/areas/">All areas and the waitlist</a></p>
+    </div>
+    <CoverageMap />
+  </div>
+</section>
+
+<style>
+  .coverage {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .suburbs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1) var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+  .suburbs li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--target);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  .coverage__more {
+    margin-top: var(--space-4);
+  }
+  @media (min-width: 900px) {
+    .coverage {
+      /* The area runs north to south, so the map is narrower than half the page. */
+      grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+      justify-content: space-between;
+      gap: var(--space-8);
+      align-items: start;
+    }
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+/** "Do you clean my suburb?" Answers in place from the area list in config. */
+---
+
+<form class="check" data-suburb-check novalidate>
+  <label for="suburb-input">Check your suburb</label>
+  <div class="check__row">
+    <input id="suburb-input" name="suburb" type="text" autocomplete="address-level2" placeholder="Suburb or postcode" />
+    <button type="submit">Check</button>
+  </div>
+  <p class="check__result" data-suburb-result aria-live="polite"></p>
+</form>
+
+<script>
+  import { initSuburbChecks } from './suburb-check';
+  initSuburbChecks();
+</script>
+
+<style>
+  .check {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+  label {
+    font-weight: var(--weight-medium);
+  }
+  .check__row {
+    display: flex;
+    gap: var(--space-2);
+  }
+  input {
+    flex: 1 1 0;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--target);
+    padding: var(--space-2) var(--space-3);
+    border: var(--hairline) solid var(--color-field-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+  }
+  button {
+    min-height: var(--target);
+    padding-inline: var(--space-5);
+    border: var(--hairline) solid var(--color-ink);
+    border-radius: var(--radius-control);
+    background: transparent;
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+  button:active {
+    transform: scale(0.97);
+  }
+  .check__result:empty {
+    display: none;
+  }
+  .check__result :global(a) {
+    margin-left: var(--space-1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button:active {
+      transform: none;
+    }
+  }
+</style>

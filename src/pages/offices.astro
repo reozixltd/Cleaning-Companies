@@ -1,0 +1,174 @@
+---
+/**
+ * Offices: written for facility and property managers, not homeowners (spec D2, §6.5).
+ * No homeowner prices and no booking bar: commercial work is priced per site after a walk-through.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import SectionHead from '@/sections/SectionHead.astro';
+import Faq from '@/sections/Faq.astro';
+import WalkthroughForm from '@/features/walkthrough/WalkthroughForm.astro';
+import Button from '@/core/ui/Button.astro';
+import Icon from '@/core/ui/Icon.astro';
+import Photo from '@/core/ui/Photo.astro';
+import { formatPhoneHref } from '@/core/format';
+import { business } from '@/config/business';
+import { photoSlots } from '@/config/photo-slots';
+
+const phoneHref = formatPhoneHref(business.phone);
+
+const facilities = [
+  { name: 'Offices', text: 'Workstations, kitchens, meeting rooms and bathrooms, cleaned before staff arrive or after they leave.' },
+  { name: 'Medical and dental suites', text: 'Waiting rooms, consult rooms and bathrooms, cleaned to the schedule and products your practice sets.' },
+  { name: 'Strata common areas', text: 'Foyers, lifts, stairwells, bin rooms and car park entries, on a roster the committee approves.' },
+  { name: 'Gyms', text: 'Change rooms, floors and equipment touchpoints, timed around your opening hours.' },
+  { name: 'Childcare', text: 'Rooms, bathrooms and kitchens cleaned after close, with products agreed with your centre.' },
+];
+
+const factors = [
+  { name: 'Floor area', text: 'The square metres we clean, and how many levels, kitchens and bathrooms that covers.' },
+  { name: 'Floor types', text: 'Carpet, hard floors and vinyl need different equipment and time, and some need periodic machine scrubbing.' },
+  { name: 'Frequency', text: 'How many cleans a week. A site cleaned often takes less time each visit, so each clean costs less.' },
+  { name: 'Cleaning hours', text: 'After hours, early morning or while you are open, and the access and alarm rules that come with each.' },
+  { name: 'Consumables', text: 'Whether we supply toilet paper, hand towels, soap and bin liners, or you do. Supplies are listed separately on the quote.' },
+];
+
+const compliance = [
+  'A current certificate of currency on request, sent the same business day.',
+  `${business.insurance.long}.`,
+  `${business.policeChecked}.`,
+  'Cleaners are our employees, not subcontractors, and covered by workers’ compensation.',
+  'Our WHS procedures and safe work method statements, on request.',
+  ...(business.bonded ? ['We are bonded, and send proof of the bond with the certificate of currency.'] : []),
+];
+
+const steps = [
+  { title: 'Send the request', text: 'Tell us about the site below. We call within 1 business day to book a time that suits you.' },
+  { title: 'We walk the site with you', text: 'About 30 minutes on site. We measure, note floor types, access and alarm procedures, and agree what is cleaned and how often.' },
+  { title: 'You get a written quote', text: 'A fixed price per clean and a scope listing each area, so you can compare quotes like for like.' },
+];
+---
+
+<BaseLayout
+  title={`Office and commercial cleaning in ${business.region}: ${business.tradingName}`}
+  description={`After-hours cleaning for offices, medical suites, strata common areas, gyms and childcare centres in ${business.region}. Priced per site after a free walk-through.`}
+  bookingBar={false}
+>
+  <PageHeader
+    title="Office and commercial cleaning"
+    intro="For facility and property managers. We price each site after a walk-through, clean to a written scope, and send compliance documents before the first clean."
+  >
+    <div class="actions">
+      <Button href="#walkthrough" size="lg">Request a walk-through</Button>
+      <Button href={phoneHref} variant="secondary" size="lg" icon="phone">Call {business.phone}</Button>
+    </div>
+  </PageHeader>
+
+  <section class="band band--surface" aria-labelledby="sites-title">
+    <div class="wrap split">
+      <div>
+        <SectionHead id="sites-title" title="Sites we clean" intro={`Small and mid-sized sites across ${business.region}, cleaned outside your busy hours.`} />
+        <ul class="rows" role="list">
+          {facilities.map((f) => <li><h3>{f.name}</h3><p>{f.text}</p></li>)}
+        </ul>
+      </div>
+      <Photo slot="offices" alt={photoSlots.offices.alt} priority ratio="4 / 3" sizes="(min-width: 900px) 360px, 100vw" class="split__photo" />
+    </div>
+  </section>
+
+  <section class="band" id="pricing" aria-labelledby="pricing-title">
+    <div class="wrap">
+      <SectionHead id="pricing-title" title="What sets the price" intro="We quote per site, not per room. These are the five things we measure on the walk-through." />
+      <dl class="schedule">
+        {factors.map((f) => <div><dt>{f.name}</dt><dd>{f.text}</dd></div>)}
+      </dl>
+      <p class="note">The quote is a fixed price per clean. It changes only if the scope does, and we agree that with you first.</p>
+    </div>
+  </section>
+
+  <section class="band band--surface" id="compliance" aria-labelledby="compliance-title">
+    <div class="wrap split">
+      <div>
+        <SectionHead id="compliance-title" title="Compliance" intro="What a contractor register usually asks for. Ask for any of it before we start." />
+        <ul class="checks" role="list">
+          {compliance.map((c) => <li><Icon name="check" size={22} />{c}</li>)}
+        </ul>
+      </div>
+      <div class="docs">
+        <p class="docs__entity">{business.legalName}<br />ABN {business.abn}</p>
+        <p>Need a certificate for your register today? Email <a href={`mailto:${business.email}`}>{business.email}</a> or call <a class="nowrap" href={phoneHref}>{business.phone}</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="process" aria-labelledby="process-title">
+    <div class="wrap">
+      <SectionHead id="process-title" title="How a walk-through works" />
+      <ol class="steps">
+        {steps.map((s) => <li><h3>{s.title}</h3><p>{s.text}</p></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="band request" id="walkthrough" aria-labelledby="walkthrough-title">
+    <div class="wrap request__grid">
+      <div class="request__intro">
+        <SectionHead id="walkthrough-title" title="Request a walk-through" intro="It takes about two minutes. The walk-through is free and there is no obligation." />
+        <p>Rather talk it through? Call <a href={phoneHref}>{business.phone}</a> and we'll book it while you're on the line.</p>
+      </div>
+      <div class="request__panel"><WalkthroughForm /></div>
+    </div>
+  </section>
+
+  <Faq tag="offices" title="Questions from facility managers" more={false} />
+</BaseLayout>
+
+<style>
+  .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-2); }
+  .band--surface { background: var(--color-surface); border-block: var(--hairline) solid var(--color-line); }
+  .split { display: grid; gap: var(--space-7); }
+  .split__photo { max-width: 360px; }
+  @media (max-width: 899px) { .split__photo { max-width: 100%; } }
+
+  .rows, .checks { display: grid; padding: 0; list-style: none; }
+  .rows { border-top: var(--wall) solid var(--color-ink); }
+  .rows li { display: grid; gap: var(--space-1); padding-block: var(--space-4); border-bottom: var(--hairline) solid var(--color-line); }
+  .rows h3 { font-size: var(--text-18); }
+  .rows p, .schedule dd, .steps p, .note { color: var(--color-ink-muted); }
+
+  .schedule { border-top: var(--wall) solid var(--color-ink); }
+  .schedule div { display: grid; gap: var(--space-1); padding-block: var(--space-4); border-bottom: var(--hairline) solid var(--color-line); }
+  .schedule dt { font-size: var(--text-18); font-weight: var(--weight-bold); }
+  .schedule dd { margin: 0; max-width: var(--measure); }
+  .note { margin-top: var(--space-5); }
+
+  .checks { gap: var(--space-4); }
+  .checks li { display: grid; grid-template-columns: auto 1fr; gap: var(--space-3); font-size: var(--text-18); }
+  .docs { display: grid; gap: var(--space-3); align-content: start; padding-left: var(--space-5); border-left: var(--hairline) solid var(--color-line); }
+  .nowrap { white-space: nowrap; }
+  .docs__entity { font-weight: var(--weight-medium); }
+
+  .steps { display: grid; gap: var(--space-5); padding: 0; list-style: none; counter-reset: step; }
+  .steps li { display: grid; gap: var(--space-2); align-content: start; padding-top: var(--space-4); border-top: var(--wall) solid var(--color-ink); counter-increment: step; }
+  .steps li::before { content: counter(step); font-size: var(--text-36); font-weight: var(--weight-bold); line-height: 1; font-variant-numeric: tabular-nums; }
+  .steps h3 { font-size: var(--text-18); }
+
+  .request { background: var(--color-room); scroll-margin-top: calc(var(--space-8) + var(--space-2)); }
+  .request__grid { display: grid; gap: var(--space-6); }
+  .request__intro { display: grid; align-content: start; }
+  .request__panel { padding: var(--space-5) var(--space-4); border: var(--hairline) solid var(--color-line); border-radius: var(--radius-control); background: var(--color-surface); }
+
+  @media (min-width: 768px) {
+    .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .schedule div { grid-template-columns: 13rem minmax(0, 1fr); gap: var(--space-5); }
+    .request__panel { padding: var(--space-6); }
+  }
+  @media (min-width: 900px) {
+    .split { grid-template-columns: minmax(0, 1fr) 360px; gap: var(--space-8); }
+    #compliance .split { grid-template-columns: minmax(0, 1fr) 320px; }
+  }
+  @media (min-width: 1024px) {
+    .request__grid { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: var(--space-8); }
+    .request__intro { position: sticky; top: calc(var(--space-8) + var(--space-5)); align-self: start; }
+  }
+</style>

@@ -1,0 +1,172 @@
+---
+/**
+ * The booking request: five numbered steps in one form, a booking tag beside them
+ * on wide screens, and the success screen. Wired by booking.ts (the page calls
+ * initBooking so it can add the message preview to the success screen through
+ * the `done` slot).
+ */
+import './booking.css';
+import { business } from '@/config/business';
+import { pricing } from '@/config/pricing';
+import { formatMoney, formatPhoneHref } from '@/core/format';
+import { describeSelection } from '@/domain/describe';
+import { quote } from '@/domain/quote';
+import { DEFAULT_SELECTION } from '@/domain/selection';
+import { priceText } from './recap';
+import Home from './steps/Home.astro';
+import When from './steps/When.astro';
+import Access from './steps/Access.astro';
+import You from './steps/You.astro';
+import Check from './steps/Check.astro';
+
+const q = quote(DEFAULT_SELECTION, pricing);
+---
+
+<div class="book" data-booking>
+  <form id="book-form" class="book__form" novalidate data-book-form aria-label="Booking request">
+    <ol class="book__steps" role="list">
+      <Home />
+      <When />
+      <Access />
+      <You />
+      <Check />
+    </ol>
+  </form>
+
+  <aside class="tag" data-book-tag aria-label="Your clean">
+    <p class="tag__summary" data-book-summary>{describeSelection(DEFAULT_SELECTION)}</p>
+    <p class="tag__price tabular" data-book-price>{priceText(q)}</p>
+    <p class="tag__first" data-book-first-row hidden={q.firstVisit === q.perVisit}>
+      First visit <strong class="tabular" data-book-first>{formatMoney(q.firstVisit)}</strong>, priced as a deep clean.
+    </p>
+    <p class="tag__when" data-tag-when hidden></p>
+    <p class="tag__note">GST included.{business.demoMode && ' Sample prices.'} We confirm by SMS {business.confirmPromise}.</p>
+  </aside>
+
+  <section class="done" data-booking-done hidden aria-labelledby="done-title">
+    <h2 id="done-title" tabindex="-1">Booking request sent</h2>
+    <p class="done__lead">We'll confirm by SMS {business.confirmPromise}.</p>
+    <p class="done__unkept" data-done-unkept hidden>
+      This browser couldn't keep a copy of your request. Call us on <a class="nowrap" href={formatPhoneHref(business.phone)}>{business.phone}</a> to be sure we have it.
+    </p>
+    <dl class="done__rows" data-done-rows></dl>
+    <p class="done__ref">Your reference is <strong data-done-ref></strong>.</p>
+    <slot name="done" />
+    <p>
+      Need to change something? Call us on <a class="nowrap" href={formatPhoneHref(business.phone)}>{business.phone}</a>.
+    </p>
+  </section>
+</div>
+
+<style>
+  .book {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  .book__form {
+    min-width: 0;
+  }
+  .book__steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  .tag {
+    display: none;
+  }
+  .done {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 44rem;
+    padding-top: var(--space-5);
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  .done h2 {
+    font-size: var(--text-36);
+    letter-spacing: var(--tracking-display);
+    outline-offset: 4px;
+  }
+  .done__lead {
+    font-size: var(--text-22);
+  }
+  .done__unkept {
+    padding: var(--space-3) var(--space-4);
+    border-left: var(--wall) solid var(--color-warning);
+    background: var(--color-warning-soft);
+  }
+  .done__unkept a {
+    color: var(--color-ink);
+    font-weight: var(--weight-medium);
+  }
+  .done__rows {
+    display: grid;
+    margin: var(--space-2) 0 0;
+    border-top: var(--hairline) solid var(--color-line);
+  }
+  .done__rows :global(div) {
+    display: grid;
+    gap: 0 var(--space-4);
+    padding-block: var(--space-2);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  .done__rows :global(dt) {
+    color: var(--color-ink-muted);
+  }
+  .done__rows :global(dd) {
+    margin: 0;
+  }
+  @media (min-width: 600px) {
+    .done__rows :global(div) {
+      grid-template-columns: 8rem minmax(0, 1fr);
+    }
+  }
+  .nowrap {
+    white-space: nowrap;
+  }
+  .done__ref {
+    color: var(--color-ink-muted);
+  }
+  .done__ref strong {
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (min-width: 1024px) {
+    .book {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      column-gap: var(--space-8);
+    }
+    .tag {
+      position: sticky;
+      top: calc(64px + var(--space-5));
+      display: grid;
+      gap: var(--space-2);
+      padding: var(--space-5);
+      border-radius: var(--radius-control);
+      background: var(--color-highlight);
+      color: var(--color-ink);
+    }
+    .tag[hidden] {
+      display: none;
+    }
+    .tag__summary {
+      font-weight: var(--weight-medium);
+    }
+    .tag__price {
+      font-size: var(--text-36);
+      font-weight: var(--weight-bold);
+      letter-spacing: var(--tracking-display);
+      line-height: 1.1;
+    }
+    .tag__when {
+      padding-top: var(--space-2);
+      border-top: var(--hairline) solid var(--color-ink);
+      font-weight: var(--weight-medium);
+    }
+    .tag__note {
+      font-size: var(--text-16);
+    }
+  }
+</style>

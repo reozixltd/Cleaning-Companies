@@ -1,0 +1,98 @@
+---
+/** Named, dated reviews next to a booking button: proof before the action, not on a separate page. */
+import { getCollection } from 'astro:content';
+import { business } from '@/config/business';
+import { formatDay } from '@/core/format';
+import Button from '@/core/ui/Button.astro';
+import Icon from '@/core/ui/Icon.astro';
+
+interface Props {
+  /** Prefer reviews from this suburb (area pages). */
+  suburb?: string;
+  limit?: number;
+}
+
+const { suburb, limit = 3 } = Astro.props;
+const all = (await getCollection('reviews')).map((r) => r.data).sort((a, b) => b.date.localeCompare(a.date));
+const local = suburb ? all.filter((r) => r.suburb === suburb) : [];
+const reviews = [...local, ...all.filter((r) => !local.includes(r))].slice(0, limit);
+const year = (date: string) => date.slice(0, 4);
+---
+
+<section class="band" id="reviews" aria-labelledby="reviews-title">
+  <div class="wrap reviews">
+    <div class="reviews__head">
+      <h2 id="reviews-title">What clients say</h2>
+      <p class="reviews__score">
+        <strong>{business.rating.value}</strong> from {business.rating.count} {business.rating.source} reviews{business.demoMode && ' (sample)'}
+      </p>
+      <Button href="/book/" data-choose-time>Book a clean</Button>
+    </div>
+    <ul class="reviews__list" role="list">
+      {reviews.map((r) => (
+        <li data-review>
+          <figure>
+            <p class="stars" role="img" aria-label={`Rated ${r.rating} out of 5`}>
+              {Array.from({ length: 5 }, (_, i) => <Icon name="star" size={18} class={i < r.rating ? 'star star--on' : 'star'} />)}
+            </p>
+            <blockquote>{r.text}</blockquote>
+            <figcaption>
+              {r.name}, {r.suburb}. <time datetime={r.date}>{formatDay(r.date)} {year(r.date)}</time>
+            </figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .reviews {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .reviews__head {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    justify-items: start;
+  }
+  .reviews__score strong {
+    font-size: var(--text-28);
+  }
+  .reviews__list {
+    display: grid;
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+  figure {
+    display: grid;
+    gap: var(--space-2);
+    padding-left: var(--space-4);
+    border-left: var(--wall) solid var(--color-ink);
+  }
+  .stars {
+    display: flex;
+    gap: 2px;
+    color: var(--color-line);
+  }
+  .stars :global(.star--on) {
+    color: var(--color-star);
+    fill: currentColor;
+  }
+  blockquote {
+    margin: 0;
+    font-size: var(--text-18);
+  }
+  figcaption {
+    color: var(--color-ink-muted);
+    font-size: var(--text-16);
+  }
+  @media (min-width: 900px) {
+    .reviews {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+      gap: var(--space-8);
+    }
+  }
+</style>

@@ -1,0 +1,87 @@
+---
+/**
+ * Refer a friend: the rule, and this visitor's own code to pass on. We never
+ * ask for a friend's details; the friend gives the code when they book.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import SectionHead from '@/sections/SectionHead.astro';
+import NumberedSteps from '@/sections/NumberedSteps.astro';
+import CtaBand from '@/sections/CtaBand.astro';
+import ReferralCode from '@/features/referral/ReferralCode.astro';
+import { business } from '@/config/business';
+
+/** A real sequence, so it is numbered. */
+const steps = [
+  { title: 'Pass on your code', text: 'Text it, email it or tell them over the fence. It is yours to keep.' },
+  { title: 'Your friend books', text: 'They add your code in the notes when they book, or say it when we confirm.' },
+  { title: 'You both save', text: 'They get $20 off their first clean. After it, $20 comes off your next one.' },
+];
+---
+
+<BaseLayout
+  title={`Refer a friend | ${business.shortName}`}
+  description="Give a friend $20 off their first clean and get $20 off your next one. Your referral code is on this page."
+>
+  <PageHeader
+    title="Refer a friend"
+    intro="Your friend gets $20 off their first clean; you get $20 off your next one after their first visit."
+  />
+
+  <section class="wrap code" aria-labelledby="code-title">
+    <h2 id="code-title">Your code</h2>
+    <ReferralCode />
+  </section>
+
+  <section class="band" aria-labelledby="refer-steps-title">
+    <div class="wrap two">
+      <div>
+        <SectionHead id="refer-steps-title" title="How it works" />
+        <NumberedSteps items={steps} labelledby="refer-steps-title" />
+      </div>
+      <div>
+        <SectionHead id="rules-title" title="The fine print" />
+        <ul class="rules" aria-labelledby="rules-title">
+          <li>Your friend needs to be new to {business.shortName} and live in a suburb we clean.</li>
+          <li>The $20 comes off once their first clean is done, on your next clean after that.</li>
+          <li>There's no limit on how many friends you refer.</li>
+          <li>Credits can't be swapped for cash. Prices include GST.</li>
+          <li>We don't ask for your friend's details. They contact us when they're ready.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Not a client yet?" text="Book your first clean, then come back for a code to share." />
+</BaseLayout>
+
+<style>
+  .code {
+    display: grid;
+    gap: var(--space-3);
+    padding-bottom: var(--space-7);
+  }
+  .code h2 {
+    font-size: var(--text-18);
+  }
+  .two {
+    display: grid;
+    gap: var(--space-7);
+  }
+  .rules {
+    display: grid;
+    padding: 0;
+    list-style: none;
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  .rules li {
+    padding-block: var(--space-3);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  @media (min-width: 900px) {
+    .two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-8);
+    }
+  }
+</style>

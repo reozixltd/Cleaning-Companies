@@ -1,0 +1,80 @@
+---
+/** Bottom of a service page: book this clean or call, and the other cleans with their from prices. */
+import { getCollection } from 'astro:content';
+import { business } from '@/config/business';
+import { pricing, SERVICE_LABELS, type ServiceId } from '@/config/pricing';
+import { formatMoney, formatPhoneHref } from '@/core/format';
+import { fromPrice } from '@/domain/quote';
+import Button from '@/core/ui/Button.astro';
+
+interface Props {
+  service: ServiceId;
+}
+const { service } = Astro.props;
+const others = (await getCollection('services')).filter((o) => o.data.service !== service).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="band close" aria-labelledby="close-title">
+  <div class="wrap close__grid">
+    <div>
+      <h2 id="close-title">Book your {SERVICE_LABELS[service].toLowerCase()}</h2>
+      <p class="muted">Pick a morning or afternoon online. We confirm by SMS {business.confirmPromise}.</p>
+      <div class="actions">
+        <Button href={`/book/?service=${service}`} size="lg">Book this clean</Button>
+        <Button href={formatPhoneHref(business.phone)} variant="secondary" size="lg" icon="phone">{business.phone}</Button>
+      </div>
+    </div>
+    <nav aria-labelledby="others-title">
+      <h2 id="others-title" class="others__title">Other cleans</h2>
+      <ul role="list" class="others">
+        {others.map((o) => (
+          <li>
+            <a href={`/services/${o.id}/`}>{o.data.title}</a>
+            <span class="tabular">from {formatMoney(fromPrice(o.data.service, pricing))}</span>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</section>
+
+<style>
+  .close {
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  .close__grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+  h2 {
+    margin-bottom: var(--space-2);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    margin-top: var(--space-4);
+  }
+  .others__title {
+    font-size: var(--text-18);
+  }
+  .others {
+    padding: 0;
+    list-style: none;
+  }
+  .others li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0 var(--space-4);
+    min-height: var(--target);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  @media (min-width: 900px) {
+    .close__grid {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: var(--space-8);
+    }
+  }
+</style>

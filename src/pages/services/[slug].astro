@@ -1,0 +1,151 @@
+---
+/**
+ * One service (spec §6.8): who it suits, the room-by-room list for this clean,
+ * the from price, how long it takes, three questions and Book this clean.
+ * End of lease prints its list for the final inspection.
+ */
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import Prose from '@/sections/Prose.astro';
+import ServiceChecklist from '@/sections/ServiceChecklist.astro';
+import Questions from '@/sections/Questions.astro';
+import ServiceClose from '@/sections/ServiceClose.astro';
+import Button from '@/core/ui/Button.astro';
+import Photo from '@/core/ui/Photo.astro';
+import { business } from '@/config/business';
+import { photoSlots, type PhotoSlotName } from '@/config/photo-slots';
+import { pricing, type ServiceId } from '@/config/pricing';
+import { formatMoney } from '@/core/format';
+import { faqSchema, serviceSchema } from '@/core/schema';
+import { fromPrice } from '@/domain/quote';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  return services.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const s = entry.data;
+const { Content } = await render(entry);
+const price = fromPrice(s.service, pricing);
+const slot = `service-${s.service}` as PhotoSlotName;
+const book = `/book/?service=${s.service}`;
+
+const lists: Record<ServiceId, { title: string; intro: string }> = {
+  regular: { title: 'What we clean, room by room', intro: 'The same list every visit, in every room you book.' },
+  deep: { title: 'What we clean, room by room', intro: 'The regular list, plus the jobs that build up over months.' },
+  'move-in': { title: 'What we clean, room by room', intro: 'A deep clean of an empty home, so we reach every surface.' },
+  'end-of-lease': {
+    title: 'Our end of lease checklist',
+    intro: 'Worked through the cleaning items on the REIQ exit-condition report that Queensland property managers inspect against. Print it, or save it as a PDF, and tick it off at the final inspection.',
+  },
+};
+
+const schema = [
+  serviceSchema({ name: s.title, description: s.summary, provider: business.tradingName, areas: business.areas.map((a) => a.suburb), priceFrom: price }),
+  faqSchema(s.faqs),
+];
+---
+
+<BaseLayout title={s.seoTitle} description={s.seoDescription} schema={schema}>
+  <PageHeader title={s.title} intro={s.summary}>
+    <dl class="facts">
+      <div>
+        <dt>Price</dt>
+        <dd>from <strong class="facts__price tabular">{formatMoney(price)}</strong>, GST included{business.demoMode && ' (sample price)'}</dd>
+      </div>
+      <div>
+        <dt>How long it takes</dt>
+        <dd>{s.duration}</dd>
+      </div>
+    </dl>
+    <div class="actions">
+      <Button href={book} size="lg">Book this clean</Button>
+      <Button href="/#plan" variant="quiet" size="lg">Price your home first</Button>
+    </div>
+  </PageHeader>
+
+  <section class="band about" aria-labelledby="suits-title">
+    <div class="wrap about__grid">
+      <Photo slot={slot} alt={photoSlots[slot]?.alt ?? s.title} priority ratio="3 / 2" sizes="(min-width: 900px) 45vw, 100vw" />
+      <div class="about__text">
+        <h2 id="suits-title">Who it suits</h2>
+        <p class="about__suits">{s.suits}</p>
+        <Prose><Content /></Prose>
+        {s.ecoClaim && <p class="muted">{s.ecoClaim.text} {s.ecoClaim.basis}</p>}
+      </div>
+    </div>
+  </section>
+
+  <ServiceChecklist service={s.service} title={lists[s.service].title} intro={lists[s.service].intro} printable={s.service === 'end-of-lease'} />
+
+  <section class="band">
+    <div class="wrap">
+      <div class="narrow">
+        <Questions id="service-questions" title={`Questions about ${s.title.toLowerCase()}`} items={s.faqs} />
+        <p class="more"><a href="/faq/">All questions</a></p>
+      </div>
+    </div>
+  </section>
+
+  <ServiceClose service={s.service} />
+</BaseLayout>
+
+<style>
+  .facts {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+    padding-block: var(--space-4);
+    border-block: var(--hairline) solid var(--color-line);
+  }
+  dt {
+    color: var(--color-ink-muted);
+    font-size: var(--text-16);
+  }
+  dd {
+    margin: 0;
+    font-size: var(--text-18);
+  }
+  .facts__price {
+    font-size: var(--text-28);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    margin-top: var(--space-2);
+  }
+  .about__grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .about__text {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+  .about__suits {
+    font-size: var(--text-18);
+  }
+  .narrow {
+    max-width: 48rem;
+  }
+  .more {
+    margin-top: var(--space-4);
+  }
+  @media (min-width: 768px) {
+    .facts {
+      grid-template-columns: repeat(2, max-content);
+      gap: var(--space-7);
+    }
+  }
+  @media (min-width: 900px) {
+    .about__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--space-8);
+      align-items: start;
+    }
+  }
+</style>

@@ -1,0 +1,59 @@
+---
+/** Not found: say so plainly and offer the pages people usually want. */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import Button from '@/core/ui/Button.astro';
+import { business } from '@/config/business';
+import { formatPhoneHref } from '@/core/format';
+
+const links = [
+  { label: 'Price your home', href: '/#plan' },
+  { label: 'Cleaning services', href: '/services/' },
+  { label: 'Prices', href: '/prices/' },
+  { label: 'Areas we clean', href: '/areas/' },
+  { label: 'Questions', href: '/faq/' },
+];
+---
+
+<BaseLayout title={`Page not found | ${business.shortName}`} description="This page doesn't exist. Find a clean, prices or the areas we cover." noindex>
+  <PageHeader title="We can't find that page" intro="The link may be old, or there may be a typo in the address.">
+    <div class="actions">
+      <Button href="/" size="lg">Go to the home page</Button>
+      <Button href={formatPhoneHref(business.phone)} variant="secondary" size="lg" icon="phone">{business.phone}</Button>
+    </div>
+  </PageHeader>
+  <nav class="wrap more" aria-labelledby="more-title">
+    <h2 id="more-title">You might be looking for</h2>
+    <ul role="list">
+      {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+    </ul>
+  </nav>
+</BaseLayout>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+  .more {
+    padding-bottom: var(--space-8);
+  }
+  .more h2 {
+    margin-bottom: var(--space-3);
+    font-size: var(--text-18);
+  }
+  ul {
+    max-width: 30rem;
+    padding: 0;
+    list-style: none;
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  li a {
+    display: flex;
+    align-items: center;
+    min-height: var(--target);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+</style>

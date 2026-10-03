@@ -1,0 +1,170 @@
+---
+/**
+ * Step 1, your home: the same choices as the floor plan calculator, plus pets.
+ * Server-rendered for the default home; selection-controls.ts syncs it to the
+ * visitor's selection. Bedrooms and bathrooms live in script state, not fields.
+ */
+import { ADD_ON_IDS, FREQUENCY_LABELS, SERVICE_IDS, SERVICE_LABELS, pricing } from '@/config/pricing';
+import { formatMoney } from '@/core/format';
+import Icon from '@/core/ui/Icon.astro';
+import { describeSelection } from '@/domain/describe';
+import { quote } from '@/domain/quote';
+import { DEFAULT_SELECTION } from '@/domain/selection';
+import { priceText } from '../recap';
+import Step from './Step.astro';
+
+const s = DEFAULT_SELECTION;
+const q = quote(s, pricing);
+const short: Record<string, string> = { regular: 'Regular', deep: 'Deep', 'end-of-lease': 'End of lease', 'move-in': 'Move-in' };
+const often = [
+  { id: 'weekly', label: 'Weekly' },
+  { id: 'fortnightly', label: 'Fortnightly' },
+  { id: 'monthly', label: 'Monthly' },
+  { id: 'once', label: 'Once' },
+];
+const steppers = [
+  { key: 'bedrooms', noun: 'bedroom', label: 'Bedrooms', value: s.bedrooms },
+  { key: 'bathrooms', noun: 'bathroom', label: 'Bathrooms', value: s.bathrooms },
+];
+---
+
+<Step id="home" n={1} title="Your home">
+  <div class="home" data-selection-controls>
+    <fieldset class="group">
+      <legend>Type of clean</legend>
+      <div class="segments segments--4">
+        {SERVICE_IDS.map((id) => (
+          <label class="segment" title={SERVICE_LABELS[id]}>
+            <input type="radio" name="service" value={id} checked={id === s.service} />
+            <span>{short[id]}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+
+    <div class="rooms">
+      {steppers.map((st) => (
+        <div class="stepper" role="group" aria-labelledby={`book-${st.key}-label`}>
+          <span id={`book-${st.key}-label`} class="stepper__label">{st.label}</span>
+          <button type="button" class="stepper__button" data-step={st.key} data-delta="-1" aria-label={`Remove a ${st.noun}, ${st.value} selected`}>
+            <Icon name="minus" size={18} />
+          </button>
+          <span class="stepper__count tabular" data-count={st.key}>{st.value}</span>
+          <button type="button" class="stepper__button" data-step={st.key} data-delta="1" aria-label={`Add a ${st.noun}, ${st.value} selected`}>
+            <Icon name="plus" size={18} />
+          </button>
+        </div>
+      ))}
+      <div class="segments" role="group" aria-label="Other rooms">
+        <button type="button" class="segment" data-toggle="study" aria-pressed="false">Study</button>
+        <button type="button" class="segment" data-toggle="laundry" aria-pressed="false">Laundry</button>
+      </div>
+    </div>
+
+    <fieldset class="group" data-frequency-group>
+      <legend>How often</legend>
+      <div class="segments segments--4">
+        {often.map((f) => (
+          <label class="segment" title={FREQUENCY_LABELS[f.id as keyof typeof FREQUENCY_LABELS]}>
+            <input type="radio" name="frequency" value={f.id} checked={f.id === s.frequency} />
+            <span>{f.label}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+    <p class="note" data-once-note hidden>This clean is a single visit.</p>
+
+    <fieldset class="group">
+      <legend>Extras <span class="optional">(optional)</span></legend>
+      <ul class="choices" role="list">
+        {ADD_ON_IDS.map((a) => (
+          <li>
+            <label class="choice">
+              <input type="checkbox" value={a} data-extra />
+              <span>{pricing.addOns[a].label}</span>
+              <span class="choice__price tabular">+{formatMoney(pricing.addOns[a].price)}</span>
+            </label>
+          </li>
+        ))}
+      </ul>
+    </fieldset>
+
+    <fieldset class="group">
+      <legend>Any pets at home?</legend>
+      <div class="segments pets">
+        <label class="segment"><input type="radio" name="pets" value="no" checked /><span>No</span></label>
+        <label class="segment"><input type="radio" name="pets" value="yes" /><span>Yes</span></label>
+      </div>
+    </fieldset>
+    <div class="pets-note" data-pets-note hidden>
+      <label for="field-petsNote">Tell us about them <span class="optional">(optional)</span></label>
+      <input id="field-petsNote" name="petsNote" type="text" maxlength="200" placeholder="A friendly dog who stays in the yard" />
+    </div>
+
+    <div class="price" data-price-line aria-live="polite">
+      <p class="price__summary" data-book-summary>{describeSelection(s)}</p>
+      <p class="price__amount tabular" data-book-price>{priceText(q)}</p>
+      <p class="price__first" data-book-first-row hidden={q.firstVisit === q.perVisit}>
+        First visit <strong class="tabular" data-book-first>{formatMoney(q.firstVisit)}</strong>, priced as a deep clean.
+      </p>
+    </div>
+  </div>
+</Step>
+
+<style>
+  .home {
+    display: grid;
+    gap: var(--space-5);
+  }
+  .rooms {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .note {
+    margin-top: calc(-1 * var(--space-3));
+  }
+  .pets {
+    max-width: 20rem;
+  }
+  .pets-note {
+    display: grid;
+    gap: var(--space-1);
+    margin-top: calc(-1 * var(--space-2));
+  }
+  .pets-note label {
+    font-weight: var(--weight-medium);
+  }
+  .pets-note input {
+    width: 100%;
+    min-height: var(--target);
+    padding: var(--space-2) var(--space-3);
+    border: var(--hairline) solid var(--color-field-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+  }
+  .price {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    border-radius: var(--radius-control);
+    background: var(--color-highlight);
+    color: var(--color-ink);
+  }
+  .price__summary {
+    font-weight: var(--weight-medium);
+  }
+  .price__amount {
+    font-size: var(--text-28);
+    font-weight: var(--weight-bold);
+    line-height: 1.2;
+  }
+  .price__first {
+    font-size: var(--text-16);
+  }
+  @media (min-width: 1024px) {
+    /* The booking tag beside the steps shows the price on wide screens. */
+    .price {
+      display: none;
+    }
+  }
+</style>

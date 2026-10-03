@@ -1,0 +1,28 @@
+---
+/**
+ * Applies the theme before first paint, so there's no flash of the default colours.
+ * Same rule as core/theme.ts resolveTheme (unit-tested there): in demo mode,
+ * ?theme=<name> wins and is remembered for the session; otherwise the configured theme.
+ */
+import { business } from '@/config/business';
+
+const settings = { allowed: business.themes, configured: business.theme, demo: business.demoMode, key: 'clearday:v1:theme' };
+---
+
+<script is:inline define:vars={{ settings }}>
+  (function () {
+    var param = new URLSearchParams(location.search).get('theme');
+    var ok = function (t) { return t !== null && settings.allowed.indexOf(t) !== -1; };
+    var root = document.documentElement;
+    // Apply first: storage can throw (blocked cookies), and the link's theme must still show.
+    root.dataset.theme = settings.demo && ok(param) ? param : settings.configured;
+    if (!settings.demo) return;
+    try {
+      if (ok(param)) sessionStorage.setItem(settings.key, param);
+      else {
+        var stored = sessionStorage.getItem(settings.key);
+        if (ok(stored)) root.dataset.theme = stored;
+      }
+    } catch (e) {}
+  })();
+</script>

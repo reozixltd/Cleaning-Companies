@@ -1,0 +1,164 @@
+/* Base styles. Raw values live in tokens.css. */
+@import '@fontsource-variable/schibsted-grotesk';
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* `hidden` always wins, even over a component's display rule. */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--body-size);
+  line-height: var(--leading-body);
+  font-weight: var(--weight-regular);
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  line-height: var(--leading-tight);
+  font-weight: var(--weight-bold);
+  text-wrap: balance;
+}
+
+h1, .display {
+  font-size: var(--text-hero);
+  letter-spacing: var(--tracking-display);
+}
+
+h2 { font-size: var(--text-28); }
+h3 { font-size: var(--text-22); }
+h4 { font-size: var(--text-18); }
+
+p, ul, ol, dl, figure { margin: 0; }
+p { max-width: var(--measure); }
+img, svg { display: block; max-width: 100%; }
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+input, textarea, select, button {
+  font: inherit;
+  color: inherit;
+}
+
+/* 16px minimum stops iOS zooming into fields (mobile-native baseline). */
+input, textarea, select {
+  font-size: max(16px, 1rem);
+}
+
+a, button, [role='button'], label, summary {
+  touch-action: manipulation;
+}
+
+button, [role='button'], summary {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.band {
+  padding-block: var(--space-7);
+}
+
+@media (min-width: 1024px) {
+  .band {
+    padding-block: var(--space-8);
+  }
+}
+
+.muted {
+  color: var(--color-ink-muted);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-4);
+  top: -100px;
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+.skip-link:focus {
+  top: var(--space-4);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reduced motion: no movement; short colour fades stay because they show what changed. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Shared form outcomes (core/forms.ts) */
+.form-failure {
+  padding: var(--space-3) var(--space-4);
+  border-left: var(--wall) solid var(--color-danger);
+  background: var(--color-danger-soft);
+}
+
+.form-done {
+  padding: var(--space-5);
+  border: var(--wall) solid var(--color-success);
+  border-radius: var(--radius-control);
+  background: var(--color-success-soft);
+  font-size: var(--text-18);
+}
+
+/* Honeypot field: off screen for people, still filled in by bots. */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

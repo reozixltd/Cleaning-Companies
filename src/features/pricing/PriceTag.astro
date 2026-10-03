@@ -1,0 +1,72 @@
+---
+/**
+ * The price beside the floor plan: per-visit price, the first-visit price when it
+ * differs, and Choose a time. Server-rendered for the default home; price-tag.ts
+ * keeps it in step with the visitor's selection.
+ */
+import { business } from '@/config/business';
+import { pricing } from '@/config/pricing';
+import { formatMoney } from '@/core/format';
+import { describeSelection } from '@/domain/describe';
+import { quote } from '@/domain/quote';
+import { DEFAULT_SELECTION, toParams } from '@/domain/selection';
+import Button from '@/core/ui/Button.astro';
+
+const q = quote(DEFAULT_SELECTION, pricing);
+---
+
+<div class="tag" data-price-tag>
+  <p class="tag__summary" data-price-summary>{describeSelection(DEFAULT_SELECTION)}</p>
+  <p class="tag__price">
+    <span class="tag__amount tabular" data-price-per-visit>{formatMoney(q.perVisit)}</span>
+    <span class="tag__unit" data-price-unit>a visit</span>
+  </p>
+  <p class="tag__first" data-price-first-visit-row hidden={q.firstVisit === q.perVisit}>
+    First visit <strong class="tabular" data-price-first-visit>{formatMoney(q.firstVisit)}</strong>, priced as a deep clean so we start from clean.
+  </p>
+  <p class="tag__note">GST included.{business.demoMode && ' Sample prices.'}</p>
+  <Button href={`/book/?${toParams(DEFAULT_SELECTION)}`} size="lg" block data-choose-time>Choose a time</Button>
+</div>
+
+<script>
+  import { initPriceTags } from './price-tag';
+  initPriceTags();
+</script>
+
+<style>
+  .tag {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    background: var(--color-highlight);
+    color: var(--color-ink);
+    border-radius: var(--radius-control);
+  }
+  .tag__summary {
+    font-weight: var(--weight-medium);
+  }
+  .tag__price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    line-height: 1;
+  }
+  .tag__amount {
+    font-size: var(--text-hero);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-display);
+  }
+  .tag__unit {
+    font-size: var(--text-18);
+  }
+  .tag__first[hidden] {
+    display: none;
+  }
+  .tag__first,
+  .tag__note {
+    font-size: var(--text-16);
+  }
+  .tag :global(.btn) {
+    margin-top: var(--space-2);
+  }
+</style>

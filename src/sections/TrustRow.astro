@@ -1,0 +1,67 @@
+---
+/** The proof that matters for a stranger in your home, right under the price. Values from config. */
+import { business } from '@/config/business';
+import Icon from '@/core/ui/Icon.astro';
+import type { IconName } from '@/core/ui/icons';
+
+const items: { icon: IconName; title: string; text: string }[] = [
+  { icon: 'shield', title: 'Police-checked cleaners', text: `${business.policeChecked}.` },
+  { icon: 'home', title: business.insurance.short, text: `${business.insurance.long}${business.bonded ? ', and we are bonded' : ''}.` },
+  { icon: 'check', title: business.guarantee.short, text: business.guarantee.long },
+  {
+    icon: 'star',
+    title: `${business.rating.value} from ${business.rating.count} ${business.rating.source} reviews`,
+    text: business.demoMode ? 'Sample rating for this demo.' : `Read them on ${business.rating.source}.`,
+  },
+];
+---
+
+<section class="trust" aria-label="Why people trust us">
+  <ul class="wrap trust__list" role="list">
+    {items.map((i) => (
+      <li class="trust__item">
+        <Icon name={i.icon} size={24} />
+        <div>
+          <p class="trust__title">{i.title}</p>
+          <p class="trust__text">{i.text}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .trust {
+    border-block: var(--hairline) solid var(--color-line);
+    background: var(--color-surface);
+  }
+  .trust__list {
+    display: grid;
+    padding-block: var(--space-5);
+    gap: var(--space-5);
+    list-style: none;
+  }
+  .trust__item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3);
+    align-items: start;
+  }
+  .trust__title {
+    font-weight: var(--weight-bold);
+  }
+  .trust__text {
+    color: var(--color-ink-muted);
+    font-size: var(--text-16);
+  }
+  @media (min-width: 768px) {
+    .trust__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1200px) {
+    .trust__list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

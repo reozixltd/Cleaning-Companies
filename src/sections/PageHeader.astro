@@ -1,0 +1,26 @@
+---
+/** Top of an inner page: the page's h1 and an optional one-line intro. */
+interface Props {
+  title: string;
+  intro?: string;
+}
+const { title, intro } = Astro.props;
+---
+
+<div class="page-header wrap">
+  <h1>{title}</h1>
+  {intro && <p class="page-header__intro">{intro}</p>}
+  <slot />
+</div>
+
+<style>
+  .page-header {
+    display: grid;
+    gap: var(--space-3);
+    padding-block: var(--space-7) var(--space-5);
+  }
+  .page-header__intro {
+    font-size: var(--text-18);
+    color: var(--color-ink-muted);
+  }
+</style>

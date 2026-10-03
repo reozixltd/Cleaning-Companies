@@ -1,0 +1,244 @@
+---
+/** Controls for the editable floor plan: service, rooms, how often, extras. Wired by plan.ts. */
+import { ADD_ON_IDS, FREQUENCIES, SERVICE_IDS, SERVICE_LABELS, FREQUENCY_LABELS, pricing } from '@/config/pricing';
+import { formatMoney } from '@/core/format';
+import { DEFAULT_SELECTION } from '@/domain/selection';
+import Icon from '@/core/ui/Icon.astro';
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+const s = DEFAULT_SELECTION;
+const short: Record<string, string> = { regular: 'Regular', deep: 'Deep', 'end-of-lease': 'End of lease', 'move-in': 'Move-in' };
+const often: Record<string, string> = { weekly: 'Weekly', fortnightly: 'Fortnightly', monthly: 'Monthly', once: 'Once' };
+const steppers = [
+  { key: 'bedrooms', noun: 'bedroom', label: 'Bedrooms', value: s.bedrooms },
+  { key: 'bathrooms', noun: 'bathroom', label: 'Bathrooms', value: s.bathrooms },
+];
+---
+
+<div class="controls" data-plan-controls={id}>
+  <fieldset class="group">
+    <legend>Type of clean</legend>
+    <div class="segments segments--4">
+      {SERVICE_IDS.map((service) => (
+        <label class="segment" title={SERVICE_LABELS[service]}>
+          <input type="radio" name={`${id}-service`} value={service} checked={service === s.service} data-service />
+          <span>{short[service]}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <div class="rooms">
+    {steppers.map((st) => (
+      <div class="stepper" role="group" aria-labelledby={`${id}-${st.key}-label`}>
+        <span id={`${id}-${st.key}-label`} class="stepper__label">{st.label}</span>
+        <button type="button" class="stepper__button" data-step={st.key} data-delta="-1" aria-label={`Remove a ${st.noun}`}>
+          <Icon name="minus" size={18} />
+        </button>
+        <output class="stepper__count tabular" data-count={st.key} aria-live="polite">{st.value}</output>
+        <button type="button" class="stepper__button" data-step={st.key} data-delta="1" aria-label={`Add a ${st.noun}, ${st.value} selected`}>
+          <Icon name="plus" size={18} />
+        </button>
+      </div>
+    ))}
+    <div class="toggles">
+      <button type="button" class="segment segment--toggle" data-toggle="study" aria-pressed={s.study ? 'true' : 'false'}>Study</button>
+      <button type="button" class="segment segment--toggle" data-toggle="laundry" aria-pressed={s.laundry ? 'true' : 'false'}>Laundry</button>
+    </div>
+  </div>
+
+  <fieldset class="group" data-frequency-group>
+    <legend>How often</legend>
+    <div class="segments segments--4">
+      {['weekly', 'fortnightly', 'monthly', 'once'].filter((f) => FREQUENCIES.includes(f as never)).map((f) => (
+        <label class="segment">
+          <input type="radio" name={`${id}-frequency`} value={f} checked={f === s.frequency} data-frequency />
+          <span title={FREQUENCY_LABELS[f as keyof typeof FREQUENCY_LABELS]}>{often[f]}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+  <p class="once-note" data-once-note hidden>This clean is a single visit.</p>
+
+  <details class="extras">
+    <summary>Add extras <Icon name="chevron-down" size={18} /></summary>
+    <ul role="list">
+      {ADD_ON_IDS.map((a) => (
+        <li>
+          <label class="extra">
+            <input type="checkbox" value={a} data-extra />
+            <span>{pricing.addOns[a].label}</span>
+            <span class="extra__price tabular">+{formatMoney(pricing.addOns[a].price)}</span>
+          </label>
+        </li>
+      ))}
+    </ul>
+  </details>
+</div>
+
+<style>
+  .controls {
+    display: grid;
+    gap: var(--space-5);
+  }
+  .group {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .group[hidden] {
+    display: none;
+  }
+  legend {
+    padding: 0;
+  }
+  legend,
+  .stepper__label {
+    margin-bottom: var(--space-2);
+    font-weight: var(--weight-medium);
+  }
+  .segments {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+  @media (min-width: 480px) {
+    .segments--4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .segment {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: var(--target);
+    padding: var(--space-1) var(--space-2);
+    border: var(--hairline) solid var(--color-ink);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    font-size: var(--text-16);
+    font-weight: var(--weight-medium);
+    text-align: center;
+    line-height: 1.2;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-colour) ease,
+      color var(--dur-colour) ease,
+      transform var(--dur-press) var(--ease-out);
+  }
+  .segment:active {
+    transform: scale(0.97);
+  }
+  .segment input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .segment:has(input:checked),
+  .segment[aria-pressed='true'] {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+  .segment:has(input:focus-visible) {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .rooms {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .stepper {
+    display: grid;
+    grid-template-columns: 1fr var(--target) 3ch var(--target);
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .stepper__label {
+    margin: 0;
+  }
+  .stepper__button {
+    display: grid;
+    place-items: center;
+    width: var(--target);
+    height: var(--target);
+    border: var(--hairline) solid var(--color-ink);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    cursor: pointer;
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+  .stepper__button:active {
+    transform: scale(0.94);
+  }
+  .stepper__button:disabled {
+    border-color: var(--color-line);
+    color: var(--color-line);
+    cursor: default;
+    transform: none;
+  }
+  .stepper__count {
+    font-size: var(--text-22);
+    font-weight: var(--weight-bold);
+    text-align: center;
+  }
+  .toggles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+  .once-note {
+    margin-top: calc(-1 * var(--space-3));
+    color: var(--color-ink-muted);
+  }
+  .extras summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--target);
+    font-weight: var(--weight-medium);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+    list-style: none;
+  }
+  .extras summary::-webkit-details-marker {
+    display: none;
+  }
+  .extras[open] summary :global(.icon) {
+    transform: rotate(180deg);
+  }
+  .extras ul {
+    display: grid;
+    padding: 0;
+    list-style: none;
+  }
+  .extra {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--target);
+    border-bottom: var(--hairline) solid var(--color-line);
+    cursor: pointer;
+  }
+  .extra input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-ink);
+  }
+  .extra__price {
+    color: var(--color-ink-muted);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .segment:active,
+    .stepper__button:active {
+      transform: none;
+    }
+  }
+</style>

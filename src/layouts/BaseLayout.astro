@@ -1,0 +1,62 @@
+---
+/** Page shell: head, theme, demo ribbon, header, main, footer and the mobile booking bar. */
+import '@/styles/global.css';
+import { business } from '@/config/business';
+import { localBusinessSchema } from '@/core/schema';
+import ThemeBoot from './ThemeBoot.astro';
+import Seo from './Seo.astro';
+import DemoRibbon from './DemoRibbon.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import MobileBookingBar from './MobileBookingBar.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  schema?: object | object[];
+  noindex?: boolean;
+  /** App-like pages (the console) hide the marketing chrome. */
+  bare?: boolean;
+  /** The booking page has its own summary, so it hides the bar. */
+  bookingBar?: boolean;
+}
+
+const { title, description, schema, noindex = false, bare = false, bookingBar = true } = Astro.props;
+
+const businessSchema = localBusinessSchema({
+  name: business.tradingName,
+  legalName: business.legalName,
+  type: business.schemaType,
+  url: Astro.site!.origin, // `site` in astro.config.mjs
+  phone: business.phone,
+  email: business.email,
+  abn: business.abn,
+  areas: business.areas.map((a) => a.suburb),
+  hours: business.hours,
+  rating: business.demoMode ? undefined : { value: business.rating.value, count: business.rating.count },
+});
+const schemas = [businessSchema, ...(schema ? (Array.isArray(schema) ? schema : [schema]) : [])];
+---
+
+<!doctype html>
+<html lang="en-AU" data-theme={business.theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <ThemeBoot />
+    <Seo title={title} description={description} schema={bare ? undefined : schemas} noindex={noindex || bare} />
+    <slot name="head" />
+  </head>
+  <body class:list={{ 'is-bare': bare, 'has-booking-bar': !bare && bookingBar }}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    {!bare && <DemoRibbon />}
+    {!bare && <Header />}
+    <main id="main"><slot /></main>
+    {!bare && <Footer />}
+    {!bare && bookingBar && <MobileBookingBar />}
+    <script>
+      import './site';
+    </script>
+  </body>
+</html>

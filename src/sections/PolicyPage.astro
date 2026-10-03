@@ -1,0 +1,68 @@
+---
+/** A policy page body: the Markdown from content/policies, its last-updated date and how to ask about it. */
+import { getEntry, render } from 'astro:content';
+import { business } from '@/config/business';
+import { formatPhoneHref } from '@/core/format';
+import PageHeader from './PageHeader.astro';
+import Prose from './Prose.astro';
+
+interface Props {
+  id: 'terms' | 'privacy' | 'accessibility';
+}
+
+const entry = (await getEntry('policies', Astro.props.id))!;
+const { Content } = await render(entry);
+const updated = entry.data.updated;
+const iso = updated.toISOString().slice(0, 10);
+const label = new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(updated);
+---
+
+<PageHeader title={entry.data.title} intro={entry.data.description}>
+  <p class="updated">Last updated <time datetime={iso}>{label}</time></p>
+</PageHeader>
+
+<div class="wrap policy">
+  <Prose><Content /></Prose>
+  <aside class="contact" aria-label="Contact us">
+    <h2>Questions about this page?</h2>
+    <p>
+      Call <a href={formatPhoneHref(business.phone)}>{business.phone}</a> or email <a href={`mailto:${business.email}`}>{business.email}</a>.
+    </p>
+    <p class="muted">{business.legalName}, <span class="nowrap">ABN {business.abn}</span></p>
+  </aside>
+</div>
+
+<style>
+  .nowrap {
+    white-space: nowrap;
+  }
+  .updated {
+    color: var(--color-ink-muted);
+    font-size: var(--text-16);
+  }
+  .policy {
+    display: grid;
+    gap: var(--space-7);
+    padding-bottom: var(--space-8);
+  }
+  .contact {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    padding-top: var(--space-4);
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  .contact h2 {
+    font-size: var(--text-18);
+  }
+  @media (min-width: 1024px) {
+    .policy {
+      grid-template-columns: minmax(0, var(--measure)) minmax(0, 1fr);
+      gap: var(--space-8);
+    }
+    .contact {
+      position: sticky;
+      top: calc(64px + var(--space-5));
+    }
+  }
+</style>

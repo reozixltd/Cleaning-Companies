@@ -1,0 +1,109 @@
+---
+/**
+ * Booking request (/book/). The booking feature does the steps; this page adds
+ * the demo preview of the confirmation SMS to the success screen, because only
+ * a page may combine two features (booking and messages).
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import BookingForm from '@/features/booking/BookingForm.astro';
+import Badge from '@/core/ui/Badge.astro';
+import { business } from '@/config/business';
+import { formatPhoneHref } from '@/core/format';
+---
+
+<BaseLayout
+  title={`Book a clean | ${business.tradingName}`}
+  description={`Price your home, pick a day and send a booking request. We confirm by SMS ${business.confirmPromise}.`}
+  bookingBar={false}
+>
+  <PageHeader title="Book a clean">
+    <p class="intro">
+      Five short steps and nothing to pay now. Rather talk it through?
+      Call <a href={formatPhoneHref(business.phone)}>{business.phone}</a>.
+    </p>
+  </PageHeader>
+
+  <div class="wrap page">
+    <BookingForm>
+      {
+        business.demoMode && (
+          <figure slot="done" class="sms" data-sms-preview hidden>
+            <figcaption class="sms__head">
+              <span>The text you'll get when we confirm</span>
+              <Badge tone="neutral">Preview, not sent</Badge>
+            </figcaption>
+            <p class="sms__text" data-sms-text />
+          </figure>
+        )
+      }
+    </BookingForm>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initBooking } from '@/features/booking/booking';
+  import { render } from '@/features/messages/render';
+  import { messages } from '@/config/messages';
+  import { booking } from '@/config/booking';
+  import { business } from '@/config/business';
+  import { pricing } from '@/config/pricing';
+  import { rooms } from '@/config/rooms';
+  import { getLeadRepository } from '@/core/leads';
+
+  const root = document.querySelector<HTMLElement>('[data-booking]');
+  const preview = document.querySelector<HTMLElement>('[data-sms-preview]');
+  const confirmation = messages.find((m) => m.id === 'confirmation');
+
+  if (root) {
+    initBooking(root, {
+      repo: getLeadRepository(),
+      config: { business, pricing, booking, rooms },
+      onSent: ({ lead, dayLabel, windowArrive, priceLabel }) => {
+        if (!preview || !confirmation) return;
+        preview.querySelector('[data-sms-text]')!.textContent = render(confirmation.body, {
+          firstName: lead.contact.firstName,
+          date: dayLabel,
+          window: windowArrive,
+          price: priceLabel,
+          businessName: business.tradingName,
+        });
+        preview.hidden = false;
+      },
+    });
+  }
+</script>
+
+<style>
+  .intro {
+    font-size: var(--text-18);
+    color: var(--color-ink-muted);
+  }
+  .intro a {
+    color: var(--color-ink);
+    font-weight: var(--weight-medium);
+    white-space: nowrap;
+  }
+  .page {
+    padding-bottom: var(--space-8);
+  }
+  .sms {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 30rem;
+    margin-block: var(--space-2);
+  }
+  .sms__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    font-weight: var(--weight-medium);
+  }
+  .sms__text {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-control) var(--radius-control) var(--radius-control) 0;
+    background: var(--color-surface);
+    border: var(--hairline) solid var(--color-line);
+  }
+</style>

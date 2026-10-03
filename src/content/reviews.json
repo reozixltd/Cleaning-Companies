@@ -1,0 +1,10 @@
+[
+  { "id": "r1", "name": "Hannah Dwyer", "suburb": "Chermside", "date": "2026-09-14", "rating": 5, "service": "regular", "text": "Grace has cleaned for us every second Thursday since March. I've never had to explain anything twice, and the price on the website was exactly what we paid." },
+  { "id": "r2", "name": "Tomasz Nowak", "suburb": "Everton Park", "date": "2026-08-30", "rating": 5, "service": "end-of-lease", "text": "Our property manager flagged the rangehood filter. They were back the next morning and fixed it. Full bond back." },
+  { "id": "r3", "name": "Aroha Ngata", "suburb": "Albany Creek", "date": "2026-08-11", "rating": 5, "service": "deep", "text": "Four kids, two dogs, one very tired house. The deep clean got the grout and the fans that I'd stopped seeing. Worth every dollar." },
+  { "id": "r4", "name": "Dev Patel", "suburb": "Aspley", "date": "2026-07-22", "rating": 4, "service": "regular", "text": "Reliable and careful with our things. They were 20 minutes late once but texted ahead, which I appreciated." },
+  { "id": "r5", "name": "Jo Kim", "suburb": "Chermside", "date": "2026-06-18", "rating": 5, "service": "move-in", "text": "Booked from my phone between inspections. They cleaned inside every cupboard before the removalists came." },
+  { "id": "r6", "name": "Margaret O'Sullivan", "suburb": "Aspley", "date": "2026-05-29", "rating": 5, "service": "regular", "text": "I'm 81 and can't do the floors any more. Luis is lovely, always on time, and leaves the kitchen sparkling." },
+  { "id": "r7", "name": "Ben Carter", "suburb": "Everton Park", "date": "2026-05-06", "rating": 5, "service": "regular", "text": "Monthly clean for our townhouse. Easy to skip a visit when we're away, no fuss." },
+  { "id": "r8", "name": "Leilani Fonoti", "suburb": "Albany Creek", "date": "2026-04-17", "rating": 5, "service": "end-of-lease", "text": "Clear price up front, no surprises. The agent's checklist and theirs matched line for line." }
+]

@@ -1,0 +1,36 @@
+---
+/**
+ * "Tell me when you clean my suburb": name, email, suburb and postcode. Stored as
+ * a `waitlist` lead so the owner sees demand by suburb. The suburb field is
+ * filled from `?suburb=` when the visitor arrives from the suburb check.
+ */
+import './forms.css';
+import Button from '@/core/ui/Button.astro';
+import ErrorSummary from '@/core/ui/ErrorSummary.astro';
+import Field from '@/core/ui/Field.astro';
+
+interface Props {
+  success?: string;
+}
+const { success = "You're on the list. We'll email you once, when we start cleaning in your suburb." } = Astro.props;
+---
+
+<form class="lead-form" data-waitlist-form data-success={success} novalidate>
+  <ErrorSummary />
+  <div class="lead-form__pair">
+    <Field name="firstName" label="First name" required autocomplete="given-name" maxlength={40} />
+    <Field name="email" label="Email" type="email" inputmode="email" required autocomplete="email" />
+  </div>
+  <div class="lead-form__pair lead-form__pair--short">
+    <Field name="suburb" label="Suburb" required autocomplete="address-level2" maxlength={60} />
+    <Field name="postcode" label="Postcode" required autocomplete="postal-code" inputmode="numeric" maxlength={4} />
+  </div>
+  <input name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <p class="lead-form__note">We only use your email to tell you when we clean in your suburb. No offers, no newsletter.</p>
+  <Button type="submit" size="lg">Join the waitlist</Button>
+</form>
+
+<script>
+  import { initWaitlistForms } from './waitlist';
+  initWaitlistForms();
+</script>

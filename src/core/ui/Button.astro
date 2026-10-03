@@ -1,0 +1,104 @@
+---
+/**
+ * Button, or a link styled as one.
+ *   primary   ink fill: the one main action in a view
+ *   secondary ink outline
+ *   quiet     underlined text with a full-size tap target
+ * Press feedback: scale(0.97) on :active (removed for reduced motion).
+ */
+import type { HTMLAttributes } from 'astro/types';
+import Icon from './Icon.astro';
+import type { IconName } from './icons';
+
+interface Props extends Omit<HTMLAttributes<'a'> & HTMLAttributes<'button'>, 'type'> {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'quiet';
+  size?: 'md' | 'lg';
+  type?: 'button' | 'submit';
+  icon?: IconName;
+  block?: boolean;
+}
+
+const { href, variant = 'primary', size = 'md', type = 'button', icon, block = false, class: className, ...rest } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  href={href}
+  type={href ? undefined : type}
+  class:list={['btn', `btn--${variant}`, `btn--${size}`, { 'btn--block': block }, className]}
+  {...rest}
+>
+  {icon && <Icon name={icon} size={18} />}
+  <span><slot /></span>
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--target);
+    padding: 0 var(--space-5);
+    border: var(--hairline) solid transparent;
+    border-radius: var(--radius-control);
+    font-size: var(--text-16);
+    font-weight: var(--weight-medium);
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      transform var(--dur-press) var(--ease-out),
+      background-color var(--dur-colour) ease,
+      border-color var(--dur-colour) ease;
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn--lg {
+    min-height: 3.25rem;
+    padding: 0 var(--space-6);
+    font-size: var(--text-18);
+  }
+  .btn--block {
+    display: flex;
+    width: 100%;
+  }
+  .btn--primary {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+  .btn--secondary {
+    background: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+  .btn--quiet {
+    padding-inline: var(--space-2);
+    background: transparent;
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .btn[disabled],
+  .btn[aria-disabled='true'] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn--primary:hover {
+      background: var(--color-ink-hover);
+    }
+    .btn--secondary:hover,
+    .btn--quiet:hover {
+      background: var(--color-shade);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn:active {
+      transform: none;
+    }
+  }
+</style>

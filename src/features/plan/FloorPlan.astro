@@ -1,0 +1,135 @@
+---
+/**
+ * The floor plan drawing. `edit`: rooms can be added by pressing the dashed slots
+ * (wired by plan.ts with the controls). `read`: rooms are buttons that show their
+ * checklist (wired by the section that uses it). Starts from the default home;
+ * plan.ts re-draws it from the visitor's saved selection.
+ */
+import { rooms } from '@/config/rooms';
+import { describeRooms } from '@/domain/describe';
+import { DEFAULT_SELECTION } from '@/domain/selection';
+import { layout } from './layout';
+import { renderPlanSvg } from './svg';
+
+interface Props {
+  id: string;
+  mode: 'edit' | 'read';
+  title: string;
+  /** Read mode: the room shown as chosen at first. */
+  selected?: string;
+}
+
+const { id, mode, title, selected } = Astro.props;
+const svg = renderPlanSvg(layout(DEFAULT_SELECTION, rooms, { slots: mode === 'edit' }), { mode, title });
+---
+
+<figure class="plan" data-plan={id} data-mode={mode} data-title={title} data-selected={selected}>
+  <div class="plan__drawing" data-plan-svg tabindex="-1" set:html={svg} />
+  <figcaption class="plan__caption" data-plan-rooms aria-live="polite">{describeRooms(DEFAULT_SELECTION)}</figcaption>
+</figure>
+
+<script>
+  import { initPlans } from './plan';
+  initPlans();
+</script>
+
+<style>
+  .plan {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .plan__drawing {
+    outline-offset: 4px;
+  }
+  .plan__caption {
+    color: var(--color-ink-muted);
+    font-size: var(--text-14);
+  }
+  .plan :global(.plan__svg) {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    font-family: var(--font-sans);
+  }
+  .plan :global(.room__fill) {
+    fill: var(--color-paper);
+    transition: fill var(--dur-colour) ease;
+  }
+  .plan :global(.room--included .room__fill) {
+    fill: var(--color-room);
+  }
+  .plan :global(.room--included.room--bedroom .room__fill),
+  .plan :global(.room--included.room--bathroom .room__fill),
+  .plan :global(.room--included.room--study .room__fill),
+  .plan :global(.room--included.room--laundry .room__fill) {
+    fill: var(--color-highlight);
+  }
+  .plan[data-mode='read'] :global(.room--included .room__fill) {
+    fill: var(--color-room);
+  }
+  .plan[data-mode='read'] :global(.room[aria-pressed='true'] .room__fill) {
+    fill: var(--color-highlight);
+  }
+  .plan :global(.room__label) {
+    fill: var(--color-ink);
+    font-size: 18px;
+    font-weight: var(--weight-medium);
+  }
+  .plan :global(.room__label--small) {
+    fill: var(--color-ink-muted);
+    font-size: 15px;
+  }
+  @media (max-width: 599px) {
+    .plan :global(.room__label) {
+      font-size: 20px;
+    }
+    .plan :global(.room__label--small) {
+      font-size: 17px;
+    }
+  }
+  .plan :global(.room__slot) {
+    fill: none;
+    stroke: var(--color-line);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 5;
+    vector-effect: non-scaling-stroke;
+  }
+  .plan :global(.room__plus) {
+    stroke: var(--color-ink-muted);
+    stroke-width: 2;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .plan :global(.plan__walls rect) {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: var(--wall);
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+  }
+  .plan :global(.plan__walls .plan__outer) {
+    stroke-width: 4px;
+  }
+  .plan :global(.room[role='button']) {
+    cursor: pointer;
+    outline: none;
+  }
+  .plan :global(.room[role='button']:focus-visible .room__fill) {
+    fill: var(--color-room);
+  }
+  .plan :global(.room[role='button']:focus-visible .room__slot),
+  .plan :global(.room--included[role='button']:focus-visible .room__fill) {
+    stroke: var(--color-focus);
+    stroke-width: 4px;
+    stroke-dasharray: none;
+    vector-effect: non-scaling-stroke;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .plan :global(.room--available:hover .room__fill) {
+      fill: var(--color-room);
+    }
+    .plan :global(.room--available:hover .room__slot) {
+      stroke: var(--color-ink);
+    }
+  }
+</style>

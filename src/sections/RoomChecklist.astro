@@ -1,0 +1,101 @@
+---
+/**
+ * "What we clean, room by room": the same plan, read-only. Choosing a room shows
+ * its checklist for the service the visitor picked. Every list is rendered at
+ * build time (readable without JavaScript and by search engines); the script only
+ * decides which one shows.
+ */
+import { ROOM_KINDS, rooms } from '@/config/rooms';
+import { SERVICE_IDS, SERVICE_LABELS } from '@/config/pricing';
+import { checklistFor } from '@/domain/checklist';
+import FloorPlan from '@/features/plan/FloorPlan.astro';
+import Icon from '@/core/ui/Icon.astro';
+import SectionHead from './SectionHead.astro';
+---
+
+<section class="band" id="whats-included" aria-labelledby="included-title">
+  <div class="wrap">
+    <SectionHead id="included-title" title="What we clean, room by room" intro="Choose a room on the plan. Deep and end of lease cleans add more to every list." />
+    <div class="included">
+      <FloorPlan id="included-plan" mode="read" title="Your home. Choose a room to see its checklist." selected="kitchen" />
+      <div class="included__lists" data-room-panels>
+        {SERVICE_IDS.flatMap((service) =>
+          ROOM_KINDS.map((kind) => (
+            <div class="panel" data-room-panel data-room-kind={kind} data-service={service} hidden={!(kind === 'kitchen' && service === 'regular')}>
+              <h3>{rooms.rooms[kind].label}</h3>
+              <p class="panel__service">{SERVICE_LABELS[service]}</p>
+              <ul role="list">
+                {checklistFor(kind, service, rooms).map((item) => (
+                  <li><Icon name="check" size={20} />{item}</li>
+                ))}
+              </ul>
+            </div>
+          )),
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { getStorage } from '@/core/storage';
+  import { pricing } from '@/config/pricing';
+  import { rooms } from '@/config/rooms';
+  import { onSelection } from '@/domain/events';
+  import { loadSelection } from '@/domain/selection';
+  import { ROOM_EVENT } from '@/features/plan/plan';
+
+  const section = document.querySelector<HTMLElement>('#whats-included')!;
+  let kind = 'kitchen';
+  let service: string = loadSelection(getStorage(), pricing, rooms.max)?.service ?? 'regular';
+
+  const show = () =>
+    section.querySelectorAll<HTMLElement>('[data-room-panel]').forEach((p) => {
+      p.hidden = !(p.dataset.roomKind === kind && p.dataset.service === service);
+    });
+
+  section.addEventListener(ROOM_EVENT, (e) => {
+    kind = (e as CustomEvent<{ kind: string }>).detail.kind;
+    show();
+  });
+  onSelection((s) => {
+    service = s.service;
+    show();
+  });
+  show();
+</script>
+
+<style>
+  .included {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  .panel {
+    display: grid;
+    gap: var(--space-1);
+  }
+  .panel__service {
+    color: var(--color-ink-muted);
+  }
+  .panel ul {
+    display: grid;
+    margin-top: var(--space-3);
+    padding: 0;
+    list-style: none;
+  }
+  .panel li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  @media (min-width: 900px) {
+    .included {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+      gap: var(--space-8);
+    }
+  }
+</style>

@@ -1,0 +1,99 @@
+/*
+ * Design tokens: the only place raw colour, type, space and motion values live.
+ * Components use var(--…) only (enforced by tools/boundaries.mjs).
+ *
+ * Themes: `floorplan` (default) and `eucalyptus`. Pick one with `theme` in
+ * src/config/business.ts. To add a client theme, copy a [data-theme] block.
+ */
+
+:root,
+[data-theme='floorplan'] {
+  --color-paper: #f4f7f8;        /* plan paper: page canvas */
+  --color-ink: #17323f;          /* plan ink: text, walls, primary buttons */
+  --color-ink-hover: #0e2430;
+  --color-ink-muted: #4e6874;    /* secondary text, AA on paper and surface */
+  --color-room: #dcebe9;         /* unselected rooms, quiet panels */
+  --color-highlight: #f2c14e;    /* selected rooms and the price tag only, always with ink text */
+  --color-line: #9fb6bf;         /* hairlines and panel edges (decorative) */
+  --color-field-border: #6f8f9b; /* text field outlines: 3:1 on paper and surface */
+  --color-surface: #ffffff;      /* form surfaces */
+  --color-on-ink: #ffffff;
+  --color-focus: #17323f;
+  --color-shade: rgb(23 50 63 / 0.08);  /* pressed and hover washes */
+  --color-shadow: rgb(23 50 63 / 0.12);
+}
+
+[data-theme='eucalyptus'] {
+  --color-paper: #f5f7f2;
+  --color-ink: #1e3b30;
+  --color-ink-hover: #142a22;
+  --color-ink-muted: #4c6458;
+  --color-room: #dde8da;
+  --color-highlight: #9cc5e8;
+  --color-line: #a9bca9;
+  --color-field-border: #728f72;
+  --color-surface: #ffffff;
+  --color-on-ink: #ffffff;
+  --color-focus: #1e3b30;
+  --color-shade: rgb(30 59 48 / 0.08);
+  --color-shadow: rgb(30 59 48 / 0.12);
+}
+
+:root {
+  /* Semantic colours, shared by both themes (AA on paper) */
+  --color-success: #1f6b4a;
+  --color-success-soft: #e3f1ea;
+  --color-warning: #7a4f00;
+  --color-warning-soft: #fbf0d6;
+  --color-danger: #b3261e;
+  --color-danger-soft: #fbe9e7;
+  --color-star: #7a4f00;
+
+  /* Type: Schibsted Grotesk only */
+  --font-sans: 'Schibsted Grotesk Variable', 'Schibsted Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-14: 0.875rem;
+  --text-16: 1rem;
+  --text-18: 1.125rem;
+  --text-22: 1.375rem;
+  --text-28: 1.75rem;
+  --text-36: 2.25rem;
+  --text-hero: clamp(2.5rem, 5vw, 3.5rem);
+  --body-size: 1.0625rem; /* 17px */
+  --leading-body: 1.6;
+  --leading-tight: 1.1;
+  --measure: 68ch;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --tracking-display: -0.02em;
+
+  /* Space (4, 8, 12, 16, 24, 32, 48, 64 px) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --gutter: 1rem;
+  --page-max: 75rem;
+
+  /* Shape */
+  --radius-control: 6px;
+  --wall: 2px;       /* the floor plan's walls: the only heavy line on the site */
+  --hairline: 1px;
+  --target: 44px;    /* minimum tap target */
+
+  /* Motion (Emil Kowalski's curves: strong ease-out for responses) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --dur-press: 160ms;
+  --dur-fill: 180ms;
+  --dur-colour: 150ms;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 2rem;
+  }
+}

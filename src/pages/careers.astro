@@ -1,0 +1,118 @@
+---
+/** Clean with us: pay, hours, what you need, how hiring works, and the application form. */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import SectionHead from '@/sections/SectionHead.astro';
+import NumberedSteps from '@/sections/NumberedSteps.astro';
+import ApplicationForm from '@/features/forms/ApplicationForm.astro';
+import Badge from '@/core/ui/Badge.astro';
+import Button from '@/core/ui/Button.astro';
+import Icon from '@/core/ui/Icon.astro';
+import { business } from '@/config/business';
+import { formatPhoneHref } from '@/core/format';
+
+const needs = [
+  'A current national police check, or you agree to us arranging one before you start',
+  'The right to work in Australia',
+  'Your own car and a full driver licence, for getting between homes',
+  'A careful eye: you notice the tap marks and the dust on top of the fridge',
+];
+
+/** A real sequence, so it is numbered. */
+const steps = [
+  { title: 'Send the form', text: 'It takes about three minutes. No CV needed.' },
+  { title: 'A phone call', text: 'Within 3 business days, to talk about hours and the suburbs that suit you.' },
+  { title: 'Paid trial clean', text: 'A full clean alongside Grace, our team lead, paid at the normal rate.' },
+  { title: 'Start with a team lead', text: 'You shadow a team lead until you know the room lists, then take on your own regular clients.' },
+];
+---
+
+<BaseLayout
+  title={`Cleaning jobs in ${business.region} | ${business.shortName}`}
+  description="Clean with Clearday: employed, not subcontracted, paid travel time, regular clients near home. Apply online in three minutes."
+>
+  <PageHeader
+    title="Clean with us"
+    intro="We employ our cleaners, pay for the time between homes, and give you regular clients in the suburbs near where you live."
+  >
+    <p class="pay">
+      <strong>From $32 an hour plus travel time</strong>{business.demoMode && <Badge>Sample</Badge>}
+    </p>
+    <p class="muted">Casual or part-time, weekdays and Saturday mornings. Super, paid training and all supplies included.</p>
+    <div><Button href="#apply" size="lg">Apply now</Button></div>
+  </PageHeader>
+
+  <section class="band" aria-labelledby="needs-title">
+    <div class="wrap two">
+      <div>
+        <SectionHead id="needs-title" title="What you need" />
+        <ul class="needs" role="list">
+          {needs.map((n) => <li><Icon name="check" size={22} />{n}</li>)}
+        </ul>
+      </div>
+      <div>
+        <SectionHead id="steps-title" title="How hiring works" />
+        <NumberedSteps items={steps} labelledby="steps-title" />
+      </div>
+    </div>
+  </section>
+
+  <section class="band apply" id="apply" aria-labelledby="apply-title">
+    <div class="wrap apply__grid">
+      <div>
+        <SectionHead id="apply-title" title="Apply" />
+        <p class="muted">We read every application. Questions first? Call <a class="nowrap" href={formatPhoneHref(business.phone)}>{business.phone}</a>.</p>
+      </div>
+      <ApplicationForm />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pay {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    font-size: var(--text-22);
+  }
+  .two,
+  .apply__grid {
+    display: grid;
+    align-items: start;
+    gap: var(--space-7);
+  }
+  .needs {
+    display: grid;
+    gap: var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+  .needs li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-3);
+    font-size: var(--text-18);
+  }
+  .nowrap {
+    white-space: nowrap;
+  }
+  .apply :global(.head) {
+    margin-bottom: var(--space-3);
+  }
+  .apply {
+    background: var(--color-surface);
+    border-block: var(--hairline) solid var(--color-line);
+    scroll-margin-top: var(--space-8);
+  }
+  @media (min-width: 900px) {
+    .two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-8);
+    }
+    .apply__grid {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: var(--space-8);
+    }
+  }
+</style>

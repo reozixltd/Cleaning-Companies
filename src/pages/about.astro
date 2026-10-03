@@ -1,0 +1,177 @@
+---
+/** About: the founder's story, the team by name, how cleaners are chosen, and the cover we carry. */
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import SectionHead from '@/sections/SectionHead.astro';
+import NumberedSteps from '@/sections/NumberedSteps.astro';
+import CtaBand from '@/sections/CtaBand.astro';
+import Photo from '@/core/ui/Photo.astro';
+import { business } from '@/config/business';
+
+const founder = (await getEntry('team', 'mel'))!.data;
+const team = (await getCollection('team')).filter((m) => m.id !== 'mel').map((m) => m.data);
+const years = new Date().getFullYear() - business.founded;
+
+/** Hiring is a real sequence, so it is numbered. */
+const vetting = [
+  { title: 'National police check', text: `${business.policeChecked}, renewed every three years.` },
+  { title: 'Interview', text: 'A conversation with Mel or Grace about how they work, and two work references we actually call.' },
+  { title: 'Paid trial clean', text: 'A full clean alongside a team lead, who checks the work room by room against our lists.' },
+  { title: 'Employed, then trained', text: 'They join as employees, not subcontractors, and shadow a team lead until they know the lists by heart.' },
+];
+
+const cover = [
+  { title: business.insurance.short, text: `${business.insurance.long}. We send a certificate of currency on request.` },
+  { title: 'Workers’ compensation', text: 'Every cleaner is an employee, covered by our workers’ compensation, so an accident in your home is our responsibility, not yours.' },
+  { title: 'Police-checked', text: `${business.policeChecked}.` },
+  { title: business.guarantee.short, text: business.guarantee.long },
+  ...(business.bonded ? [{ title: 'Bonded', text: 'We hold a fidelity bond covering every cleaner.' }] : []),
+];
+---
+
+<BaseLayout
+  title={`About ${business.tradingName}`}
+  description={`Who cleans your home: a ${business.region} team of employed, police-checked cleaners, started by ${founder.name} in ${business.founded}.`}
+>
+  <PageHeader title="About us" intro={`A local team of employed cleaners, cleaning homes across ${business.region} for ${years} years.`} />
+
+  <section class="wrap founder" aria-labelledby="founder-title">
+    <Photo slot="founder" priority alt={`${founder.name}, ${founder.role.toLowerCase()}`} label={`${founder.name}, ${founder.role.toLowerCase()}`} ratio="4 / 5" sizes="(min-width: 900px) 360px, 100vw" />
+    <div class="founder__text">
+      <h2 id="founder-title">Why {business.shortName} exists</h2>
+      <blockquote>{founder.note}</blockquote>
+      <p>
+        {founder.name} started {business.shortName} in {founder.since} from {business.base.suburb}. The rules haven't changed since:
+        cleaners are employed and paid properly, every price is on the website before you book, and you get the same cleaner each visit whenever we can.
+      </p>
+      <p class="muted">{founder.name}, {founder.role.toLowerCase()}</p>
+    </div>
+  </section>
+
+  <section class="band team" aria-labelledby="team-title">
+    <div class="wrap">
+      <SectionHead id="team-title" title="The team" intro="The people who'll be in your home, and what they look after." />
+      <ul class="people" role="list">
+        {team.map((m) => (
+          <li>
+            <div>
+              <h3>{m.name}</h3>
+              <p class="muted">{m.role}, since {m.since}</p>
+            </div>
+            <p>{m.note}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="vetting-title">
+    <div class="wrap two">
+      <div>
+        <SectionHead id="vetting-title" title="How we choose cleaners" intro="Four steps before anyone cleans a client's home." />
+        <NumberedSteps items={vetting} labelledby="vetting-title" />
+      </div>
+      <div>
+        <SectionHead id="cover-title" title="What we carry" />
+        <dl class="cover" aria-labelledby="cover-title">
+          {cover.map((c) => (
+            <div>
+              <dt>{c.title}</dt>
+              <dd>{c.text}</dd>
+            </div>
+          ))}
+          <div>
+            <dt>Registered business</dt>
+            <dd>{business.legalName}, <span class="nowrap">ABN {business.abn}</span>.</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Meet your cleaner at your first clean" text="Price your home online and choose a time. We confirm by SMS with your cleaner's name." />
+</BaseLayout>
+
+<style>
+  .founder {
+    display: grid;
+    gap: var(--space-6);
+    padding-bottom: var(--space-7);
+  }
+  .founder :global(.placeholder),
+  .founder :global(.photo) {
+    max-width: 360px;
+  }
+  .founder__text {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+  blockquote {
+    margin: 0;
+    padding-left: var(--space-4);
+    border-left: var(--wall) solid var(--color-ink);
+    font-size: var(--text-22);
+    line-height: 1.4;
+    max-width: var(--measure);
+  }
+  .team {
+    background: var(--color-surface);
+    border-block: var(--hairline) solid var(--color-line);
+  }
+  .people {
+    padding: 0;
+    list-style: none;
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  .people li {
+    display: grid;
+    gap: var(--space-2);
+    padding-block: var(--space-4);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  .people h3 {
+    font-size: var(--text-18);
+  }
+  .two {
+    display: grid;
+    gap: var(--space-7);
+  }
+  .cover {
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  .cover div {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: var(--space-3);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  dt {
+    font-weight: var(--weight-bold);
+  }
+  .nowrap {
+    white-space: nowrap;
+  }
+  dd {
+    margin: 0;
+    color: var(--color-ink-muted);
+  }
+  @media (min-width: 768px) {
+    .people li {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      gap: var(--space-6);
+    }
+  }
+  @media (min-width: 900px) {
+    .founder {
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: var(--space-8);
+      align-items: start;
+    }
+    .two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-8);
+    }
+  }
+</style>

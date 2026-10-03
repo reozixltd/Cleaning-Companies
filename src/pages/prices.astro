@@ -1,0 +1,199 @@
+---
+/**
+ * Prices: where each clean starts, what recurring visits save, what extras cost,
+ * and what moves the price. Every number comes from config/pricing.ts, so this
+ * page can never disagree with the calculator.
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/sections/PageHeader.astro';
+import SectionHead from '@/sections/SectionHead.astro';
+import CtaBand from '@/sections/CtaBand.astro';
+import Button from '@/core/ui/Button.astro';
+import { business } from '@/config/business';
+import { ADD_ON_IDS, FREQUENCIES, FREQUENCY_LABELS, pricing, SERVICE_LABELS } from '@/config/pricing';
+import { formatMoney } from '@/core/format';
+import { describeRooms } from '@/domain/describe';
+import { fromPrice, quote } from '@/domain/quote';
+import { DEFAULT_SELECTION } from '@/domain/selection';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const oneOff = (id: (typeof services)[number]['data']['service']) => pricing.oneOffOnly.includes(id);
+const pct = (n: number) => `${Math.round(n * 100)}%`;
+const recurring = FREQUENCIES.filter((f) => pricing.discount[f] > 0);
+const example = quote(DEFAULT_SELECTION, pricing);
+const multiplierNote = (m: number) => (m === 1 ? 'The base price' : `${m} times the regular price`);
+
+const changes = [
+  { title: 'Rooms', text: `${formatMoney(pricing.base)} covers 1 bedroom, 1 bathroom, the living area and kitchen. Each extra bedroom adds ${formatMoney(pricing.perExtraBedroom)}, each extra bathroom ${formatMoney(pricing.perExtraBathroom)}, a study ${formatMoney(pricing.study)} and a laundry ${formatMoney(pricing.laundry)}.` },
+  { title: 'Type of clean', text: `Deep, move-in and end of lease cleans do more in every room, so they cost ${pricing.multiplier.deep}, ${pricing.multiplier['move-in']} and ${pricing.multiplier['end-of-lease']} times the regular price.` },
+  { title: 'How often', text: `Regular visits every week, fortnight or month cost less each time. End of lease and move-in cleans are always a single visit.` },
+  { title: 'Extras', text: 'Jobs that take real time on their own, like inside the oven, are added at a flat price so you only pay for what you choose.' },
+  { title: 'The state of the home', text: "If a home needs much more than the price allows for, your cleaner calls you before going on. We never add to the bill without asking first." },
+];
+---
+
+<BaseLayout
+  title={`House cleaning prices in ${business.region} | ${business.shortName}`}
+  description="What house cleaning costs with Clearday: from prices for each clean, recurring savings, extras and what changes the price. GST included."
+>
+  <PageHeader
+    title="Prices"
+    intro={`Every price includes GST, supplies and equipment.${business.demoMode ? ' Sample prices for this demo.' : ''} For an exact price, add your rooms on the floor plan.`}
+  >
+    <div><Button href="/#plan" size="lg">Price your home</Button></div>
+  </PageHeader>
+
+  <section class="band" aria-labelledby="from-title">
+    <div class="wrap">
+      <SectionHead id="from-title" title="Where each clean starts" intro="For a 1 bedroom, 1 bathroom home with a living area and kitchen." />
+      <table class="table">
+        <thead>
+          <tr><th scope="col">Clean</th><th scope="col" class="hide-sm">How the price is set</th><th scope="col" class="num">From</th></tr>
+        </thead>
+        <tbody>
+          {services.map((s) => (
+            <tr>
+              <th scope="row"><a href={`/services/${s.id}/`}>{SERVICE_LABELS[s.data.service]}</a>{oneOff(s.data.service) && <span class="muted sub">One visit</span>}</th>
+              <td class="hide-sm muted">{multiplierNote(pricing.multiplier[s.data.service])}{s.data.service === 'regular' && ', with the weekly saving'}</td>
+              <td class="num tabular" data-from-price={s.data.service}>{formatMoney(fromPrice(s.data.service, pricing))}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="band split" aria-labelledby="often-title">
+    <div class="wrap split__grid">
+      <div>
+        <SectionHead id="often-title" title="Regular visits cost less" intro="Taken off the rooms price for every visit." />
+        <table class="table">
+          <tbody>
+            {recurring.map((f) => (
+              <tr><th scope="row">{FREQUENCY_LABELS[f]}</th><td class="num tabular">{pct(pricing.discount[f])} off</td></tr>
+            ))}
+          </tbody>
+        </table>
+        {pricing.firstVisitAsDeep && (
+          <p class="first">Your first visit on a regular plan is priced as a deep clean, so we start from clean; every visit after that is the regular price.</p>
+        )}
+      </div>
+      <div>
+        <SectionHead id="extras-title" title="Extras" intro="Added at a flat price to any clean." />
+        <table class="table" aria-labelledby="extras-title">
+          <tbody>
+            {ADD_ON_IDS.map((id) => (
+              <tr><th scope="row">{pricing.addOns[id].label}</th><td class="num tabular">{formatMoney(pricing.addOns[id].price)}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="changes-title">
+    <div class="wrap">
+      <SectionHead id="changes-title" title="What changes the price" />
+      <dl class="changes">
+        {changes.map((c) => (
+          <div>
+            <dt>{c.title}</dt>
+            <dd>{c.text}</dd>
+          </div>
+        ))}
+      </dl>
+      <p class="example muted">
+        For example: {describeRooms(DEFAULT_SELECTION)}, cleaned {FREQUENCY_LABELS[example.frequency].toLowerCase()}, is {formatMoney(example.perVisit)} a visit{example.firstVisit !== example.perVisit && `, and ${formatMoney(example.firstVisit)} for the first visit`}.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand title="See the exact price for your home" text="Add your rooms on the floor plan and the price updates as you go." />
+</BaseLayout>
+
+<style>
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  th,
+  td {
+    padding: var(--space-3) var(--space-4) var(--space-3) 0;
+    border-bottom: var(--hairline) solid var(--color-line);
+    text-align: left;
+    vertical-align: baseline;
+  }
+  thead th {
+    color: var(--color-ink-muted);
+    font-size: var(--text-16);
+    font-weight: var(--weight-medium);
+  }
+  tbody th {
+    font-weight: var(--weight-medium);
+  }
+  .sub {
+    display: block;
+    font-size: var(--text-16);
+    font-weight: var(--weight-regular);
+  }
+  .num {
+    padding-right: 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+  tbody .num {
+    font-size: var(--text-22);
+    font-weight: var(--weight-bold);
+  }
+  .hide-sm {
+    display: none;
+  }
+  .split {
+    background: var(--color-surface);
+    border-block: var(--hairline) solid var(--color-line);
+  }
+  .split__grid {
+    display: grid;
+    gap: var(--space-7);
+  }
+  .first {
+    margin-top: var(--space-4);
+  }
+  .changes {
+    display: grid;
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  .changes div {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: var(--space-4);
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  dt {
+    font-weight: var(--weight-bold);
+  }
+  dd {
+    margin: 0;
+    max-width: var(--measure);
+  }
+  .example {
+    margin-top: var(--space-4);
+  }
+  @media (min-width: 768px) {
+    .hide-sm {
+      display: table-cell;
+    }
+    .changes div {
+      grid-template-columns: 14rem minmax(0, 1fr);
+      gap: var(--space-6);
+    }
+  }
+  @media (min-width: 900px) {
+    .split__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-8);
+    }
+  }
+</style>

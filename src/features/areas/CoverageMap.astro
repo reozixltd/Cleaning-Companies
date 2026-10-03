@@ -1,0 +1,72 @@
+---
+/**
+ * Where we clean, drawn as a plan of the area: a dot per suburb, a square for
+ * the base, names for suburbs with their own page. Inline SVG, no map service.
+ */
+import { business } from '@/config/business';
+import { projectPoints } from '@/core/geo';
+
+const WIDTH = 560;
+const points = [{ id: '__base', lat: business.base.lat, lng: business.base.lng }, ...business.areas.map((a) => ({ id: a.suburb, lat: a.lat, lng: a.lng }))];
+const map = projectPoints(points, { width: WIDTH, padding: 56 });
+const at = new Map(map.points.map((p) => [p.id, p]));
+const base = at.get('__base')!;
+---
+
+<figure class="map">
+  <svg viewBox={`0 0 ${WIDTH} ${Math.round(map.height)}`} role="img" aria-label={`Map of the ${business.areas.length} suburbs we clean around ${business.base.suburb}`}>
+    <rect class="map__frame" x="1" y="1" width={WIDTH - 2} height={Math.round(map.height) - 2}></rect>
+    {business.areas.map((a) => {
+      const p = at.get(a.suburb);
+      return p && (
+        <g data-map-point={a.suburb} class:list={['map__point', { 'map__point--page': a.page }]}>
+          <circle cx={p.x} cy={p.y} r={a.page ? 9 : 6}></circle>
+          {a.page && <text x={p.x + 15} y={p.y + 7}>{a.suburb}</text>}
+        </g>
+      );
+    })}
+    <g class="map__base">
+      <rect x={base.x - 9} y={base.y - 9} width="18" height="18"></rect>
+      <text x={base.x + 15} y={base.y - 14}>Our base</text>
+    </g>
+  </svg>
+  <figcaption>Suburbs are approximate. Larger dots have their own page.</figcaption>
+</figure>
+
+<style>
+  .map {
+    display: grid;
+    gap: var(--space-2);
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    font-family: var(--font-sans);
+  }
+  .map__frame {
+    fill: var(--color-surface);
+    stroke: var(--color-line);
+    stroke-width: 2;
+  }
+  .map__point circle {
+    fill: var(--color-ink);
+  }
+  .map__point--page circle {
+    fill: var(--color-highlight);
+    stroke: var(--color-ink);
+    stroke-width: 2;
+  }
+  /* About 14px on a phone and 15px at the desktop map width. */
+  text {
+    fill: var(--color-ink);
+    font-size: 22px;
+    font-weight: var(--weight-medium);
+  }
+  .map__base rect {
+    fill: var(--color-ink);
+  }
+  figcaption {
+    color: var(--color-ink-muted);
+    font-size: var(--text-14);
+  }
+</style>

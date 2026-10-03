@@ -1,0 +1,57 @@
+---
+/**
+ * Photo for a named slot. With a file in src/assets/photos/<slot>.*: an optimised
+ * <Picture> (AVIF + WebP) cropped to `ratio`, lazy unless `priority`.
+ * Without a file: the labelled placeholder.
+ */
+import { Picture } from 'astro:assets';
+import { getPhoto } from '../photos';
+import Placeholder from './Placeholder.astro';
+
+interface Props {
+  slot: string;
+  alt: string;
+  ratio?: string;
+  sizes?: string;
+  priority?: boolean;
+  /** Placeholder text when no file exists. Defaults to the alt text. */
+  label?: string;
+  class?: string;
+}
+
+const { slot, alt, ratio = '4 / 3', sizes = '(min-width: 1024px) 33vw, 100vw', priority = false, label, class: className } = Astro.props;
+const image = getPhoto(slot);
+const widths = [480, 800, 1200, 1600].filter((w) => !image || w <= image.width);
+---
+
+{
+  image ? (
+    <figure class:list={['photo', className]} style={`aspect-ratio: ${ratio}`}>
+      <Picture
+        src={image}
+        alt={alt}
+        formats={['avif', 'webp']}
+        widths={widths.length ? widths : [image.width]}
+        sizes={sizes}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : 'auto'}
+        decoding="async"
+      />
+    </figure>
+  ) : (
+    <div class={className}><Placeholder label={label ?? alt} ratio={ratio} /></div>
+  )
+}
+
+<style>
+  .photo {
+    overflow: hidden;
+    border-radius: var(--radius-control);
+    background: var(--color-room);
+  }
+  .photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

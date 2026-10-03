@@ -1,0 +1,51 @@
+---
+/**
+ * A short numbered sequence (hiring, vetting, how a referral works). Only for
+ * real sequences: the spec allows numbered markers nowhere else.
+ */
+interface Props {
+  items: { title: string; text: string }[];
+  /** id of the heading that names this list. */
+  labelledby?: string;
+}
+const { items, labelledby } = Astro.props;
+---
+
+<ol class="steps" aria-labelledby={labelledby}>
+  {items.map((s) => (
+    <li>
+      <h3>{s.title}</h3>
+      <p>{s.text}</p>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    display: grid;
+    gap: var(--space-4);
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+  li {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: var(--space-1) var(--space-3);
+    counter-increment: step;
+  }
+  li::before {
+    content: counter(step);
+    grid-row: span 2;
+    font-size: var(--text-28);
+    font-weight: var(--weight-bold);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  h3 {
+    font-size: var(--text-18);
+  }
+  p {
+    color: var(--color-ink-muted);
+  }
+</style>

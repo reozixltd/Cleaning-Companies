@@ -1,0 +1,33 @@
+---
+/** Home: the calculator first, then the proof a homeowner looks for, in the order they look for it. */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/sections/Hero.astro';
+import TrustRow from '@/sections/TrustRow.astro';
+import RoomChecklist from '@/sections/RoomChecklist.astro';
+import ServicesList from '@/sections/ServicesList.astro';
+import Reviews from '@/sections/Reviews.astro';
+import Vetting from '@/sections/Vetting.astro';
+import HowItWorks from '@/sections/HowItWorks.astro';
+import Coverage from '@/sections/Coverage.astro';
+import OfficesBand from '@/sections/OfficesBand.astro';
+import Faq from '@/sections/Faq.astro';
+import BookingTag from '@/features/pricing/BookingTag.astro';
+import { business } from '@/config/business';
+---
+
+<BaseLayout
+  title={`${business.tradingName}: house cleaning in ${business.region}`}
+  description="Price your home room by room and book a police-checked cleaner online. Regular, deep, end of lease and move-in cleaning in Brisbane's north."
+>
+  <Hero />
+  <BookingTag />
+  <TrustRow />
+  <RoomChecklist />
+  <ServicesList />
+  <Reviews />
+  <Vetting />
+  <HowItWorks />
+  <Coverage />
+  <OfficesBand />
+  <Faq tag="home" limit={5} />
+</BaseLayout>

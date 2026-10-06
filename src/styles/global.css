@@ -199,7 +199,7 @@ button, [role='button'], summary {
   line-height: 1;
 }
 .accordion details[open] summary::after {
-  content: '2';
+  content: '\2212';
 }
 .accordion details p {
   padding-bottom: var(--space-4);
@@ -228,7 +228,7 @@ button, [role='button'], summary {
   text-transform: uppercase;
 }
 .arrow-link::after {
-  content: '92';
+  content: '\2192';
 }
 @media (hover: hover) and (pointer: fine) {
   .arrow-link:hover {

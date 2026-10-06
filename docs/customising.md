@@ -93,7 +93,7 @@ The site's address (canonical links, the sitemap, sharing links and structured d
 
 ## Themes
 
-Two themes ship: `floorplan` (navy ink, yellow highlight) and `eucalyptus` (green ink, blue highlight). To use one, set `theme` in `business.ts`.
+Two themes ship: `floorplan` (black ink, pink accent) and `eucalyptus` (green ink and accent). To use one, set `theme` in `business.ts`.
 
 ### Add a client theme
 

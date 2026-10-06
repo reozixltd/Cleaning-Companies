@@ -334,18 +334,21 @@ Full token reference goes in `docs/design-system.md`. Raw values live only in `s
 
 | Token | Hex | Role |
 |---|---|---|
-| `--color-paper` | `#F4F7F8` | Page canvas |
-| `--color-ink` | `#17323F` | Text, plan walls, primary button fill |
-| `--color-ink-muted` | `#4E6874` | Secondary text (AA on paper and white) |
-| `--color-room` | `#DCEBE9` | Unselected rooms, quiet panels |
-| `--color-highlight` | `#F2C14E` | Selected rooms and the price tag only; always with ink text, never as a text colour |
-| `--color-line` | `#9FB6BF` | Hairlines (decorative) |
-| `--color-field-border` | `#6F8F9B` | Text field outlines, 3:1 on paper and surface (added in the build, §15) |
-| `--color-surface` | `#FFFFFF` | Form surfaces |
+| `--color-paper` | `#ffffff` | Page canvas |
+| `--color-ink` | `#000000` | Headings, plan walls, primary button fill |
+| `--color-ink-muted` | `#333333` | Body text and captions |
+| `--color-room` | `#f7e1f7` | Quiet tint: selected rooms, hover |
+| `--color-highlight` | `#ffc5ee` | Strong tint: price tag, priced rooms; always with ink text |
+| `--color-card`, `--color-card-border` | `#fffcf6`, `#c4c9dd` | Cards |
+| `--color-line` | `#cccccc` | Hairlines (decorative) |
+| `--color-field-border` | `#8c8c8c` | Field outlines, 3:1 on paper, card and panel |
+| `--color-surface` | `#ffffff` | Form surfaces |
+| `--color-accent`, `--color-on-accent` | `#ff83da`, `#ffffff` | The one primary action per screen (approved 2.2:1 exception, see design-system.md) |
+| `--color-panel`, `--color-on-panel-muted` | `#161616`, `#cccccc` | Dark hero panel |
 
 Semantic success, warning and danger tokens follow the Trades set, checked for AA against paper.
 
-Theme `eucalyptus` (D12): paper `#F5F7F2`, ink `#1E3B30`, room `#DDE8DA`, highlight `#9CC5E8`. Theme selection: `theme` in `config/business.ts`; in demo mode only, `?theme=` overrides it for the session.
+Theme `eucalyptus` (D12): paper `#ffffff`, ink `#142a22`, room `#dcebdf`, highlight `#cfe5d2`, accent `#2f7d5b`. Theme selection: `theme` in `config/business.ts`; in demo mode only, `?theme=` overrides it for the session.
 
 ### 7.2 Type
 

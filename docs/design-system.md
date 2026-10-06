@@ -33,7 +33,7 @@ Two themes ship. `floorplan` is the default: its block is `:root, [data-theme='f
 
 ### Known accessibility exception
 
-White text on `#ff83da` is 2.21:1. This is limited to `.btn--accent` (header Book button) and `.bar__book` (phone booking bar). The owner chose it to match DESIGN.md. `tests/e2e/quality.e2e.mjs` exempts `color-contrast` for those selectors only, and `tests/unit/contrast.test.ts` has no accent pair. The eucalyptus accent passes AA (4.99:1). Hover and focus switch to black with white text.
+White text on `#ff83da` is 2.21:1. This is limited to `.btn--accent` (header Book button) and `.bar__book` (phone booking bar). The owner chose it to match DESIGN.md. `tests/e2e/quality.e2e.mjs` exempts `color-contrast` for those selectors only, and `tests/unit/contrast.test.ts` has no accent pair. The eucalyptus accent passes AA (4.99:1). Hover (on the header button) switches to black with white text.
 
 Semantic colours are shared by every theme (the plain `:root` block):
 
@@ -111,7 +111,7 @@ One family: Inter Variable (400 to 900), self-hosted through `@fontsource-variab
 - Weights: `--weight-regular` 400, `--weight-medium` 500 (labels, buttons), `--weight-semibold` 600, `--weight-bold` 700, `--weight-black` 900.
 - Prices and counts use `.tabular` (tabular figures) so they don't jump as they change.
 - Sentence case everywhere, left-aligned throughout. Capitals only on `.eyebrow` and `.arrow-link`, in CSS.
-- Text is never smaller than `--text-14`. The exception is SVG labels on the floor plan and coverage map: they are set in px (15 to 20px) in drawing units, so they shrink with the drawing on a phone. `FloorPlan.astro` enlarges them below 600px to compensate. That is the one place px font sizes appear in components.
+- Text is never smaller than `--text-13` (the announcement bar and eyebrow). The exception is SVG labels on the floor plan and coverage map: they are set in px (15 to 20px) in drawing units, so they shrink with the drawing on a phone. `FloorPlan.astro` enlarges them below 600px to compensate. That is the one place px font sizes appear in components.
 
 ## Space and layout
 

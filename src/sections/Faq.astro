@@ -18,7 +18,7 @@ const items = (await getCollection('faqs')).map((f) => f.data).filter((f) => f.t
 <section class="band" id="faq" aria-labelledby={`faq-${tag}`}>
   <div class="wrap faq">
     <SectionHead id={`faq-${tag}`} title={title} />
-    <div class="faq__list">
+    <div class="faq__list accordion">
       {items.map((f) => (
         <details>
           <summary>{f.q}</summary>
@@ -26,43 +26,13 @@ const items = (await getCollection('faqs')).map((f) => f.data).filter((f) => f.t
         </details>
       ))}
     </div>
-    {more && <p class="faq__more"><a href="/faq/">All questions</a></p>}
+    {more && <p class="faq__more"><a class="arrow-link" href="/faq/">All questions</a></p>}
   </div>
 </section>
 
 <style>
-  .faq__list {
-    border-top: var(--wall) solid var(--color-ink);
-  }
-  details {
-    border-bottom: var(--hairline) solid var(--color-line);
-  }
-  summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-    min-height: 56px;
-    padding-block: var(--space-3);
-    font-size: var(--text-18);
-    font-weight: var(--weight-medium);
-    cursor: pointer;
-    list-style: none;
-  }
-  summary::-webkit-details-marker {
-    display: none;
-  }
-  summary::after {
-    content: '+';
-    font-size: var(--text-28);
-    font-weight: var(--weight-regular);
-    line-height: 1;
-  }
-  details[open] summary::after {
-    content: '−';
-  }
-  details p {
-    padding-bottom: var(--space-4);
+  .faq {
+    max-width: 50rem;
   }
   .faq__more {
     margin-top: var(--space-4);

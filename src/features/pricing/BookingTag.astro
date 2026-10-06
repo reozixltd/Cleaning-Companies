@@ -19,11 +19,14 @@
     gap: var(--space-3);
     padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
     background: var(--color-highlight);
-    border-radius: var(--radius-control);
+    border-radius: var(--radius-pill);
     border: var(--hairline) solid var(--color-ink);
   }
   .pin[hidden] {
     display: none;
+  }
+  .pin {
+    color: var(--color-ink);
   }
   .pin__price {
     font-size: var(--text-18);
@@ -33,10 +36,11 @@
     align-items: center;
     min-height: var(--target);
     padding-inline: var(--space-4);
-    border-radius: var(--radius-control);
+    border-radius: var(--radius-pill);
     background: var(--color-ink);
     color: var(--color-on-ink);
-    font-weight: var(--weight-medium);
+    font-size: var(--text-14);
+    font-weight: var(--weight-semibold);
     text-decoration: none;
   }
   @media (max-width: 767px) {

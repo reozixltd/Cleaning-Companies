@@ -1,13 +1,15 @@
 ---
-/** Top of an inner page: the page's h1 and an optional one-line intro. */
+/** Top of an inner page: the page's h1, an optional eyebrow above it and an optional one-line intro. */
 interface Props {
   title: string;
   intro?: string;
+  eyebrow?: string;
 }
-const { title, intro } = Astro.props;
+const { title, intro, eyebrow } = Astro.props;
 ---
 
 <div class="page-header wrap">
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
   <h1>{title}</h1>
   {intro && <p class="page-header__intro">{intro}</p>}
   <slot />

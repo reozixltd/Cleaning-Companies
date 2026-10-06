@@ -37,13 +37,14 @@ const steps = [
     display: grid;
     gap: var(--space-2);
     padding-top: var(--space-4);
-    border-top: var(--wall) solid var(--color-ink);
+    border-top: var(--hairline) solid var(--color-line);
     counter-increment: step;
   }
   .steps li::before {
     content: counter(step);
+    color: var(--color-ink);
     font-size: var(--text-48);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-black);
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }

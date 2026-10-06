@@ -13,7 +13,7 @@ import SuburbCheck from '@/features/areas/SuburbCheck.astro';
 <section class="hero" id="plan" aria-labelledby="hero-title">
   <div class="wrap hero__grid">
     <div class="hero__copy">
-      <h1 id="hero-title">Your home, priced room by room.</h1>
+      <h1 id="hero-title" class="display">Your home, priced room by room.</h1>
       <p class="hero__lead">Add your rooms and choose how often. The price updates as you go, and you can book a time without calling.</p>
       <SuburbCheck />
     </div>
@@ -43,16 +43,28 @@ import SuburbCheck from '@/features/areas/SuburbCheck.astro';
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-4);
     align-content: start;
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: var(--color-panel);
+    color: var(--color-on-ink);
+    --color-focus: var(--color-on-ink); /* ink ring would vanish on the dark panel */
+  }
+  .hero__copy h1 {
+    color: inherit;
   }
   .hero__lead {
     font-size: var(--text-18);
-    color: var(--color-ink-muted);
+    color: var(--color-on-panel-muted);
   }
   .hero__plan {
     grid-area: plan;
     display: grid;
     gap: var(--space-4);
     align-content: start;
+    padding: var(--space-4);
+    border: var(--hairline) solid var(--color-card-border);
+    border-radius: var(--radius-card);
+    background: var(--color-paper);
   }
   .hero__controls {
     grid-area: controls;
@@ -61,11 +73,14 @@ import SuburbCheck from '@/features/areas/SuburbCheck.astro';
     .hero {
       padding-block: var(--space-6) var(--space-8);
     }
+    .hero__copy {
+      padding: var(--space-6);
+    }
     .hero__grid {
       grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
       grid-template-rows: auto 1fr;
       grid-template-areas: 'copy plan' 'controls plan';
-      column-gap: var(--space-8);
+      column-gap: var(--space-6);
       row-gap: var(--space-6);
     }
   }

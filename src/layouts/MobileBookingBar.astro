@@ -35,7 +35,7 @@ import Icon from '@/core/ui/Icon.astro';
     gap: var(--space-2);
     padding: var(--space-2) var(--gutter) calc(var(--space-2) + env(safe-area-inset-bottom));
     background: var(--color-surface);
-    border-top: var(--wall) solid var(--color-ink);
+    border-top: var(--hairline) solid var(--color-line);
   }
   .bar[hidden] {
     display: none;
@@ -45,6 +45,9 @@ import Icon from '@/core/ui/Icon.astro';
     min-width: 0;
     flex: 1;
     line-height: 1.3;
+  }
+  .bar__price {
+    color: var(--color-ink);
   }
   .bar__summary {
     overflow: hidden;
@@ -65,12 +68,16 @@ import Icon from '@/core/ui/Icon.astro';
     transition: transform var(--dur-press) var(--ease-out);
   }
   .bar__book {
-    padding-inline: var(--space-4);
-    background: var(--color-ink);
-    color: var(--color-on-ink);
+    padding-inline: var(--space-5);
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    font-size: var(--text-14);
+    font-weight: var(--weight-bold);
   }
   .bar__call {
     width: var(--target);
+    color: var(--color-ink);
     border: var(--hairline) solid var(--color-ink);
   }
   .bar__book:active,

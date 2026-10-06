@@ -25,7 +25,7 @@ const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
         <span class="header__phone-text">{business.phone}</span>
         <span class="visually-hidden">Call {business.shortName}</span>
       </a>
-      <Button href="/book/" class="header__book">Book a clean</Button>
+      <Button href="/book/" variant="accent" class="header__book">Book a clean</Button>
       <button class="header__toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
         <Icon name="menu" size={22} label="Menu" />
       </button>
@@ -68,13 +68,14 @@ const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
     align-items: center;
     min-height: var(--target);
     padding-inline: var(--space-3);
+    border-radius: var(--radius-pill);
+    color: var(--color-ink);
+    font-size: var(--text-14);
     text-decoration: none;
     font-weight: var(--weight-medium);
   }
   .header__nav a[aria-current='page'] {
-    text-decoration: underline;
-    text-decoration-thickness: var(--wall);
-    text-underline-offset: 0.4em;
+    background: var(--color-room);
   }
   .header__actions {
     display: flex;
@@ -89,6 +90,7 @@ const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
     gap: var(--space-2);
     min-width: var(--target);
     min-height: var(--target);
+    color: var(--color-ink);
     text-decoration: none;
     font-weight: var(--weight-medium);
   }
@@ -120,6 +122,7 @@ const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
     display: flex;
     align-items: center;
     min-height: 48px;
+    color: var(--color-ink);
     font-size: var(--text-18);
     font-weight: var(--weight-medium);
     text-decoration: none;

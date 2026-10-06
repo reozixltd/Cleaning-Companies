@@ -28,7 +28,7 @@ const nearby = a.nearby.map((name) => ({ name, area: findArea(name, business.are
 ---
 
 <BaseLayout title={`House cleaning in ${a.suburb} ${a.postcode} | ${business.shortName}`} description={a.seoDescription}>
-  <PageHeader title={`House cleaning in ${a.suburb}`} intro={a.intro} />
+  <PageHeader eyebrow="Areas" title={`House cleaning in ${a.suburb}`} intro={a.intro} />
 
   <section class="wrap local" aria-label={`Cleaning in ${a.suburb}`}>
     <div class="local__text">
@@ -84,7 +84,7 @@ const nearby = a.nearby.map((name) => ({ name, area: findArea(name, business.are
   .nearby ul {
     padding: 0;
     list-style: none;
-    border-top: var(--wall) solid var(--color-ink);
+    border-top: var(--hairline) solid var(--color-line);
   }
   .nearby li {
     display: flex;

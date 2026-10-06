@@ -54,7 +54,7 @@ const proof = [
   .tag {
     justify-self: start;
     padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-control);
+    border-radius: var(--radius-pill);
     background: var(--color-highlight);
     color: var(--color-ink);
     font-weight: var(--weight-medium);
@@ -100,7 +100,7 @@ const proof = [
   }
   .lines tfoot tr:first-child :global(th),
   .lines tfoot tr:first-child :global(td) {
-    border-top: var(--wall) solid var(--color-ink);
+    border-top: var(--hairline) solid var(--color-line);
     font-size: var(--text-22);
     font-weight: var(--weight-bold);
   }
@@ -114,8 +114,9 @@ const proof = [
     gap: var(--space-4);
     justify-items: start;
     padding: var(--space-5);
-    border-radius: var(--radius-control);
-    background: var(--color-room);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+    border: var(--hairline) solid var(--color-card-border);
   }
   .proof {
     display: grid;

@@ -174,7 +174,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .book .segment:not(:has(input:checked)):not([aria-pressed='true']):hover {
-    background: var(--color-room);
+    background: var(--color-shade);
   }
 }
 

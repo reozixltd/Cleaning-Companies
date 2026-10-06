@@ -131,12 +131,12 @@ const steps = [
   @media (max-width: 899px) { .split__photo { max-width: 100%; } }
 
   .rows, .checks { display: grid; padding: 0; list-style: none; }
-  .rows { border-top: var(--wall) solid var(--color-ink); }
+  .rows { border-top: var(--hairline) solid var(--color-line); }
   .rows li { display: grid; gap: var(--space-1); padding-block: var(--space-4); border-bottom: var(--hairline) solid var(--color-line); }
   .rows h3 { font-size: var(--text-18); }
   .rows p, .schedule dd, .steps p, .note { color: var(--color-ink-muted); }
 
-  .schedule { border-top: var(--wall) solid var(--color-ink); }
+  .schedule { border-top: var(--hairline) solid var(--color-line); }
   .schedule div { display: grid; gap: var(--space-1); padding-block: var(--space-4); border-bottom: var(--hairline) solid var(--color-line); }
   .schedule dt { font-size: var(--text-18); font-weight: var(--weight-bold); }
   .schedule dd { margin: 0; max-width: var(--measure); }
@@ -149,14 +149,14 @@ const steps = [
   .docs__entity { font-weight: var(--weight-medium); }
 
   .steps { display: grid; gap: var(--space-5); padding: 0; list-style: none; counter-reset: step; }
-  .steps li { display: grid; gap: var(--space-2); align-content: start; padding-top: var(--space-4); border-top: var(--wall) solid var(--color-ink); counter-increment: step; }
+  .steps li { display: grid; gap: var(--space-2); align-content: start; padding-top: var(--space-4); border-top: var(--hairline) solid var(--color-line); counter-increment: step; }
   .steps li::before { content: counter(step); font-size: var(--text-48); font-weight: var(--weight-bold); line-height: 1; font-variant-numeric: tabular-nums; }
   .steps h3 { font-size: var(--text-18); }
 
-  .request { background: var(--color-room); scroll-margin-top: calc(var(--space-8) + var(--space-2)); }
+  .request { background: var(--color-card); scroll-margin-top: calc(var(--space-8) + var(--space-2)); }
   .request__grid { display: grid; gap: var(--space-6); }
   .request__intro { display: grid; align-content: start; }
-  .request__panel { padding: var(--space-5) var(--space-4); border: var(--hairline) solid var(--color-line); border-radius: var(--radius-control); background: var(--color-surface); }
+  .request__panel { padding: var(--space-5) var(--space-4); border: var(--hairline) solid var(--color-card-border); border-radius: var(--radius-card); background: var(--color-surface); }
 
   @media (min-width: 768px) {
     .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }

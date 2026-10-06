@@ -10,19 +10,30 @@ Two themes ship. `floorplan` is the default: its block is `:root, [data-theme='f
 
 | Token | `floorplan` | `eucalyptus` | Role |
 |---|---|---|---|
-| `--color-paper` | `#f4f7f8` | `#f5f7f2` | Page canvas, empty plan rooms |
-| `--color-ink` | `#17323f` | `#1e3b30` | Text, plan walls, primary button fill, rules |
-| `--color-ink-hover` | `#0e2430` | `#142a22` | Primary button on hover |
-| `--color-ink-muted` | `#4e6874` | `#4c6458` | Secondary text, captions, hints |
-| `--color-room` | `#dcebe9` | `#dde8da` | Living and kitchen on the plan, quiet panels, photo placeholders |
-| `--color-highlight` | `#f2c14e` | `#9cc5e8` | Selected rooms and the price tag only. Always with ink text, never as a text colour |
-| `--color-line` | `#9fb6bf` | `#a9bca9` | Hairlines, panel edges, dashed add-a-room slots (decorative, so no contrast minimum) |
-| `--color-field-border` | `#6f8f9b` | `#728f72` | Text field outlines (inputs, selects, text areas, the suburb check). 3:1 on paper and surface, WCAG 1.4.11 |
+| `--color-paper` | `#ffffff` | `#ffffff` | Page canvas, empty plan rooms |
+| `--color-ink` | `#000000` | `#142a22` | Headings, plan walls, primary button fill |
+| `--color-ink-hover` | `#333333` | `#1e3b30` | Primary button on hover |
+| `--color-ink-muted` | `#333333` | `#33483f` | Body text, captions, hints |
+| `--color-room` | `#f7e1f7` | `#dcebdf` | Quiet tint: selected rooms, done steps, active nav pill, hover |
+| `--color-highlight` | `#ffc5ee` | `#cfe5d2` | Strong tint: price tag, priced rooms, FAQ toggle, announcement bar. Always with ink text |
+| `--color-card` | `#fffcf6` | `#f7f9f3` | Card and panel fill |
+| `--color-card-border` | `#c4c9dd` | `#bccabc` | Card edge (decorative) |
+| `--color-line` | `#cccccc` | `#c9d3c9` | Hairline dividers (decorative, so no contrast minimum) |
+| `--color-field-border` | `#8c8c8c` | `#728f72` | Text field outlines. 3:1 on paper, card and panel, WCAG 1.4.11 |
 | `--color-surface` | `#ffffff` | `#ffffff` | Form fields and controls |
-| `--color-on-ink` | `#ffffff` | `#ffffff` | Text on ink (primary buttons, demo ribbon) |
-| `--color-focus` | `#17323f` | `#1e3b30` | Focus ring (3px solid, 2px offset) |
-| `--color-shade` | `rgb(23 50 63 / 0.08)` | `rgb(30 59 48 / 0.08)` | Hover wash on secondary and quiet buttons |
-| `--color-shadow` | `rgb(23 50 63 / 0.12)` | `rgb(30 59 48 / 0.12)` | The one shadow: the pinned booking tag |
+| `--color-on-ink` | `#ffffff` | `#ffffff` | Text on ink (primary buttons) |
+| `--color-focus` | `#000000` | `#142a22` | Focus ring (3px solid, 2px offset) |
+| `--color-shade` | `rgb(0 0 0 / 0.06)` | `rgb(20 42 34 / 0.06)` | Hover wash on secondary and quiet buttons |
+| `--color-accent` | `#ff83da` | `#2f7d5b` | The one primary action per screen (`accent` button) |
+| `--color-on-accent` | `#ffffff` | `#ffffff` | Text on accent |
+| `--color-panel` | `#161616` | `#142a22` | Dark hero panel |
+| `--color-on-panel-muted` | `#cccccc` | `#c9d3c9` | Secondary text on the dark panel |
+
+`--color-ice` (`#d2f4ff`, photo placeholders) and `--color-lime` (`#e8ff5b`, the highlight badge) are shared by both themes. There are no shadows, so the old shadow token is gone.
+
+### Known accessibility exception
+
+White text on `#ff83da` is 2.21:1. This is limited to `.btn--accent` (header Book button) and `.bar__book` (phone booking bar). The owner chose it to match DESIGN.md. `tests/e2e/quality.e2e.mjs` exempts `color-contrast` for those selectors only, and `tests/unit/contrast.test.ts` has no accent pair. The eucalyptus accent passes AA (4.99:1). Hover and focus switch to black with white text.
 
 Semantic colours are shared by every theme (the plain `:root` block):
 
@@ -80,25 +91,26 @@ Axe can't measure two things, so `tests/e2e/quality.e2e.mjs` measures them in th
 
 ## Type
 
-One family: Schibsted Grotesk Variable (400 to 700), self-hosted through `@fontsource-variable/schibsted-grotesk` (imported at the top of `src/styles/global.css`), with system fallbacks in `--font-sans`.
+One family: Inter Variable (400 to 900), self-hosted through `@fontsource-variable/inter` (imported at the top of `src/styles/global.css`), with system fallbacks in `--font-sans`.
 
 | Token | Size | Used for |
 |---|---|---|
-| `--text-14` | 14px | Smallest text: captions, the demo ribbon, badges, the mobile bar summary |
-| `--text-16` | 16px | Buttons, hints, field errors, footer |
-| `--body-size` | 17px | Body text |
-| `--text-18` | 18px | Section intros, lead lines, review quotes, h4 |
+| `--text-12`, `--text-13` | 12, 13px | Fine print, announcement bar, eyebrow |
+| `--text-14` | 14px | Captions, badges, nav links, buttons, the mobile bar summary |
+| `--text-16` | 16px | Body text, hints, field errors, footer |
+| `--text-18` | 18px | Section intros, lead lines, review quotes |
+| `--text-20` | 20px | h4, card titles |
 | `--text-22` | 22px | h3, the logo wordmark, stepper counts |
 | `--text-28` | 28px | h2 |
-| `--text-36` | 36px | Step numbers in "How a booking works" |
-| `--text-hero` | `clamp(2.5rem, 5vw, 3.5rem)` | h1, `.display`, the price on the price tag |
+| `--text-48` | `clamp(2rem, 5vw, 3rem)` | h1, step numbers, the price on the price tag |
+| `--text-display` | `clamp(2.75rem, 6.5vw, 6rem)` | `.display`: the home hero headline |
 
-- Body: `--leading-body` 1.6, line length up to `--measure` (68ch) on paragraphs.
-- Headings: weight 700, `--leading-tight` 1.1, `text-wrap: balance`.
-- `--tracking-display` (−0.02em) is used only on h1, `.display`, the price-tag amount and the logo wordmark.
-- Weights: `--weight-regular` 400, `--weight-medium` 500 (labels, buttons), `--weight-bold` 700.
+- Body: 16px, `--leading-body` 1.5, colour `--color-ink-muted`, line length up to `--measure` (68ch) on paragraphs.
+- Headings: ink, weight 700 (h1 and h2 900), `--leading-tight` 1.1, `text-wrap: balance`. `.display` is 900 at 0.9 leading.
+- `--tracking-display` (−0.025em) is for `.display` and the price-tag amount; `--tracking-heading` (−0.015em) for h1 to h3; `--tracking-caps` (0.03em) for uppercase labels.
+- Weights: `--weight-regular` 400, `--weight-medium` 500 (labels, buttons), `--weight-semibold` 600, `--weight-bold` 700, `--weight-black` 900.
 - Prices and counts use `.tabular` (tabular figures) so they don't jump as they change.
-- Sentence case everywhere, left-aligned throughout. Nothing is set in capitals.
+- Sentence case everywhere, left-aligned throughout. Capitals only on `.eyebrow` and `.arrow-link`, in CSS.
 - Text is never smaller than `--text-14`. The exception is SVG labels on the floor plan and coverage map: they are set in px (15 to 20px) in drawing units, so they shrink with the drawing on a phone. `FloorPlan.astro` enlarges them below 600px to compensate. That is the one place px font sizes appear in components.
 
 ## Space and layout
@@ -107,10 +119,11 @@ One family: Schibsted Grotesk Variable (400 to 700), self-hosted through `@fonts
 |---|---|
 | `--space-1` … `--space-8` | 4, 8, 12, 16, 24, 32, 48, 64 px |
 | `--gutter` | 16px below 768px, 32px from 768px |
-| `--page-max` | 75rem (1200px) |
+| `--page-max` | 80rem (1280px) |
+| `--space-section` | 5rem (80px between sections; `.band` is half of it top and bottom) |
 | `--target` | 44px, the minimum tap target |
 
-- `.wrap` centres content at `--page-max` with `--gutter` on each side. `.band` gives a section 48px of vertical padding, 64px from 1024px.
+- `.wrap` centres content at `--page-max` with `--gutter` on each side. `.band` gives a section 32px of vertical padding, 40px from 1024px.
 - Single column below 768px with a 16px side gutter. Everything must work at 375px (and 320px) with no horizontal scroll.
 - From 1024px the layout follows a 12-column grid (spec §7.3). There is no grid utility class: each section sets its own `grid-template-columns`. Hero: `5fr 6fr` from 1024px. Reviews: `4fr 7fr` from 900px. Room checklist: `5fr 4fr` from 900px. Vetting: text beside a 320px founder column. Coverage: two equal columns. Most bands pair a wide column with a narrow one, all left-aligned.
 - Breakpoints in use: 480px (plan segments go four across), 600px (plan labels stop being enlarged), 768px (header shows the phone number and Book a clean, the mobile booking bar goes away, step lists go four across), 900px (two-column bands), 1024px (header navigation, two-column hero), 1200px (trust row four across).
@@ -120,12 +133,12 @@ One family: Schibsted Grotesk Variable (400 to 700), self-hosted through `@fonts
 
 The floor plan is the one bold element on the site. Everything else stays quiet so the plan reads as the thing to use.
 
-- `--wall` (2px) is the only heavy line weight. The plan's walls use it, and the outer wall of the house is drawn at 4px. Outside the plan, 2px ink rules work like walls between parts of a page: the top of the services list, the FAQ list, each booking step and the footer, above and below the offices band, beside each review, and along the top of the mobile booking bar. Status boxes (error summary, form outcomes) and photo placeholders also use `--wall`, in their own colours. The current header link and a hovered service title get a 2px underline.
+- `--wall` (2px) is the only heavy line weight. The plan's walls use it, the current booking step and status boxes (error summary, form outcomes, photo placeholders) too.
 - Everything else is a 1px `--hairline` in `--color-line`, or white space.
-- Before adding another 2px line, check it divides the page the way a wall would. If it only decorates, use a hairline.
-- Corners: 0 on the plan (rooms and walls are square; the dashed add-a-room slot inside a room has a slight corner so it reads as a button). `--radius-control` (6px) on buttons, fields, photos, placeholders, badges, the price tag and the booking tag.
-- One shadow on the whole site: the pinned booking tag, so it reads as floating above the page.
-- Services, reviews and team are lists or rows, never grids of identical cards.
+- Corners: 0 on the plan. `--radius-card` (4px) on cards, panels, photos, placeholders and the price tag. `--radius-control` (8px) on fields, ghost buttons and segments. `--radius-pill` on buttons, badges and the booking tag.
+- No shadows.
+- Shared classes in `global.css`: `.card` (cream fill, lilac hairline, 4px), `.accordion` (native `<details>` rows with a plus/minus in a tint circle), `.eyebrow` and `.arrow-link` (uppercase labels).
+- Trust items, the four home services and reviews are cards (4, 2, 1 columns where they are grids). Other services lists and team are rows.
 
 ## Motion
 
@@ -174,7 +187,7 @@ Industry-neutral primitives. They take everything as props and read no config.
 
 | Component | Props | Notes |
 |---|---|---|
-| `Button` | `href?`, `variant?: 'primary' \| 'secondary' \| 'quiet'` (default primary), `size?: 'md' \| 'lg'`, `type?: 'button' \| 'submit'`, `icon?: IconName`, `block?: boolean`, plus any `<a>`/`<button>` attribute | A link when `href` is set, otherwise a button. Primary is ink with on-ink text, secondary an ink outline, quiet an underlined text button with a full-size target |
+| `Button` | `href?`, `variant?: 'primary' \| 'secondary' \| 'quiet' \| 'accent'` (default primary), `size?: 'md' \| 'lg'`, `type?: 'button' \| 'submit'`, `icon?: IconName`, `block?: boolean`, plus any `<a>`/`<button>` attribute | A link when `href` is set, otherwise a button. Accent is the pink pill and the single primary action on a screen (the header button at 768px and up, the booking bar below). Primary is an ink pill with on-ink text, secondary an ink outline with 8px corners, quiet an underlined text button with a full-size target |
 | `Field` | `name`, `label`, `type?: 'text' \| 'email' \| 'tel' \| 'textarea' \| 'select' \| 'number'`, `required?`, `autocomplete?`, `inputmode?`, `hint?`, `options?: { value, label }[]`, `value?`, `placeholder?`, `maxlength?` | Input id is `field-<name>`. Writes "(optional)" after the label when not required. Errors go in `[data-error-for=<name>]` |
 | `ErrorSummary` | `title?` (default "Check these and try again:") | Empty `role="alert"` box, hidden until `core/forms.ts` fills it with links to the fields and focuses it |
 | `Icon` | `name: IconName`, `size?` (20), `label?`, `class?` | 24×24 outline icons from `icons.ts`. Decorative unless `label` is set. To add one, add a path to `icons.ts` |

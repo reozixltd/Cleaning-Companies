@@ -349,18 +349,18 @@ Theme `eucalyptus` (D12): paper `#F5F7F2`, ink `#1E3B30`, room `#DDE8DA`, highli
 
 ### 7.2 Type
 
-- Schibsted Grotesk (variable, 400–700), self-hosted, Latin subset. One family.
-- Scale: 14, 16, 18, 22, 28, 36; hero headline `clamp(2.5rem, 5vw, 3.5rem)`.
-- Body 17px, line height 1.6, line length up to 68ch.
-- Headlines 700 with negative tracking (−0.02em); nothing else uses that treatment.
+- Inter (variable, 400–900), self-hosted. One family.
+- Scale: 12, 13, 14, 16, 18, 20, 22, 28, 48; display headline `clamp(2.75rem, 6.5vw, 6rem)`.
+- Body 16px, line height 1.5, colour `#333`, line length up to 68ch.
+- Headlines 700 to 900 with negative tracking (−0.015em; −0.025em on the display headline).
 - Sentence case everywhere, left-aligned throughout.
 
 ### 7.3 Layout and shape
 
 - 12-column grid at ≥1024px, single column below 768px, 16px side gutter on mobile.
 - The plan is the one bold element: 2px ink "walls" are the only heavy lines on the site. Elsewhere: hairlines and white space.
-- Corners: 0 on the plan, 6px on controls and photos.
-- Services, reviews and team are lists or rows, not grids of identical rounded cards.
+- Corners: 0 on the plan, 4px on cards and photos, 8px on controls, pills on buttons and tags.
+- Trust items, the four home services and reviews are cream cards; no shadows.
 
 ### 7.4 Motion
 

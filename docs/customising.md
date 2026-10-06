@@ -107,17 +107,22 @@ Two themes ship: `floorplan` (navy ink, yellow highlight) and `eucalyptus` (gree
      --color-ink-muted: #4f5a6e;
      --color-room: #e6e8ee;
      --color-highlight: #f4b9a0;
+     --color-card: #f7f6f2;
+     --color-card-border: #c9ccd6;
      --color-line: #aab1bf;
      --color-field-border: #6b768c;   /* text field outlines: 3:1 on paper and surface */
      --color-surface: #ffffff;
      --color-on-ink: #ffffff;
      --color-focus: #1f2a44;
-     --color-shade: rgb(31 42 68 / 0.08);  /* ink at 8% */
-     --color-shadow: rgb(31 42 68 / 0.12); /* ink at 12% */
+     --color-shade: rgb(31 42 68 / 0.06);  /* ink at 6% */
+     --color-accent: #1f2a44;
+     --color-on-accent: #ffffff;
+     --color-panel: #1f2a44;
+     --color-on-panel-muted: #c9ccd6;
    }
    ```
 
-   Set all thirteen tokens; the contrast test fails if a theme leaves one out, since it would quietly fall back to the floor plan colour. `--color-line` is for decorative hairlines and can be light; `--color-field-border` outlines text fields and must reach 3:1 against both `--color-paper` and `--color-surface`. Write colours as hex (the contrast test reads hex), except `--color-shade` and `--color-shadow`, which are the ink colour as `rgb()` with transparency. The other tokens (semantic colours, type, space, radius, motion) are shared by every theme in the plain `:root` block further down the file. To change one for a client, edit it there: a value set in a theme block above it would be overridden.
+   Set all eighteen colour tokens; the contrast test fails if a theme leaves one out, since it would quietly fall back to the floor plan colour. `--color-line` is for decorative hairlines and can be light; `--color-field-border` outlines text fields and must reach 3:1 against both `--color-paper` and `--color-surface`. Write colours as hex (the contrast test reads hex), except `--color-shade`, which is the ink colour as `rgb()` with transparency. The other tokens (semantic colours, type, space, radius, motion) are shared by every theme in the plain `:root` block further down the file. To change one for a client, edit it there: a value set in a theme block above it would be overridden.
 
 2. In `src/config/business.ts`, add the name to `ThemeName` and use it:
 
@@ -142,20 +147,20 @@ The theme is set before the first paint by an inline script in `src/layouts/Them
 
 ### Font
 
-The site uses one family, Schibsted Grotesk, self-hosted. To change it, install a Fontsource variable package, replace the import at the top of `src/styles/global.css`, and update `--font-sans` in `tokens.css`:
+The site uses one family, Inter Variable, self-hosted. To change it, install a Fontsource variable package, replace the import at the top of `src/styles/global.css`, and update `--font-sans` in `tokens.css`:
 
 ```bash
-npm install @fontsource-variable/inter
+npm install @fontsource-variable/manrope
 ```
 
 ```css
 /* src/styles/global.css */
-@import '@fontsource-variable/inter';
+@import '@fontsource-variable/manrope';
 ```
 
 ```css
 /* src/styles/tokens.css */
---font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+--font-sans: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 ```
 
 ## Prices and the first-visit rule

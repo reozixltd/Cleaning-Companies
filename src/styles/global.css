@@ -1,5 +1,5 @@
 /* Base styles. Raw values live in tokens.css. */
-@import '@fontsource-variable/schibsted-grotesk';
+@import '@fontsource-variable/inter';
 @import './tokens.css';
 
 *,
@@ -37,7 +37,7 @@ h1, h2, h3, h4 {
 }
 
 h1, .display {
-  font-size: var(--text-hero);
+  font-size: var(--text-48);
   letter-spacing: var(--tracking-display);
 }
 

@@ -8,35 +8,45 @@
 
 :root,
 [data-theme='floorplan'] {
-  --color-paper: #f4f7f8;        /* plan paper: page canvas */
-  --color-ink: #17323f;          /* plan ink: text, walls, primary buttons */
-  --color-ink-hover: #0e2430;
-  --color-ink-muted: #4e6874;    /* secondary text, AA on paper and surface */
-  --color-room: #dcebe9;         /* unselected rooms, quiet panels */
-  --color-highlight: #f2c14e;    /* selected rooms and the price tag only, always with ink text */
-  --color-line: #9fb6bf;         /* hairlines and panel edges (decorative) */
-  --color-field-border: #6f8f9b; /* text field outlines: 3:1 on paper and surface */
+  --color-paper: #ffffff;        /* page canvas */
+  --color-ink: #000000;          /* headings, borders, default buttons */
+  --color-ink-hover: #333333;
+  --color-ink-muted: #333333;    /* body text */
+  --color-room: #f7e1f7;         /* quiet tint: selected rooms, done steps, active nav pill, hover */
+  --color-highlight: #ffc5ee;    /* strong tint: price tag, priced rooms, FAQ toggle, announcement bar. Always ink text */
+  --color-card: #fffcf6;         /* card and panel fill */
+  --color-card-border: #c4c9dd;  /* card edge (decorative) */
+  --color-line: #cccccc;         /* hairline dividers (decorative) */
+  --color-field-border: #8c8c8c; /* text field outlines: 3:1 on paper, card and panel */
   --color-surface: #ffffff;      /* form surfaces */
   --color-on-ink: #ffffff;
-  --color-focus: #17323f;
-  --color-shade: rgb(23 50 63 / 0.08);  /* pressed and hover washes */
-  --color-shadow: rgb(23 50 63 / 0.12);
+  --color-focus: #000000;
+  --color-shade: rgb(0 0 0 / 0.06);  /* pressed and hover washes */
+  --color-accent: #ff83da;       /* the one primary action per screen */
+  --color-on-accent: #ffffff;    /* 2.2:1 on accent: owner-approved exception, see docs/design-system.md */
+  --color-panel: #161616;        /* dark hero panel */
+  --color-on-panel-muted: #cccccc;
 }
 
 [data-theme='eucalyptus'] {
-  --color-paper: #f5f7f2;
-  --color-ink: #1e3b30;
-  --color-ink-hover: #142a22;
-  --color-ink-muted: #4c6458;
-  --color-room: #dde8da;
-  --color-highlight: #9cc5e8;
-  --color-line: #a9bca9;
+  --color-paper: #ffffff;
+  --color-ink: #142a22;
+  --color-ink-hover: #1e3b30;
+  --color-ink-muted: #33483f;
+  --color-room: #dcebdf;
+  --color-highlight: #cfe5d2;
+  --color-card: #f7f9f3;
+  --color-card-border: #bccabc;
+  --color-line: #c9d3c9;
   --color-field-border: #728f72;
   --color-surface: #ffffff;
   --color-on-ink: #ffffff;
-  --color-focus: #1e3b30;
-  --color-shade: rgb(30 59 48 / 0.08);
-  --color-shadow: rgb(30 59 48 / 0.12);
+  --color-focus: #142a22;
+  --color-shade: rgb(20 42 34 / 0.06);
+  --color-accent: #2f7d5b;
+  --color-on-accent: #ffffff;
+  --color-panel: #142a22;
+  --color-on-panel-muted: #c9d3c9;
 }
 
 :root {
@@ -49,23 +59,35 @@
   --color-danger-soft: #fbe9e7;
   --color-star: #7a4f00;
 
-  /* Type: Schibsted Grotesk only */
-  --font-sans: 'Schibsted Grotesk Variable', 'Schibsted Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Supporting tints, shared by both themes. Never a page or button background. */
+  --color-ice: #d2f4ff;
+  --color-lime: #e8ff5b;
+
+  /* Type: Inter only (DESIGN.md substitute for Soehne) */
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-12: 0.75rem;
+  --text-13: 0.8125rem;
   --text-14: 0.875rem;
   --text-16: 1rem;
   --text-18: 1.125rem;
+  --text-20: 1.25rem;
   --text-22: 1.375rem;
   --text-28: 1.75rem;
-  --text-36: 2.25rem;
-  --text-hero: clamp(2.5rem, 5vw, 3.5rem);
-  --body-size: 1.0625rem; /* 17px */
-  --leading-body: 1.6;
+  --text-48: clamp(2rem, 5vw, 3rem);
+  --text-display: clamp(2.75rem, 6.5vw, 6rem);
+  --body-size: 1rem;
+  --leading-body: 1.5;
   --leading-tight: 1.1;
+  --leading-display: 0.9;
   --measure: 68ch;
   --weight-regular: 400;
   --weight-medium: 500;
+  --weight-semibold: 600;
   --weight-bold: 700;
-  --tracking-display: -0.02em;
+  --weight-black: 900;
+  --tracking-display: -0.025em;
+  --tracking-heading: -0.015em;
+  --tracking-caps: 0.03em;
 
   /* Space (4, 8, 12, 16, 24, 32, 48, 64 px) */
   --space-1: 0.25rem;
@@ -76,12 +98,15 @@
   --space-6: 2rem;
   --space-7: 3rem;
   --space-8: 4rem;
+  --space-section: 5rem;
   --gutter: 1rem;
-  --page-max: 75rem;
+  --page-max: 80rem;
 
   /* Shape */
-  --radius-control: 6px;
-  --wall: 2px;       /* the floor plan's walls: the only heavy line on the site */
+  --radius-control: 8px;  /* inputs, ghost buttons, segments */
+  --radius-card: 4px;
+  --radius-pill: 9999px;
+  --wall: 2px;       /* floor-plan walls and status outlines only */
   --hairline: 1px;
   --target: 44px;    /* minimum tap target */
 

@@ -97,6 +97,12 @@ const THEME_PAIRS: Pair[] = [
   ['focus', 'highlight', 3], // focus ring on the price tag's Choose a time button
   ['field-border', 'paper', 3], // text field outline (non-text: 3:1, WCAG 1.4.11)
   ['field-border', 'surface', 3], // the same outline against the field's own white fill
+  ['ink', 'card', 4.5],
+  ['ink-muted', 'card', 4.5],
+  ['field-border', 'card', 3],
+  ['on-ink', 'panel', 4.5],
+  ['on-panel-muted', 'panel', 4.5],
+  ['field-border', 'panel', 3],
 ];
 
 /** Semantic colours from the shared :root block, as each theme ends up with them. */

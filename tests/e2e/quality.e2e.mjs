@@ -43,7 +43,7 @@ async function seriousIssues(page) {
   const APPROVED = /btn--accent|bar__book/;
   return violations
     .filter((v) => v.impact === 'serious' || v.impact === 'critical')
-    .map((v) => (v.id === 'color-contrast' ? { ...v, nodes: v.nodes.filter((n) => !APPROVED.test(n.html)) } : v))
+    .map((v) => (v.id === 'color-contrast' ? { ...v, nodes: v.nodes.filter((n) => !APPROVED.test(`${n.target.join(' ')} ${n.html}`)) } : v))
     .filter((v) => v.nodes.length > 0)
     .map((v) => `${v.id} (${v.impact}): ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(', ')}`);
 }

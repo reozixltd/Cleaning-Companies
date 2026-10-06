@@ -66,9 +66,6 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
     font-size: var(--text-14);
   }
   .service__price {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-2);
     font-size: var(--text-14);
   }
   .service__price strong {
@@ -77,7 +74,7 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
   }
   .service__price::after {
     content: '92';
-    margin-left: auto;
+    float: right;
     color: var(--color-ink);
     font-size: var(--text-18);
   }

@@ -410,6 +410,7 @@ A few sentences are written in components rather than config. Each is a claim ab
 | `src/sections/OfficesBand.astro` | "send insurance certificates on request" |
 | `src/sections/TrustRow.astro` | "Police-checked cleaners" |
 | `src/features/pricing/PriceTag.astro` | "priced as a deep clean so we start from clean" |
+| `src/features/pricing/PriceLine.astro` | The same "priced as a deep clean so we start from clean" line, in the home hero |
 | `src/pages/index.astro` | The home page description mentions "Brisbane's north" |
 
 The other pages (`/offices`, `/careers`, `/refer`, `/about`, `/book` and the end-of-lease service page) carry more of the same kind: the certificate turnaround, the careers pay range, the referral reward, the REIQ checklist, the 72-hour re-clean promise and the "Nothing to pay now" line beside the booking button. Read each page for claims before launch.
@@ -429,6 +430,21 @@ The status also lists files that match no slot, such as a misspelt name or an up
 - Demo photos are licence-free shots of rooms, never people presented as staff.
 - Record every file in [`photo-credits.md`](photo-credits.md). Remove the demo rows when the client's photos go in.
 - To change what a slot asks for, edit its `brief`, `search` and `alt`, then run `--write`.
+
+### The home hero: a still and a video
+
+The hero's backdrop is a `Scene` (`src/core/ui/Scene.astro`): a still, and optionally a silent loop over it.
+
+- `src/assets/photos/hero.jpg`: the wide still, 2880×1620. Keep the left 40% calm, because the headline card sits there.
+- `src/assets/photos/hero-portrait.jpg`: the upright crop phones get, 1440×2560. Without it phones get the wide still, cropped.
+- `public/media/hero-loop.mp4` and `public/media/hero-loop.webm`: the loop, 1920×1080, no audio, at most 2.5 MB and 1.5 MB. Its first frame should match the still. Encode a source clip with:
+
+```bash
+ffmpeg -i source.mp4 -an -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,fps=30" -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart public/media/hero-loop.mp4
+ffmpeg -i source.mp4 -an -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,fps=30" -c:v libvpx-vp9 -b:v 0 -crf 38 -row-mt 1 public/media/hero-loop.webm
+```
+
+With no `hero.jpg` the hero is its card alone. With no clip it is the still alone. The video is never requested on screens under 768px, under reduced motion, with Save-Data on, or on a 2G or 3G connection. `public/media/sample.*` is a two-second test clip for `/dev/ui/`; leave it in place.
 
 ## Production lead storage
 
@@ -596,7 +612,7 @@ Checks, all green:
 npm test             # boundaries, contrast, unit tests
 npm run check        # types and content schemas
 npm run build        # static site in dist/
-npm run budget       # JavaScript per page under 30 KB gzipped
+npm run budget       # JavaScript per page: 30 KB gzipped eager, 150 KB lazy
 npm run preview &    # serve dist/ on :4321
 npm run e2e          # Playwright smoke tests, axe scan, overflow checks
 ```

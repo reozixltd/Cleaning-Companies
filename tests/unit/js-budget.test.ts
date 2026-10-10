@@ -84,7 +84,7 @@ describe('overBudget', () => {
       { page: '/model/', bytes: 2_000, lazy: 160_000 },
       { page: '/fine/', bytes: 30_000, lazy: 150_000 },
     ];
-    expect(overBudget(pages, 30_720, 153_600).map((p) => p.page)).toEqual(['/model/', '/book/', '/']);
+    expect(overBudget(pages, 30_720, 153_600).map((p: { page: string }) => p.page)).toEqual(['/model/', '/book/', '/']);
   });
 
   it('defaults to 30 KB eager and 150 KB lazy', () => {

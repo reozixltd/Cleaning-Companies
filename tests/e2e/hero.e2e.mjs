@@ -54,19 +54,24 @@ await step('a one-off clean shows one price in the hero too', async (page) => {
   assert.deepEqual(hero, await priced(page, '#plan'));
 }, { width: 1280 });
 
-await step('Price your home goes to the estimator, clear of the header', async (page) => {
-  await go(page, '/');
-  await page.locator(`${HERO} a[href="#plan"]`).click();
-  await page.waitForFunction(() => location.hash === '#plan');
-  await page.waitForTimeout(200);
-  const heading = await page.locator('#plan h2').first().evaluate((el) => el.getBoundingClientRect().top);
-  const header = await page.locator('header.header').evaluate((el) => el.getBoundingClientRect().bottom);
-  assert.ok(heading >= header && heading < 400, `the heading is at ${Math.round(heading)}px and the header ends at ${Math.round(header)}px`);
-}, { width: 1280 });
+for (const width of [375, 1280]) {
+  await step(`Price your home goes to the estimator, clear of the header, with the hero out of sight (${width})`, async (page) => {
+    await go(page, '/');
+    await page.locator(`${HERO} a[href="#plan"]`).click();
+    await page.waitForFunction(() => location.hash === '#plan');
+    await page.waitForTimeout(200);
+    const heading = await page.locator('#plan h2').first().evaluate((el) => el.getBoundingClientRect().top);
+    const header = await page.locator('header.header').evaluate((el) => el.getBoundingClientRect().bottom);
+    const button = await page.locator(`${HERO} a[href="#plan"]`).evaluate((el) => el.getBoundingClientRect().bottom);
+    assert.ok(heading >= header && heading < 400, `the heading is at ${Math.round(heading)}px and the header ends at ${Math.round(header)}px`);
+    assert.ok(button <= header, `the hero's last button ends at ${Math.round(button)}px and the header at ${Math.round(header)}px`);
+  }, { width });
+}
 
 for (const width of [375, 1280]) {
   await step(`every control in the hero is at least 44px (${width})`, async (page) => {
     await go(page, '/');
+    assert.ok((await page.locator(`${HERO} :is(a, button)`).count()) >= 2, 'the hero has its two buttons');
     const small = await page.$$eval(`${HERO} :is(a, button)`, (els) =>
       els
         .map((el) => ({ el, box: el.getBoundingClientRect() }))
@@ -129,6 +134,29 @@ await step('the pinned tag stays away while the hero price is on screen, and com
   assert.ok(!(await page.locator('[data-booking-tag]').isVisible()));
   await page.locator('#plan').evaluate((el) => window.scrollTo(0, el.getBoundingClientRect().bottom + window.scrollY));
   await page.locator('[data-booking-tag]').waitFor();
+}, { width: 1280 });
+
+// The photo layout is chosen at build time (a `hero` photo). These two steps switch its class on, so its CSS is tested without the asset.
+const scenic = (page) => page.locator(HERO).evaluate((el) => el.classList.add('scene-hero--scenic'));
+
+await step('under a photo hero the estimator still starts on the first screen of a laptop', async (page) => {
+  for (const [width, height] of [[1024, 768], [1280, 800], [1366, 768]]) {
+    await page.setViewportSize({ width, height });
+    await go(page, '/');
+    await scenic(page);
+    const plan = await page.locator('#plan').evaluate((el) => el.getBoundingClientRect().top);
+    const buttons = await page.locator(`${HERO} a[href="#plan"]`).evaluate((el) => el.getBoundingClientRect().bottom);
+    assert.ok(plan <= height - 48, `${width}x${height}: the estimator starts at ${Math.round(plan)}px`);
+    assert.ok(buttons < plan, `${width}x${height}: the buttons end at ${Math.round(buttons)}px and the estimator starts at ${Math.round(plan)}px`);
+  }
+});
+
+await step('under a photo hero the card stays solid while its buttons are on screen', async (page) => {
+  await go(page, '/');
+  await scenic(page);
+  await page.evaluate(() => window.scrollTo(0, 480));
+  await page.waitForFunction(() => Number(getComputedStyle(document.querySelector('.scene-hero')).getPropertyValue('--p')) > 0);
+  assert.equal(await page.locator(`${HERO} .scene-hero__card`).evaluate((el) => getComputedStyle(el).opacity), '1');
 }, { width: 1280 });
 
 await step('home has no horizontal scroll at 320, 375, 768, 1024 and 1280', async (page) => {

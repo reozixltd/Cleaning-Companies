@@ -38,7 +38,7 @@ Semantic colours are shared by every theme (the plain `:root` block):
 
 Rules for using colour:
 
-- Highlight marks what the visitor chose or can act on: included bedrooms, bathrooms, study and laundry on the hero plan, the chosen room on the checklist plan, the price tag, the pinned booking tag, suburbs with their own page on the coverage map, the `highlight` badge, and the filled room in the logo. Don't add it anywhere else: if everything is yellow, the plan stops standing out.
+- Highlight marks what the visitor chose or can act on: included bedrooms, bathrooms, study and laundry on the estimator's plan, the chosen room on the checklist plan, the price tag, the pinned booking tag, suburbs with their own page on the coverage map, the `highlight` badge, and the filled room in the logo. Don't add it anywhere else: if everything is yellow, the plan stops standing out.
 - Text on highlight is always `--color-ink`. Never put `--color-ink-muted` on highlight: it drops to about 3.5:1.
 - Living and kitchen use `--color-room`, not highlight: they are always included, so they are not a choice.
 - Status always pairs the strong colour with its `-soft` background, or sits on paper.
@@ -113,7 +113,7 @@ One family: Schibsted Grotesk Variable (400 to 700), self-hosted through `@fonts
 - `.wrap` centres content at `--page-max` with `--gutter` on each side. `.band` gives a section 48px of vertical padding, 64px from 1024px.
 - Single column below 768px with a 16px side gutter. Everything must work at 375px (and 320px) with no horizontal scroll.
 - From 1024px the layout follows a 12-column grid (spec §7.3). There is no grid utility class: each section sets its own `grid-template-columns`. Estimator: `5fr 6fr` from 1024px. Reviews: `4fr 7fr` from 900px. Room checklist: `5fr 4fr` from 900px. Vetting: text beside a 320px founder column. Coverage: two equal columns. Most bands pair a wide column with a narrow one, all left-aligned.
-- Breakpoints in use: 480px (plan segments go four across), 600px (plan labels stop being enlarged), 768px (header shows the phone number and Book a clean, the mobile booking bar goes away, step lists go four across), 900px (two-column bands), 1024px (header navigation, two-column hero), 1200px (trust row four across).
+- Breakpoints in use: 480px (plan segments go four across), 600px (plan labels stop being enlarged), 768px (header shows the phone number and Book a clean, the mobile booking bar goes away, step lists go four across), 900px (two-column bands), 1024px (header navigation, two-column estimator), 1200px (trust row four across).
 - Targets are at least 44px with at least 8px between them.
 
 ## Shape: one bold element
@@ -136,7 +136,7 @@ A few named moments move, and everything else responds quickly or not at all. Th
 | A room is added | Its fill fades from paper to its colour in about 180ms with `--ease-out` | `fadeIn()` in `src/features/plan/plan.ts` (Web Animations API) |
 | A button is pressed | `transform: scale(0.97)` on `:active` over `--dur-press` (160ms) with `--ease-out`. Plan stepper buttons use 0.94 | `Button`, plan segments and steppers, suburb check button, mobile bar |
 | A colour changes | `background-color`, `border-color`, `color` or `fill` over `--dur-colour` (150ms) | Buttons, fields, plan segments and rooms |
-| The home hero leaves the screen | Its photo scales 1 to 1.12; its card rises 6% of its own height and stays solid. Driven by `--p` | `HeroScene`, `src/layouts/motion.ts` |
+| The home hero leaves the screen (with a photo, from 768px) | Its photo scales 1 to 1.12; its card rises 6% of its own height and stays solid. Driven by `--p` | `HeroScene`, `src/layouts/motion.ts` |
 | The estimator arrives | The plan tilts from flat to a three-quarter view and its walls rise. A room added later rises in 180ms | `src/features/plan/scene3d.ts` |
 | A background video starts | It fades in over its still in `--dur-scene` (900ms) | `Scene` |
 
@@ -196,7 +196,7 @@ Icons available: `phone`, `menu`, `close`, `check`, `plus`, `minus`, `home`, `sh
 | `plan/PlanControls` | `id` (same as its `FloorPlan`) | Type of clean, bedroom and bathroom steppers, study and laundry toggles, how often, "Add extras" |
 | `pricing/PriceTag` | none | Per-visit price, first-visit price when different, Choose a time |
 | `pricing/PriceLine` | none; default slot for extra actions | The same price hooks as `PriceTag` in a compact block, for the home hero |
-| `pricing/BookingTag` | none | Desktop only: a compact tag pinned under the header after the hero scrolls away |
+| `pricing/BookingTag` | none | Desktop only: a compact tag pinned under the header once the hero's price and the estimator are both off screen |
 | `areas/SuburbCheck` | none | "Check your suburb" form. Uses the fixed id `suburb-input`, so one per page |
 | `areas/CoverageMap` | none | SVG map of `business.areas` around `business.base`. Larger dots are suburbs with a page |
 | `booking/BookingForm` | none | The five-step request on `/book/`, built from `booking/steps/{Step,Home,When,Access,You,Check}`. Below 1024px the price sits inside step 1; from 1024px it is a sticky tag beside the steps |

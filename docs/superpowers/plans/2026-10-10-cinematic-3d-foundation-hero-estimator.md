@@ -2657,3 +2657,5 @@ Filled in by Task 1 (main) and Task 7 (plan 1). Lighthouse figures are the media
 | Lighthouse `/`: LCP, CLS, TBT | 1.8 s, 0.026, 0 ms | 1.9 s, 0.026, 0 ms |
 | Lighthouse `/book/`: performance | 98 | 98 |
 | Lighthouse `/book/`: accessibility | 100 | 100 |
+
+Plan 1's Lighthouse runs used `--chrome-flags="--headless=new --disable-gpu"`, because plain headless Chrome hung after one run on this machine (that one run of `/`: performance 98, LCP 2.0 s); main's runs used `--headless=new` alone. The home page was measured before Task 8, with no hero photo or video, so its largest paint was the headline.

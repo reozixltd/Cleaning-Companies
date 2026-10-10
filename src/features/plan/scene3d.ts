@@ -195,7 +195,7 @@ export function start(figure: HTMLElement & Probe, selection: Selection): void {
     const active = document.activeElement;
     const held = (active instanceof HTMLElement || active instanceof SVGElement) && drawing.contains(active) ? active : null;
     move();
-    held?.focus();
+    held?.focus({ preventScroll: true });
   };
 
   /** Back to the flat plan, for good (spec §6.4). */
@@ -256,7 +256,7 @@ export function start(figure: HTMLElement & Probe, selection: Selection): void {
     const moving = pose(now) || settling;
     css.render(scene, camera);
     gl.render(scene, camera);
-    if (last) watch(now - last);
+    if (last) watch(dt);
     last = moving ? now : 0;
     if (moving) invalidate();
   };
@@ -294,7 +294,7 @@ export function start(figure: HTMLElement & Probe, selection: Selection): void {
   canvas.addEventListener('webglcontextlost', stop, { once: true });
 
   resize();
-  keepFocus(() => css.render(scene, camera)); // the first render moves the drawing onto the floor, still flat
+  keepFocus(() => css.render(scene, camera)); // the first render moves the drawing onto the floor; the frame resize() asked for poses it before anything is painted
 
   figure.planPointOnScreen = (x, y) => {
     const v = boxes.localToWorld(new Vector3(x, 0, y)).project(camera);

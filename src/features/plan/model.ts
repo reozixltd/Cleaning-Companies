@@ -25,7 +25,7 @@ const WALL = 0.08;
 
 /**
  * Furniture per room kind, as fractions of the room: x, y, width, depth, then
- * height in plan units. All of it sits in the top third, clear of the room's label.
+ * height in plan units. All of it sits in the top 40%, clear of the room's label.
  */
 const FURNITURE: Record<RoomKind, [number, number, number, number, number][]> = {
   bedroom: [[0.2, 0.08, 0.6, 0.28, 0.25], [0.2, 0.08, 0.6, 0.04, 0.5]],
@@ -39,10 +39,10 @@ const FURNITURE: Record<RoomKind, [number, number, number, number, number][]> = 
 function walls(r: PlanRoom): Box[] {
   const wall = (x: number, y: number, w: number, d: number, h: number): Box => ({ room: r.id, kind: 'wall', x, y, w, d, h });
   return [
-    wall(r.x, r.y, r.w, WALL, r.y === 0 ? WALL_HEIGHT : LOW_WALL_HEIGHT),
-    wall(r.x, r.y + r.h - WALL, r.w, WALL, LOW_WALL_HEIGHT),
-    wall(r.x, r.y + WALL, WALL, r.h - 2 * WALL, WALL_HEIGHT),
-    wall(r.x + r.w - WALL, r.y + WALL, WALL, r.h - 2 * WALL, WALL_HEIGHT),
+    wall(r.x + WALL, r.y, r.w - 2 * WALL, WALL, r.y === 0 ? WALL_HEIGHT : LOW_WALL_HEIGHT),
+    wall(r.x + WALL, r.y + r.h - WALL, r.w - 2 * WALL, WALL, LOW_WALL_HEIGHT),
+    wall(r.x, r.y, WALL, r.h, WALL_HEIGHT),
+    wall(r.x + r.w - WALL, r.y, WALL, r.h, WALL_HEIGHT),
   ];
 }
 

@@ -481,7 +481,9 @@ Measured on the final build (local preview):
 |---|---|
 | Unit tests | 334 passing in 39 files, boundaries clean |
 | Types | `astro check`: 0 errors, 0 warnings, 0 hints |
-| End to end | 10 files, 131 steps passing, none skipped. Run with 9 of 12 photo slots filled and no hero photo or video; the hero's photo layout is checked by switching its class on |
+| End to end | 10 files, 132 steps passing, none skipped. Run with 9 of 12 photo slots filled and no hero photo or video; the hero's photo layout is checked by switching its class on. The last run used Chromium's headless shell with software rendering (`--use-angle=swiftshader`) |
 | Accessibility | axe (WCAG 2.0 to 2.2 A/AA tags): no serious or critical issues on `/`, `/book/` (steps 1 and 4, with errors), `/offices/`, `/console/` in both themes at 375 and 1280 |
-| JavaScript | Heaviest page 16.0 KB gzipped (`/console/`), `/book/` 15.6 KB, `/` 11.8 KB plus 130.8 KB that loads only through `import()`; budgets 30 KB and 150 KB (`npm run budget`) |
+| JavaScript | Heaviest page 16.0 KB gzipped (`/console/`), `/book/` 15.6 KB, `/` 11.9 KB plus 130.8 KB that loads only through `import()`; budgets 30 KB and 150 KB (`npm run budget`) |
 | Lighthouse mobile | Performance and accessibility only, median of three runs: home 99 and 100 (LCP 1.9 s, CLS 0.026, TBT 0 ms); `/book/` 98 and 100. Run with `--disable-gpu`, and before the hero photo and video exist, so home's largest paint was the headline |
+
+The Lighthouse figures use its phone profile, which is narrower than 768px, so none of them includes the 3D model. The model's start-up cost and frame rate on a desktop have not been measured.

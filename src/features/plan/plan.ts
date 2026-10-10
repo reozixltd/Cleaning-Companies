@@ -71,6 +71,30 @@ function addRoom(s: Selection, kind: string): Selection {
   return s;
 }
 
+/**
+ * Runs `load` once the 3D model is worth downloading (spec §6.3): a viewport
+ * 768px or wider, motion allowed, Save-Data off, WebGL2 present, the plan within
+ * one viewport of the screen and the page finished loading. Otherwise the flat
+ * plan is all there is, exactly as before.
+ * ponytail: checked once, so a phone-width window that is later widened keeps the flat plan until reload.
+ */
+function whenModelAllowed(figure: HTMLElement, load: () => void): void {
+  const matches = (query: string) => window.matchMedia(query).matches;
+  if (!matches('(min-width: 768px)') || matches('(prefers-reduced-motion: reduce)')) return;
+  if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return;
+  if (!('IntersectionObserver' in window) || !document.createElement('canvas').getContext('webgl2')) return;
+  const near = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      near.disconnect();
+      if (document.readyState === 'complete') load();
+      else window.addEventListener('load', load, { once: true });
+    },
+    { rootMargin: '100% 0px' },
+  );
+  near.observe(figure);
+}
+
 function initEditPlan(figure: HTMLElement): void {
   const controls = document.querySelector<HTMLElement>(`[data-plan-controls="${figure.dataset.plan}"]`);
   let s = loadSelection(storage, pricing, rooms.max) ?? DEFAULT_SELECTION;
@@ -88,6 +112,10 @@ function initEditPlan(figure: HTMLElement): void {
   draw(figure, s);
   if (controls) syncControls(controls, s);
   if (loadSelection(storage, pricing, rooms.max)) emitSelection(s);
+  whenModelAllowed(figure, () => {
+    // A failed download or start leaves the flat plan, which needs nothing from the model.
+    import('./scene3d').then((model) => model.start(figure, s)).catch(() => {});
+  });
 
   const pressRoom = (g: Element, viaKeyboard: boolean) => {
     const kind = (g as SVGGElement).dataset.kind!;

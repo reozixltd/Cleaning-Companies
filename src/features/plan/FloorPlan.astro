@@ -9,7 +9,7 @@ import { rooms } from '@/config/rooms';
 import { describeRooms } from '@/domain/describe';
 import { DEFAULT_SELECTION } from '@/domain/selection';
 import { layout } from './layout';
-import { renderPlanSvg } from './svg';
+import { PAD, UNIT, renderPlanSvg } from './svg';
 
 interface Props {
   id: string;
@@ -20,11 +20,16 @@ interface Props {
 }
 
 const { id, mode, title, selected } = Astro.props;
-const svg = renderPlanSvg(layout(DEFAULT_SELECTION, rooms, { slots: mode === 'edit' }), { mode, title });
+const plan = layout(DEFAULT_SELECTION, rooms, { slots: mode === 'edit' });
+const svg = renderPlanSvg(plan, { mode, title });
+// The stage holds the drawing's shape, so nothing moves when the 3D model takes the drawing over.
+const aspect = `${plan.width * UNIT + 2 * PAD} / ${plan.height * UNIT + 2 * PAD}`;
 ---
 
 <figure class="plan" data-plan={id} data-mode={mode} data-title={title} data-selected={selected}>
-  <div class="plan__drawing" data-plan-svg tabindex="-1" set:html={svg} />
+  <div class="plan__stage" data-plan-stage style={`aspect-ratio: ${aspect}`}>
+    <div class="plan__drawing" data-plan-svg tabindex="-1" set:html={svg} />
+  </div>
   <figcaption class="plan__caption" data-plan-rooms aria-live="polite">{describeRooms(DEFAULT_SELECTION)}</figcaption>
 </figure>
 
@@ -37,6 +42,18 @@ const svg = renderPlanSvg(layout(DEFAULT_SELECTION, rooms, { slots: mode === 'ed
   .plan {
     display: grid;
     gap: var(--space-2);
+  }
+  .plan__stage {
+    position: relative;
+  }
+  /* The 3D model's two layers (scene3d.ts): the drawing on its floor, and the canvas above it. */
+  .plan :global(.plan__floor),
+  .plan :global(.plan__model) {
+    position: absolute;
+    inset: 0;
+  }
+  .plan :global(.plan__model) {
+    pointer-events: none;
   }
   .plan__drawing {
     outline-offset: 4px;

@@ -37,19 +37,26 @@ function showPinned(): void {
 }
 
 function watchHero(): void {
-  const hero = document.querySelector('#plan');
-  if (!hero || !('IntersectionObserver' in window)) {
-    heroVisible = !hero ? false : heroVisible;
+  // Wherever the page already shows the price in full: the estimator, and the home hero's price line.
+  const priced = all('#plan, [data-price-line]');
+  if (!priced.length || !('IntersectionObserver' in window)) {
+    heroVisible = !priced.length ? false : heroVisible;
     return;
   }
-  // The top margin matches the sticky header: a hero hidden under it counts as gone.
-  new IntersectionObserver(
-    ([entry]) => {
-      heroVisible = entry.isIntersecting;
+  const onScreen = new Set<Element>();
+  // The top margin matches the sticky header: a price hidden under it counts as gone.
+  const watcher = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) onScreen.add(entry.target);
+        else onScreen.delete(entry.target);
+      }
+      heroVisible = onScreen.size > 0;
       showPinned();
     },
     { rootMargin: '-80px 0px 0px 0px' },
-  ).observe(hero);
+  );
+  priced.forEach((el) => watcher.observe(el));
 }
 
 let started = false;

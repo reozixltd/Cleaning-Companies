@@ -2,7 +2,7 @@
  * Every photo the site uses, by slot. To fill a slot, save an image as
  * src/assets/photos/<slot>.jpg (or .png/.webp/.avif). Missing files show a
  * labelled placeholder. Photos show finished rooms; never present stock people as staff.
- * The home page has no hero photo on purpose: the floor plan is the hero.
+ * The home hero uses `hero` as a backdrop behind its headline card, and `hero-portrait` on phones.
  */
 export interface PhotoSlot {
   alt: string;
@@ -12,6 +12,8 @@ export interface PhotoSlot {
 }
 
 export const photoSlots = {
+  hero: { alt: 'A bright open-plan living room and kitchen in morning light', brief: 'Wide interior of a just-cleaned open-plan living room and kitchen in morning light. Keep the left 40% calm: the headline card sits there. 2880×1620.', search: '(generated: prompt G0 in docs/superpowers/specs/2026-10-10-cinematic-3d-redesign-design.md)', orientation: 'landscape' },
+  'hero-portrait': { alt: 'A sunlit kitchen island in a clean home', brief: 'The same home as `hero`, framed upright for phones: island and sunlit window in the top two thirds. 1440×2560.', search: '(generated: prompt G2 in the same spec)', orientation: 'portrait' },
   'service-regular': { alt: 'A made bed in a bright bedroom', brief: 'A bedroom after a regular clean: made bed, clear surfaces.', search: 'tidy bedroom natural light', orientation: 'landscape' },
   'service-deep': { alt: 'A clean basin and tapware against dark bathroom tiles', brief: 'A bathroom with spotless tiles, glass and tapware.', search: 'clean bathroom tiles glass shower', orientation: 'landscape' },
   'service-end-of-lease': { alt: 'An empty, clean apartment ready for inspection', brief: 'An empty rental after a bond clean: bare floors, clean windows.', search: 'empty clean apartment bright', orientation: 'landscape' },

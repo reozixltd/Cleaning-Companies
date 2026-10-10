@@ -17,6 +17,8 @@ export const icons = {
   'chevron-down': 'M6 9l6 6 6-6',
   mail: 'M4 6h16v12H4zM4 7l8 6 8-6',
   copy: 'M9 9h10v10H9zM5 15V5h10',
+  pause: 'M9 5v14M15 5v14',
+  play: 'M8 5l11 7-11 7z',
 } as const;
 
 export type IconName = keyof typeof icons;

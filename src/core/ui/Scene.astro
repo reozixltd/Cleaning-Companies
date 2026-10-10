@@ -1,0 +1,132 @@
+---
+/**
+ * A full-bleed backdrop (spec §7.1): a still from a photo slot and, when a clip
+ * exists, a silent looping video that fades in over it. It fills its parent,
+ * which must be positioned. With `portrait`, screens under 768px get that slot.
+ * The <video> ships with no source: scene.ts attaches one only on devices that
+ * can afford it, and the still stays if anything fails.
+ *
+ * A parent can set --scene-scale (a number) to scale the media, and
+ * --scene-pause-bottom (a length) to lift the pause button.
+ */
+import { existsSync } from 'node:fs';
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import { getPhoto } from '../photos';
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Photo slot for the still. */
+  slot: string;
+  /** Photo slot used under 768px wide. */
+  portrait?: string;
+  /** Clip name: public/media/<video>.webm and .mp4. */
+  video?: string;
+  /** Backdrops are decorative, so the default is empty. */
+  alt?: string;
+  /** True for a first-screen scene: the still loads eagerly as the largest paint. */
+  priority?: boolean;
+}
+
+const { slot, portrait, video, alt = '', priority = false } = Astro.props;
+const wide = getPhoto(slot);
+const tall = portrait ? getPhoto(portrait) : undefined;
+
+const srcset = async (image: ImageMetadata, sizes: number[], format: 'avif' | 'webp') => {
+  const widths = sizes.filter((w) => w <= image.width);
+  return (await getImage({ src: image, widths: widths.length ? widths : [image.width], format })).srcSet.attribute;
+};
+const WIDE = [800, 1200, 1600, 2400];
+const TALL = [480, 720, 1080];
+const still = wide && {
+  fallback: (await getImage({ src: wide, width: Math.min(1600, wide.width), format: 'jpeg' })).src,
+  avif: await srcset(wide, WIDE, 'avif'),
+  webp: await srcset(wide, WIDE, 'webp'),
+  tallAvif: tall && (await srcset(tall, TALL, 'avif')),
+  tallWebp: tall && (await srcset(tall, TALL, 'webp')),
+};
+// `astro build` and `astro dev` both run from the project root, where public/ is.
+const clips = video ? ['webm', 'mp4'].filter((format) => existsSync(`public/media/${video}.${format}`)) : [];
+---
+
+<div class="scene" data-scene>
+  {
+    still && (
+      <picture>
+        {still.tallAvif && <source media="(max-width: 767px)" type="image/avif" srcset={still.tallAvif} sizes="100vw" />}
+        {still.tallWebp && <source media="(max-width: 767px)" type="image/webp" srcset={still.tallWebp} sizes="100vw" />}
+        <source type="image/avif" srcset={still.avif} sizes="100vw" />
+        <source type="image/webp" srcset={still.webp} sizes="100vw" />
+        <img src={still.fallback} alt={alt} loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} decoding="async" />
+      </picture>
+    )
+  }
+  {
+    clips.length > 0 && (
+      <>
+        <video class="scene__video" muted playsinline loop preload="none" aria-hidden="true" tabindex="-1" data-scene-video={video} data-formats={clips.join(' ')} />
+        <button class="scene__pause" type="button" aria-pressed="false" data-scene-toggle hidden>
+          <Icon name="pause" class="scene__icon-pause" />
+          <Icon name="play" class="scene__icon-play" />
+          <span class="visually-hidden">Pause background video</span>
+        </button>
+      </>
+    )
+  }
+</div>
+
+<script>
+  import { initScenes } from './scene';
+  initScenes();
+</script>
+
+<style>
+  .scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--color-room);
+  }
+  .scene img,
+  .scene__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    transform: scale(var(--scene-scale, 1));
+  }
+  .scene__video {
+    opacity: 0;
+    transition: opacity var(--dur-scene) var(--ease-out);
+  }
+  .scene[data-playing] .scene__video {
+    opacity: 1;
+  }
+  /* A solid chip, so the control never depends on the picture behind it for contrast. */
+  .scene__pause {
+    position: absolute;
+    right: var(--space-4);
+    bottom: var(--scene-pause-bottom, var(--space-4));
+    z-index: 1; /* above anything a parent lays over the backdrop */
+    display: grid;
+    place-items: center;
+    width: var(--target);
+    height: var(--target);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-1);
+    cursor: pointer;
+  }
+  .scene__pause:focus-visible {
+    outline-offset: -5px;
+  }
+  .scene__pause[aria-pressed='true'] :global(.scene__icon-pause),
+  .scene__pause[aria-pressed='false'] :global(.scene__icon-play) {
+    display: none;
+  }
+</style>

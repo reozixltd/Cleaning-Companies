@@ -268,8 +268,8 @@ export function start(figure: HTMLElement & Probe, selection: Selection): void {
 
   const resizer = new ResizeObserver(resize);
   resizer.observe(stage);
-  const watcher = new IntersectionObserver(([entry]) => {
-    inView = entry.isIntersecting;
+  const watcher = new IntersectionObserver((entries) => {
+    inView = entries.at(-1)!.isIntersecting; // the newest record; an older one can be queued ahead of it
     invalidate();
   });
   watcher.observe(stage);

@@ -1,6 +1,7 @@
 /**
- * Keeps every price display in step with the visitor's selection: the hero tag,
- * the pinned desktop tag and the mobile booking bar all use the same data-* hooks.
+ * Keeps every price display in step with the visitor's selection: the hero's price
+ * line, the estimator's tag, the pinned desktop tag and the mobile booking bar all
+ * use the same data-* hooks.
  * It listens for selection events; it never imports the floor plan.
  */
 import { formatMoney } from '@/core/format';

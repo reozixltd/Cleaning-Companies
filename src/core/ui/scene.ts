@@ -49,8 +49,8 @@ function attach(scene: HTMLElement): void {
     toggle.setAttribute('aria-pressed', String(pausedByVisitor));
     sync();
   });
-  new IntersectionObserver(([entry]) => {
-    onScreen = entry.isIntersecting;
+  new IntersectionObserver((entries) => {
+    onScreen = entries.at(-1)!.isIntersecting; // the newest record; an older one can be queued ahead of it
     sync();
   }).observe(scene);
 }

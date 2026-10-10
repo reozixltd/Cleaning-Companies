@@ -27,31 +27,36 @@ const rect = (page, selector) =>
     return [r.left, r.top, r.right, r.bottom];
   });
 
-/** Waits until the model has stopped moving: the drawing's on-screen box reads the same twice running. */
+/** Waits until the model has stopped moving: the drawing's on-screen box reads the same for about a second, which outlasts the gap between frames on a software renderer. */
 async function settled(page) {
   let before = '';
-  for (let i = 0; i < 50; i++) {
+  let same = 0;
+  for (let i = 0; i < 80; i++) {
     const now = JSON.stringify(await rect(page, `${FIGURE} [data-plan-svg]`));
-    if (now === before) return;
+    same = now === before ? same + 1 : 0;
+    if (same === 8) return;
     before = now;
     await page.waitForTimeout(120);
   }
   throw new Error('the model never settled');
 }
 
-/** The largest gap, in pixels, between where WebGL puts a room's floor and where the browser drew that SVG room. */
-async function misalignment(page, id) {
-  const fill = `${FIGURE} [data-room-id="${id}"] .room__fill`;
-  const dom = await rect(page, fill);
-  const gl = await page.$eval(fill, (el) => {
+/**
+ * The largest gap, in pixels, between where WebGL puts a room's floor and where the browser drew that SVG room.
+ * Both are read in one go, so no frame can land between them.
+ */
+function misalignment(page, id) {
+  return page.$eval(`${FIGURE} [data-room-id="${id}"] .room__fill`, (el) => {
+    const r = el.getBoundingClientRect();
+    const dom = [r.left, r.top, r.right, r.bottom];
     const figure = el.closest('[data-plan]');
     const [x, y, w, h] = ['x', 'y', 'width', 'height'].map((name) => Number(el.getAttribute(name)) / 40); // svg.ts UNIT
     const points = [[x, y], [x + w, y], [x, y + h], [x + w, y + h]].map(([px, py]) => figure.planPointOnScreen(px, py));
     const xs = points.map((p) => p[0]);
     const ys = points.map((p) => p[1]);
-    return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
+    const gl = [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
+    return Math.max(...dom.map((edge, i) => Math.abs(edge - gl[i])));
   });
-  return Math.max(...dom.map((edge, i) => Math.abs(edge - gl[i])));
 }
 
 /** The core estimator behaviour on a fresh visit. It must hold whether or not the model is running. */
@@ -186,11 +191,25 @@ await step('Save-Data keeps the flat plan', async (page, context) => {
   await staysFlat(page);
 }, { width: 1280 });
 
-await step('a browser without WebGL2 keeps the flat plan', async (page, context) => {
+await step('a browser without WebGL2 keeps the flat plan, and is asked only after the page has loaded', async (page, context) => {
   await context.addInitScript(() => {
     const original = HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
-      return type === 'webgl2' ? null : original.call(this, type, ...rest);
+      if (type !== 'webgl2') return original.call(this, type, ...rest);
+      window.webgl2AskedAt = document.readyState;
+      return null;
+    };
+  });
+  await staysFlat(page);
+  assert.equal(await page.evaluate(() => window.webgl2AskedAt), 'complete');
+}, { width: 1280 });
+
+await step('a WebGL2 check that throws leaves the flat plan working', async (page, context) => {
+  await context.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
+      if (type === 'webgl2') throw new Error('no GPU');
+      return original.call(this, type, ...rest);
     };
   });
   await staysFlat(page);

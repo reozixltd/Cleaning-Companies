@@ -82,13 +82,23 @@ function whenModelAllowed(figure: HTMLElement, load: () => void): void {
   const matches = (query: string) => window.matchMedia(query).matches;
   if (!matches('(min-width: 768px)') || matches('(prefers-reduced-motion: reduce)')) return;
   if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return;
-  if (!('IntersectionObserver' in window) || !document.createElement('canvas').getContext('webgl2')) return;
+  if (!('IntersectionObserver' in window)) return;
+  // WebGL2 is asked for last, once the page has loaded: the question is a round trip to the GPU, and the estimator never waits for it (spec §6.4).
+  const loadIfWebGL2 = () => {
+    try {
+      const gl = document.createElement('canvas').getContext('webgl2');
+      gl?.getExtension('WEBGL_lose_context')?.loseContext(); // the model makes its own context
+      if (gl) load();
+    } catch {
+      // No model: the flat plan needs nothing from it.
+    }
+  };
   const near = new IntersectionObserver(
     (entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       near.disconnect();
-      if (document.readyState === 'complete') load();
-      else window.addEventListener('load', load, { once: true });
+      if (document.readyState === 'complete') loadIfWebGL2();
+      else window.addEventListener('load', loadIfWebGL2, { once: true });
     },
     { rootMargin: '100% 0px' },
   );

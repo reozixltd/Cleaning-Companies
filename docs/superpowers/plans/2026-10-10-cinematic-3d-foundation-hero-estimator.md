@@ -2645,15 +2645,15 @@ Filled in by Task 1 (main) and Task 7 (plan 1). Lighthouse figures are the media
 
 | Check | main (`d5053fe`) | plan 1 |
 | --- | --- | --- |
-| Unit tests passing | | |
-| `astro check` errors | | |
-| E2E files and steps passing | | |
-| Heaviest page, eager JS | | |
-| `/` eager JS | | |
+| Unit tests passing | 325 (38 files) | |
+| `astro check` errors | 0 | |
+| E2E files and steps passing | 7 files, 96 steps (0 skipped) | |
+| Heaviest page, eager JS | 15.7 KB (`/console/`) | |
+| `/` eager JS | 10.5 KB | |
 | `/` lazy JS | 0 | |
-| `/book/` eager JS | | |
-| Lighthouse `/`: performance | | |
-| Lighthouse `/`: accessibility | | |
-| Lighthouse `/`: LCP, CLS, TBT | | |
-| Lighthouse `/book/`: performance | | |
-| Lighthouse `/book/`: accessibility | | |
+| `/book/` eager JS | 15.3 KB | |
+| Lighthouse `/`: performance | 99 | |
+| Lighthouse `/`: accessibility | 100 | |
+| Lighthouse `/`: LCP, CLS, TBT | 1.8 s, 0.026, 0 ms | |
+| Lighthouse `/book/`: performance | 98 | |
+| Lighthouse `/book/`: accessibility | 100 | |

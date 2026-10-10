@@ -11,20 +11,20 @@ Rules for every photo:
 - Demo photos must be licence-free. Record each one in [`photo-credits.md`](photo-credits.md).
 - A live client uses their own photos. The `founder` slot is always the real person.
 
-## Status: 0 of 10 filled
+## Status: 9 of 10 filled
 
 | Slot | Orientation | File |
 |---|---|---|
-| `service-regular` | landscape | missing |
-| `service-deep` | landscape | missing |
-| `service-end-of-lease` | landscape | missing |
-| `service-move-in` | landscape | missing |
-| `area-chermside` | landscape | missing |
-| `area-aspley` | landscape | missing |
-| `area-albany-creek` | landscape | missing |
-| `area-everton-park` | landscape | missing |
+| `service-regular` | landscape | `service-regular.jpg` |
+| `service-deep` | landscape | `service-deep.jpg` |
+| `service-end-of-lease` | landscape | `service-end-of-lease.webp` |
+| `service-move-in` | landscape | `service-move-in.jpg` |
+| `area-chermside` | landscape | `area-chermside.jpg` |
+| `area-aspley` | landscape | `area-aspley.jpg` |
+| `area-albany-creek` | landscape | `area-albany-creek.jpg` |
+| `area-everton-park` | landscape | `area-everton-park.jpg` |
 | `founder` | portrait | missing |
-| `offices` | landscape | missing |
+| `offices` | landscape | `offices.jpg` |
 
 ## Shot list
 
@@ -38,7 +38,7 @@ Rules for every photo:
 ### `service-deep`
 
 - Orientation: landscape
-- Alt text: A gleaming bathroom with clean grout
+- Alt text: A clean basin and tapware against dark bathroom tiles
 - Brief: A bathroom with spotless tiles, glass and tapware.
 - Search terms: clean bathroom tiles glass shower
 
@@ -52,35 +52,35 @@ Rules for every photo:
 ### `service-move-in`
 
 - Orientation: landscape
-- Alt text: A clean, empty kitchen ready for a new household
+- Alt text: A clean, bright kitchen ready for a new household
 - Brief: An empty kitchen with clean benches and cupboards.
 - Search terms: empty clean kitchen
 
 ### `area-chermside`
 
 - Orientation: landscape
-- Alt text: A leafy street in Chermside
+- Alt text: The atrium at Westfield Chermside
 - Brief: A residential street in Chermside or similar Brisbane north suburb.
 - Search terms: Brisbane suburb street
 
 ### `area-aspley`
 
 - Orientation: landscape
-- Alt text: Houses in Aspley
+- Alt text: Gympie Road in Aspley under a blue sky
 - Brief: Homes in Aspley.
 - Search terms: Brisbane house street
 
 ### `area-albany-creek`
 
 - Orientation: landscape
-- Alt text: A quiet street in Albany Creek
+- Alt text: Albany Creek Road and the local shops in Albany Creek
 - Brief: A street in Albany Creek.
 - Search terms: Queensland suburban street
 
 ### `area-everton-park`
 
 - Orientation: landscape
-- Alt text: Townhouses in Everton Park
+- Alt text: Everton Park Library on South Pine Road
 - Brief: Townhouses in Everton Park.
 - Search terms: Brisbane townhouses
 
@@ -94,6 +94,6 @@ Rules for every photo:
 ### `offices`
 
 - Orientation: landscape
-- Alt text: A clean, empty office floor
+- Alt text: A clean, empty meeting room with a long table
 - Brief: An open-plan office after hours, clean desks and floor.
 - Search terms: clean empty office

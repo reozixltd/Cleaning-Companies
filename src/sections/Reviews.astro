@@ -19,7 +19,7 @@ const reviews = [...local, ...all.filter((r) => !local.includes(r))].slice(0, li
 const year = (date: string) => date.slice(0, 4);
 ---
 
-<section class="band" id="reviews" aria-labelledby="reviews-title">
+<section class="band band--tint" id="reviews" aria-labelledby="reviews-title">
   <div class="wrap reviews">
     <div class="reviews__head">
       <h2 id="reviews-title">What clients say</h2>

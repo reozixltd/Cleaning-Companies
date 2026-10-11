@@ -113,6 +113,30 @@ button, [role='button'], summary {
   }
 }
 
+/* Space before the footer, unless the page ends in the closing band, which meets it. */
+main:not(:has(> .cta:last-child)) {
+  padding-bottom: var(--space-8);
+}
+
+/* Band tones: alternate these down a page so sections read as separate. */
+.band--cream {
+  background: var(--color-card);
+}
+.band--tint {
+  background: var(--color-room);
+}
+
+/* Dark surface: remaps the ink tokens so text, rules, logos and focus rings inside read on the panel.
+   Don't put primary (ink) buttons inside: --color-on-ink is not remapped. */
+.on-dark {
+  --color-ink: var(--color-on-ink);
+  --color-ink-muted: var(--color-on-panel-muted);
+  --color-focus: var(--color-on-ink);
+  --color-line: var(--color-field-border);
+  background: var(--color-panel);
+  color: var(--color-ink-muted);
+}
+
 .muted {
   color: var(--color-ink-muted);
 }

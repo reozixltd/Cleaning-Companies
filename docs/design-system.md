@@ -29,7 +29,7 @@ Two themes ship. `floorplan` is the default: its block is `:root, [data-theme='f
 | `--color-panel` | `#161616` | `#142a22` | Dark hero panel |
 | `--color-on-panel-muted` | `#cccccc` | `#c9d3c9` | Secondary text on the dark panel |
 
-`--color-ice` (`#d2f4ff`, photo placeholders) and `--color-lime` (`#e8ff5b`, the highlight badge) are shared by both themes. There are no shadows, so the old shadow token is gone.
+`--color-ice` (`#d2f4ff`) and `--color-lime` (`#e8ff5b`, the highlight badge) are shared by both themes. There are no shadows, so the old shadow token is gone.
 
 ### Known accessibility exception
 
@@ -124,6 +124,9 @@ One family: Inter Variable (400 to 900), self-hosted through `@fontsource-variab
 | `--target` | 44px, the minimum tap target |
 
 - `.wrap` centres content at `--page-max` with `--gutter` on each side. `.band` gives a section 32px of vertical padding, 40px from 1024px.
+- Band tones separate sections down a page: plain (page white), `.band--cream` (`--color-card`), `.band--tint` (`--color-room`) and `.on-dark` (`--color-panel`). Don't put two of the same tone next to each other.
+- `.on-dark` remaps `--color-ink`, `--color-ink-muted`, `--color-line` and `--color-focus` for whatever is inside it, so text, rules, the logo and focus rings read on the panel. How it works and the footer use it. Don't put a primary (ink) button inside: `--color-on-ink` is not remapped.
+- `main` has 64px of bottom padding unless the page ends in the closing `CtaBand`, which sits directly on the dark footer.
 - Single column below 768px with a 16px side gutter. Everything must work at 375px (and 320px) with no horizontal scroll.
 - From 1024px the layout follows a 12-column grid (spec §7.3). There is no grid utility class: each section sets its own `grid-template-columns`. Hero: `5fr 6fr` from 1024px. Reviews: `4fr 7fr` from 900px. Room checklist: `5fr 4fr` from 900px. Vetting: text beside a 320px founder column. Coverage: two equal columns. Most bands pair a wide column with a narrow one, all left-aligned.
 - Breakpoints in use: 480px (plan segments go four across), 600px (plan labels stop being enlarged), 768px (header shows the phone number and Book a clean, the mobile booking bar goes away, step lists go four across), 900px (two-column bands), 1024px (header navigation, two-column hero), 1200px (trust row four across).
@@ -133,7 +136,7 @@ One family: Inter Variable (400 to 900), self-hosted through `@fontsource-variab
 
 The floor plan is the one bold element on the site. Everything else stays quiet so the plan reads as the thing to use.
 
-- `--wall` (2px) is the only heavy line weight. The plan's walls use it, the current booking step and status boxes (error summary, form outcomes, photo placeholders) too.
+- `--wall` (2px) is the only heavy line weight. The plan's walls use it, the current booking step and status boxes (error summary, form outcomes) too.
 - Everything else is a 1px `--hairline` in `--color-line`, or white space.
 - Corners: 0 on the plan. `--radius-card` (4px) on cards, panels, photos, placeholders and the price tag. `--radius-control` (8px) on fields, ghost buttons and segments. `--radius-pill` on buttons, badges and the booking tag.
 - No shadows.
@@ -142,12 +145,13 @@ The floor plan is the one bold element on the site. Everything else stays quiet 
 
 ## Motion
 
-There is one moment, and everything else responds quickly or not at all. These rules follow Emil Kowalski's design-engineering guidance.
+The floor plan has the one interactive moment; sections reveal quietly as they scroll in; everything else responds quickly or not at all. These rules follow Emil Kowalski's design-engineering guidance.
 
 | What | How | Where |
 |---|---|---|
 | A room is added | Its fill fades from paper to its colour in about 180ms with `--ease-out` | `fadeIn()` in `src/features/plan/plan.ts` (Web Animations API) |
 | A button is pressed | `transform: scale(0.97)` on `:active` over `--dur-press` (160ms) with `--ease-out`. Plan stepper buttons use 0.94 | `Button`, plan segments and steppers, suburb check button, mobile bar |
+| A section scrolls into view | Its blocks fade in and rise 16px over 500ms with `--ease-out`, 80ms apart, once. Sections on the first screen don't animate. The hidden state is set by the script, so the page is complete without JavaScript | `initReveal()` in `src/layouts/reveal.ts` (Motion: `animate`, `inView`, `stagger`) |
 | A colour changes | `background-color`, `border-color`, `color` or `fill` over `--dur-colour` (150ms) | Buttons, fields, plan segments and rooms |
 
 - `--ease-out` is `cubic-bezier(0.23, 1, 0.32, 1)`: a strong ease-out, so a response starts at once and settles.
@@ -155,8 +159,8 @@ There is one moment, and everything else responds quickly or not at all. These r
 - The room fade runs only for pointer actions. A room added with the keyboard (Enter or Space on a dashed slot, or a stepper activated from the keyboard, where `event.detail === 0`) appears with no fade, because animating a keyboard action only slows it down.
 - The fade's 180ms and its curve are written in `fadeIn()`. `--dur-fill` records the value but is not read by it, so change both together.
 - Hover styles exist only inside `@media (hover: hover) and (pointer: fine)`, so touch screens never get a stuck hover state. No hover lifts or shadows.
-- No scroll-triggered entrances. The pinned booking tag appears and disappears without animating.
-- `prefers-reduced-motion: reduce` removes movement: `global.css` cuts CSS animations and smooth scrolling, and each component removes its press scale. The short colour fades stay, because they show what changed without moving anything.
+- The pinned booking tag appears and disappears without animating.
+- `prefers-reduced-motion: reduce` removes movement: `global.css` cuts CSS animations and smooth scrolling, `initReveal()` does nothing, and each component removes its press scale. The short colour fades stay, because they show what changed without moving anything.
 
 ## Mobile baseline
 
@@ -193,7 +197,7 @@ Industry-neutral primitives. They take everything as props and read no config.
 | `Icon` | `name: IconName`, `size?` (20), `label?`, `class?` | 24×24 outline icons from `icons.ts`. Decorative unless `label` is set. To add one, add a path to `icons.ts` |
 | `Badge` | `tone?: 'neutral' \| 'success' \| 'warning' \| 'highlight'` | Short status label |
 | `Photo` | `slot`, `alt`, `ratio?` ('4 / 3'), `sizes?`, `priority?`, `label?`, `class?` | AVIF and WebP `<Picture>` when `src/assets/photos/<slot>.*` exists, otherwise `Placeholder` |
-| `Placeholder` | `label`, `ratio?` | Room-coloured panel with a dashed border saying what photo goes there |
+| `Placeholder` | `label`, `ratio?` | Room-coloured panel naming the photo that goes there. Only the `founder` slot still shows one |
 
 Icons available: `phone`, `menu`, `close`, `check`, `plus`, `minus`, `home`, `shield`, `star`, `clock`, `key`, `map-pin`, `building`, `calendar`, `chevron-down`, `mail`, `copy`. `/dev/ui/` (`src/pages/dev/ui.astro`) shows every primitive in both themes. It is not linked and not indexed.
 
@@ -252,7 +256,7 @@ Page bands built from features and core UI.
 | `OfficesBand` | none |
 | `Faq` | `tag: 'home' \| 'booking' \| 'offices' \| 'keys' \| 'payment'`, `limit?`, `title?`, `more?` (link to `/faq/`, default true) |
 | `CtaBand` | `title`, `text?` |
-| `PageHeader` | `title`, `intro?`, default slot |
+| `PageHeader` | `title`, `intro?`, default slot (full-width cream band; from 1024px the logo's floor plan is drawn behind it as decoration) |
 | `SectionHead` | `id`, `title`, `intro?` |
 
 ## Import boundaries

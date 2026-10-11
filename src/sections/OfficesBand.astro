@@ -1,12 +1,13 @@
 ---
 /** One line for facility managers, in their own voice, pointing to the offices page. */
+import { photoSlots } from '@/config/photo-slots';
 import Button from '@/core/ui/Button.astro';
-import Icon from '@/core/ui/Icon.astro';
+import Photo from '@/core/ui/Photo.astro';
 ---
 
-<section class="offices" aria-labelledby="offices-title">
+<section class="offices" aria-labelledby="offices-title" data-progress>
   <div class="wrap offices__inner">
-    <Icon name="building" size={32} />
+    <Photo slot="offices" alt={photoSlots.offices.alt} ratio="3 / 2" sizes="(min-width: 900px) 240px, 100vw" class="offices__photo" />
     <div>
       <h2 id="offices-title">Managing an office, clinic or strata building?</h2>
       <p>We price commercial cleaning after a walk-through of your site, and send insurance certificates on request.</p>
@@ -25,6 +26,15 @@ import Icon from '@/core/ui/Icon.astro';
     gap: var(--space-4);
     justify-items: start;
   }
+  .offices :global(.offices__photo) {
+    width: 100%;
+  }
+  /* The photo settles from 1.1 to 1 inside its frame as the band comes up the screen. */
+  @media screen {
+    :global(.motion) .offices :global(.offices__photo img) {
+      transform: scale(calc(1.1 - 0.1 * min(1, var(--p) * 2)));
+    }
+  }
   h2 {
     font-size: var(--text-22);
   }
@@ -33,7 +43,7 @@ import Icon from '@/core/ui/Icon.astro';
   }
   @media (min-width: 900px) {
     .offices__inner {
-      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-columns: 240px minmax(0, 1fr) auto;
       align-items: center;
       gap: var(--space-6);
     }

@@ -12,6 +12,7 @@ import HowItWorks from '@/sections/HowItWorks.astro';
 import Coverage from '@/sections/Coverage.astro';
 import OfficesBand from '@/sections/OfficesBand.astro';
 import Faq from '@/sections/Faq.astro';
+import CtaBand from '@/sections/CtaBand.astro';
 import BookingTag from '@/features/pricing/BookingTag.astro';
 import { business } from '@/config/business';
 ---
@@ -32,4 +33,5 @@ import { business } from '@/config/business';
   <Coverage />
   <OfficesBand />
   <Faq tag="home" limit={5} />
+  <CtaBand title="Ready when you are" text="Price your home on the floor plan and choose a time. No phone call needed." scene="closing" />
 </BaseLayout>

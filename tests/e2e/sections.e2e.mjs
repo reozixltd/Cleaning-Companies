@@ -446,6 +446,81 @@ for (const width of [375, 1280]) {
   }, { width });
 }
 
+// ── Areas, offices, close (spec §5.9, §5.10) ─────────────────
+const mapTransform = () => getComputedStyle(document.querySelector('#areas .map svg')).transform;
+
+await step('the map lies back, settles flat, and its pins drop in', async (page) => {
+  await go(page, '/');
+  assert.equal(await page.locator('#areas [data-map-point]').count(), 12);
+  assert.notEqual(await page.evaluate(mapTransform), 'none');
+  await page.locator('#areas .map').scrollIntoViewIfNeeded();
+  await page.waitForFunction(`(${mapTransform})() === 'none' || new DOMMatrix((${mapTransform})()).isIdentity`);
+  await page.waitForFunction(() => [...document.querySelectorAll('#areas [data-map-point]')].every((el) => getComputedStyle(el).opacity === '1'));
+  const delays = await page.$$eval('#areas [data-map-point]', (els) => els.map((el) => parseFloat(getComputedStyle(el).transitionDelay)));
+  assert.ok(delays[11] > delays[0], delays.join(' '));
+}, { width: 1280 });
+
+await step('the map is flat from the start under reduced motion', async (page) => {
+  await go(page, '/');
+  assert.equal(await page.evaluate(mapTransform), 'none');
+  assert.ok((await page.$$eval('#areas [data-map-point]', (els) => els.map((el) => getComputedStyle(el).opacity))).every((o) => o === '1'));
+}, { width: 1280, reducedMotion: 'reduce' });
+
+await step('the offices band shows its photo, which settles from 1.1 to 1, and keeps its link', async (page) => {
+  await go(page, '/');
+  const band = page.locator('.offices');
+  assert.equal(await band.locator('a[href="/offices/#walkthrough"]').count(), 1);
+  const scale = () => band.locator('img').evaluate((img) => new DOMMatrix(getComputedStyle(img).transform).a);
+  await band.evaluate((el) => window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - window.innerHeight + 10, behavior: 'instant' }));
+  await page.waitForTimeout(150);
+  assert.ok((await scale()) > 1.08, `starts near 1.1: ${await scale()}`);
+  await band.evaluate((el) => window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'instant' }));
+  await page.waitForFunction(() => new DOMMatrix(getComputedStyle(document.querySelector('.offices img')).transform).a === 1);
+}, { width: 1280 });
+
+const text = (page, selector) => page.locator(selector).innerText();
+
+await step("the closing band's price follows the estimator, on load and after a change", async (page) => {
+  await go(page, '/');
+  const closing = page.locator('.cta--scenic');
+  assert.equal(await closing.locator('[data-scene] img').getAttribute('alt'), '');
+  assert.equal(await closing.locator('.cta__card').evaluate((el) => getComputedStyle(el).backgroundColor), 'rgb(255, 255, 255)');
+  assert.equal(await text(page, '.cta--scenic [data-price-per-visit]'), await text(page, '#plan [data-price-per-visit]'));
+  assert.equal((await closing.locator('[data-choose-time]').innerText()).trim(), 'Choose a time');
+
+  const before = await text(page, '#plan [data-price-per-visit]');
+  await page.locator('[data-plan-controls] [data-step="bedrooms"][data-delta="1"]').click();
+  await page.waitForFunction((was) => document.querySelector('#plan [data-price-per-visit]').textContent !== was, before);
+  const same = async () => {
+    assert.equal(await text(page, '.cta--scenic [data-price-per-visit]'), await text(page, '#plan [data-price-per-visit]'));
+    assert.equal(await text(page, '.cta--scenic [data-price-summary]'), await text(page, '.scene-hero [data-price-summary]'));
+    assert.equal(await closing.locator('[data-choose-time]').getAttribute('href'), await page.locator('#plan [data-choose-time]').getAttribute('href'));
+  };
+  await same();
+  // A returning visitor: the saved selection is applied to every price on the page before they scroll.
+  await go(page, '/');
+  assert.notEqual(await text(page, '#plan [data-price-per-visit]'), before);
+  await same();
+  // At the foot of the page the price is on screen in full, so the pinned tag steps aside.
+  await closing.scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => document.querySelector('[data-booking-tag]').hidden);
+  assert.equal(await page.locator('h1').count(), 1);
+}, { width: 1280 });
+
+await step('the closing picture settles from 1.08 as the band comes up the screen', async (page) => {
+  await go(page, '/');
+  const scale = () => page.locator('.cta--scenic [data-scene] img').evaluate((img) => new DOMMatrix(getComputedStyle(img).transform).a);
+  assert.ok(Math.abs((await scale()) - 1.08) < 0.001, `starts at 1.08: ${await scale()}`);
+  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+  await page.waitForFunction(() => new DOMMatrix(getComputedStyle(document.querySelector('.cta--scenic [data-scene] img')).transform).a < 1.07);
+}, { width: 1280 });
+
+await step('inner pages keep the plain closing band', async (page) => {
+  await go(page, '/faq/');
+  assert.equal(await page.locator('.cta--scenic').count(), 0);
+  assert.equal((await page.locator('.cta [data-choose-time]').innerText()).trim(), 'Book a clean');
+});
+
 // ── After every block has shown ──────────────────────────────
 for (const theme of THEMES) {
   for (const width of [375, 1280]) {

@@ -1,28 +1,57 @@
 ---
-/** Closing call to action for inner pages: book, or call. */
+/**
+ * Closing call to action: book, or call. With `scene` (a photo slot that has a file)
+ * the band is a solid card in front of that picture, holding the live price. Without
+ * one, or while the slot is empty, it is the plain band.
+ */
 import { business } from '@/config/business';
 import { formatPhoneHref } from '@/core/format';
+import { hasPhoto } from '@/core/photos';
 import Button from '@/core/ui/Button.astro';
+import Scene from '@/core/ui/Scene.astro';
+import PriceLine from '@/features/pricing/PriceLine.astro';
 
 interface Props {
   title: string;
   text?: string;
+  /** Photo slot for a backdrop behind a card with the live price. */
+  scene?: string;
 }
-const { title, text } = Astro.props;
+const { title, text, scene } = Astro.props;
+const scenic = scene !== undefined && hasPhoto(scene);
 ---
 
-<section class="cta" aria-labelledby="cta-title">
-  <div class="wrap cta__inner">
-    <div>
-      <h2 id="cta-title">{title}</h2>
-      {text && <p>{text}</p>}
-    </div>
-    <div class="cta__actions">
-      <Button href="/book/" size="lg" data-choose-time>Book a clean</Button>
-      <Button href={formatPhoneHref(business.phone)} variant="secondary" size="lg" icon="phone">{business.phone}</Button>
-    </div>
-  </div>
-</section>
+{
+  scenic ? (
+    <section class="cta cta--scenic" aria-labelledby="cta-title" data-progress>
+      <Scene slot={scene!} />
+      <div class="wrap cta__front">
+        <div class="cta__card" data-reveal>
+          <div>
+            <h2 id="cta-title">{title}</h2>
+            {text && <p>{text}</p>}
+          </div>
+          <PriceLine>
+            <Button href={formatPhoneHref(business.phone)} variant="secondary" size="lg" icon="phone">{business.phone}</Button>
+          </PriceLine>
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section class="cta" aria-labelledby="cta-title">
+      <div class="wrap cta__inner" data-reveal>
+        <div>
+          <h2 id="cta-title">{title}</h2>
+          {text && <p>{text}</p>}
+        </div>
+        <div class="cta__actions">
+          <Button href="/book/" size="lg" data-choose-time>Book a clean</Button>
+          <Button href={formatPhoneHref(business.phone)} variant="secondary" size="lg" icon="phone">{business.phone}</Button>
+        </div>
+      </div>
+    </section>
+  )
+}
 
 <style>
   .cta {
@@ -46,6 +75,34 @@ const { title, text } = Astro.props;
     .cta__inner {
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
+    }
+  }
+  /* With a picture: the card is solid, so its words and buttons never rely on the picture for contrast. */
+  .cta--scenic {
+    position: relative;
+    padding-block: var(--space-8);
+  }
+  /* The picture settles from 1.08 to 1 as the band comes up the screen. */
+  @media screen {
+    :global(.motion) .cta--scenic {
+      --scene-scale: calc(1.08 - 0.08 * min(1, var(--p) * 2));
+    }
+  }
+  .cta__front {
+    position: relative;
+  }
+  .cta__card {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 32rem;
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border-radius: var(--radius-control);
+    box-shadow: var(--shadow-2);
+  }
+  @media (min-width: 768px) {
+    .cta__card {
+      padding: var(--space-6);
     }
   }
 </style>

@@ -13,13 +13,13 @@ const at = new Map(map.points.map((p) => [p.id, p]));
 const base = at.get('__base')!;
 ---
 
-<figure class="map">
+<figure class="map" data-reveal>
   <svg viewBox={`0 0 ${WIDTH} ${Math.round(map.height)}`} role="img" aria-label={`Map of the ${business.areas.length} suburbs we clean around ${business.base.suburb}`}>
     <rect class="map__frame" x="1" y="1" width={WIDTH - 2} height={Math.round(map.height) - 2}></rect>
-    {business.areas.map((a) => {
+    {business.areas.map((a, i) => {
       const p = at.get(a.suburb);
       return p && (
-        <g data-map-point={a.suburb} class:list={['map__point', { 'map__point--page': a.page }]}>
+        <g data-map-point={a.suburb} class:list={['map__point', { 'map__point--page': a.page }]} style={`--i: ${i}`}>
           <circle cx={p.x} cy={p.y} r={a.page ? 9 : 6}></circle>
           {a.page && <text x={p.x + 15} y={p.y + 7}>{a.suburb}</text>}
         </g>
@@ -68,5 +68,27 @@ const base = at.get('__base')!;
   figcaption {
     color: var(--color-ink-muted);
     font-size: var(--text-14);
+  }
+  /* Entrance (spec §5.9), once, when the map comes on screen: it lies back 12° and settles flat,
+     then the pins drop in one after another. Screen only, under .motion, so the map is never left tilted. */
+  @media screen {
+    :global(.motion) .map svg {
+      transform: perspective(60rem) rotateX(12deg);
+      transform-origin: 50% 100%;
+    }
+    :global(.motion) .map.is-in svg {
+      transform: none;
+      transition: transform var(--dur-scene) var(--ease-out);
+    }
+    :global(.motion) .map__point {
+      opacity: 0;
+      transform: translateY(-16px);
+    }
+    :global(.motion) .map.is-in .map__point {
+      opacity: 1;
+      transform: none;
+      transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
+      transition-delay: calc(var(--i, 0) * 60ms + 300ms);
+    }
   }
 </style>

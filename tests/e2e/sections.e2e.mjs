@@ -93,6 +93,49 @@ await step('scroll progress is exactly 0 below the screen and exactly 1 above it
   await page.waitForFunction(() => document.querySelector('.scene-hero').style.getPropertyValue('--p') === '1.0000');
 }, { width: 1280 });
 
+// ── Trust, process, FAQ (spec §5.3, §5.8, §5.10) ─────────────
+await step('the four trust proofs rise one after another', async (page) => {
+  await go(page, '/');
+  assert.equal(await page.locator('.trust__item[data-reveal]').count(), 4);
+  await page.locator('.trust__item').last().scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => [...document.querySelectorAll('.trust__item .icon')].every((el) => getComputedStyle(el).opacity === '1'));
+  // The stagger delay sits on the shown rule, so it is read once every item is in.
+  const delays = await page.$$eval('.trust__item[data-reveal]', (els) => els.map((el) => parseFloat(getComputedStyle(el).transitionDelay)));
+  assert.equal(delays.length, 4);
+  assert.deepEqual([...delays].sort((a, b) => a - b), delays);
+  assert.ok(delays[3] > delays[0], delays.join(' '));
+}, { width: 1280 });
+
+const fillOf = () => new DOMMatrix(getComputedStyle(document.querySelector('#how .steps'), '::after').transform).a;
+const lastNumber = (page) => page.locator('#how .steps li').last().evaluate((li) => Number(getComputedStyle(li, '::before').opacity));
+
+await step('the process line fills, and its numbers darken, as the steps cross the screen', async (page) => {
+  await go(page, '/');
+  assert.equal(await page.locator('#how ol.steps > li').count(), 4);
+  const toSteps = (fromTop) =>
+    page.locator('#how .steps').evaluate((ol, y) => window.scrollTo({ top: ol.getBoundingClientRect().top + window.scrollY - y, behavior: 'instant' }), fromTop);
+  await toSteps(780); // the list has only just come on screen
+  await page.waitForFunction(`(${fillOf})() < 0.1`);
+  assert.ok((await lastNumber(page)) < 0.7, 'the last number starts quiet');
+  await toSteps(120); // the list is near the top
+  await page.waitForFunction(`(${fillOf})() === 1`);
+  assert.equal(await lastNumber(page), 1);
+}, { width: 1280 });
+
+await step('under reduced motion the process line is complete from the start', async (page) => {
+  await go(page, '/');
+  assert.equal(await page.evaluate(fillOf), 1);
+  assert.equal(await lastNumber(page), 1);
+}, { width: 1280, reducedMotion: 'reduce' });
+
+await step('the FAQ keeps its native accordion', async (page) => {
+  await go(page, '/');
+  const first = page.locator('#faq details').first();
+  await first.locator('summary').click();
+  assert.equal(await first.evaluate((d) => d.open), true);
+  assert.ok(await first.locator('p').isVisible());
+});
+
 // ── After every block has shown ──────────────────────────────
 for (const theme of THEMES) {
   for (const width of [375, 1280]) {

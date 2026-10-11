@@ -18,7 +18,7 @@ const items = (await getCollection('faqs')).map((f) => f.data).filter((f) => f.t
 <section class="band" id="faq" aria-labelledby={`faq-${tag}`}>
   <div class="wrap faq">
     <SectionHead id={`faq-${tag}`} title={title} />
-    <div class="faq__list">
+    <div class="faq__list" data-reveal>
       {items.map((f) => (
         <details>
           <summary>{f.q}</summary>

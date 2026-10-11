@@ -18,8 +18,8 @@ const items: { icon: IconName; title: string; text: string }[] = [
 
 <section class="trust" aria-label="Why people trust us">
   <ul class="wrap trust__list" role="list">
-    {items.map((i) => (
-      <li class="trust__item">
+    {items.map((i, n) => (
+      <li class="trust__item" data-reveal style={`--i: ${n}`}>
         <Icon name={i.icon} size={24} />
         <div>
           <p class="trust__title">{i.title}</p>
@@ -62,6 +62,19 @@ const items: { icon: IconName; title: string; text: string }[] = [
   @media (min-width: 1200px) {
     .trust__list {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  /* Each proof rises in turn (Reveal); its icon follows a beat later. */
+  @media screen {
+    :global(.motion) .trust__item :global(.icon) {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    :global(.motion) .trust__item.is-in :global(.icon) {
+      opacity: 1;
+      transform: none;
+      transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
+      transition-delay: calc(var(--i, 0) * 80ms + 200ms);
     }
   }
 </style>

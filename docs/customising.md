@@ -426,8 +426,8 @@ npm run photos:status -- --write   # also rewrite docs/photo-brief.md
 
 The status also lists files that match no slot, such as a misspelt name or an upper-case `.JPG`.
 
-- A live client uses their own photos. The `founder` slot is always the real person.
-- Demo photos are licence-free shots of rooms, never people presented as staff.
+- A live client uses their own photos.
+- Demo photos of rooms are licence-free or generated. Pictures of people follow one rule: in the demo they are generated illustrations (cleaners working or arriving, one founder portrait), each marked "Sample photo" on the page while `demoMode` is on; never a face on a review, never a child, never a real person presented as staff, founder or client. The one real street photograph (`area-chermside`, credited in [`photo-credits.md`](photo-credits.md)) has a single passer-by far away and seen from behind. "Before" pictures show an ordinary week. Replace every image of a person with a real photograph before a real business goes live.
 - Record every file in [`photo-credits.md`](photo-credits.md). Remove the demo rows when the client's photos go in.
 - To change what a slot asks for, edit its `brief`, `search` and `alt`, then run `--write`.
 
@@ -440,11 +440,38 @@ The hero's backdrop is a `Scene` (`src/core/ui/Scene.astro`): a still, and optio
 - `public/media/hero-loop.mp4` and `public/media/hero-loop.webm`: the loop, 1920×1080, no audio, at most 2.5 MB and 1.5 MB. Its first frame should match the still. Encode a source clip with:
 
 ```bash
-ffmpeg -i source.mp4 -an -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,fps=30" -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart public/media/hero-loop.mp4
-ffmpeg -i source.mp4 -an -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,fps=30" -c:v libvpx-vp9 -b:v 0 -crf 38 -row-mt 1 public/media/hero-loop.webm
+ffmpeg -i source.mp4 -an -map_metadata -1 -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080" -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -level:v 4.0 -movflags +faststart public/media/hero-loop.mp4
+ffmpeg -i source.mp4 -an -map_metadata -1 -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080" -c:v libvpx-vp9 -b:v 0 -crf 38 -row-mt 1 public/media/hero-loop.webm
 ```
 
 With no `hero.jpg` the hero is its card alone. With no clip it is the still alone. The video is never requested on screens under 768px, under reduced motion, with Save-Data on, or on a 2G or 3G connection. `public/media/sample.*` is a two-second test clip for `/dev/ui/`; leave it in place.
+
+### The closing picture
+
+The `closing` slot (`src/assets/photos/closing.jpg`, 2400×1350) is the backdrop of the home page's closing band, where a solid card holds the live price and the phone number. Keep the left of the picture calm, because the card sits there. Without the file the home page's closing band is the plain band, which is also what inner pages use.
+
+### Room stage
+
+"What we clean, room by room" has a before-and-after stage (`src/features/stage/RoomStage.astro`) beside the plan. It reads eight stills from `src/assets/photos/`, 1920×1080 each:
+
+- `room-kitchen-before`, `room-kitchen-after`
+- `room-bath-before`, `room-bath-after`
+- `room-bed-before`, `room-bed-after`
+- `room-living-before`, `room-living-after`
+
+Shoot or generate each pair from the same position, with the same framing, so the sweep lines up. A pair that is not from one camera position needs `fade: true` on its room in `src/features/stage/RoomStage.astro` (the living room has it), and then "after" fades in instead of sweeping. A room without both files has no stage: the checklist is all it shows, and with no rooms at all the stage is left out. "Before" pictures show an ordinary week. The stage's caption reads "Illustration, not a client's home.".
+
+The kitchen also has an action beat, a clip that plays between "before" and the sweep. To replace it, put the clip in `public/media/` as `action-kitchen.mp4` and `action-kitchen.webm`, 1920×1080, no audio, 8 seconds (it loops during its beat), at most 2.5 MB and 1.5 MB, with two stills in `src/assets/photos/`: `action-kitchen.jpg`, the clip's first frame (its poster, which should match `room-kitchen-before`), and `action-kitchen-still.jpg`, the frame phones show instead of the clip (under 768px the clip is never requested). Encode a source clip with:
+
+```bash
+VF="scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,format=yuv420p"
+ffmpeg -y -loglevel error -i source.mp4 -t 8 -an -map_metadata -1 -vf "$VF" -c:v libx264 -preset slow -crf 26 -level:v 4.0 -movflags +faststart public/media/action-kitchen.mp4
+ffmpeg -y -loglevel error -i source.mp4 -t 8 -an -map_metadata -1 -vf "$VF" -c:v libvpx-vp9 -b:v 0 -crf 38 -row-mt 1 public/media/action-kitchen.webm
+ffmpeg -y -loglevel error -i source.mp4 -frames:v 1 -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080" -q:v 2 src/assets/photos/action-kitchen.jpg
+ffmpeg -y -loglevel error -ss 4 -i source.mp4 -frames:v 1 -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080" -q:v 2 src/assets/photos/action-kitchen-still.jpg
+```
+
+If a file is over its limit, raise its `-crf` by 2 and encode again. Take the second still from the moment the cleaner is mid-wipe (4 seconds in, here). While `demoMode` is on the clip carries the "Sample photo" mark, because it shows a generated person.
 
 ## Production lead storage
 
@@ -592,6 +619,7 @@ Content and config:
 - [ ] Services, area pages, reviews, FAQs, team and policies replaced. No demo reviews, no sample rating.
 - [ ] Wording in components checked ([Wording that lives in components](#wording-that-lives-in-components)).
 - [ ] `npm run photos:status` shows every slot filled with the client's photos; `docs/photo-credits.md` updated.
+- [ ] Replace every picture of a person (`founder`, `team`, the kitchen clip and its two stills) with real photographs or remove them.
 
 Data and privacy:
 

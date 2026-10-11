@@ -120,12 +120,12 @@ One family: Schibsted Grotesk Variable (400 to 700), self-hosted through `@fonts
 
 The floor plan is the one bold element on the site. Everything else stays quiet so the plan reads as the thing to use.
 
-- `--wall` (2px) is the only heavy line weight. The plan's walls use it, and the outer wall of the house is drawn at 4px. Outside the plan, 2px ink rules work like walls between parts of a page: the top of the services list, the FAQ list, each booking step and the footer, above and below the offices band, beside each review, and along the top of the mobile booking bar. Status boxes (error summary, form outcomes) and photo placeholders also use `--wall`, in their own colours. The current header link and a hovered service title get a 2px underline.
+- `--wall` (2px) is the only heavy line weight. The plan's walls use it, and the outer wall of the house is drawn at 4px. Outside the plan, 2px ink rules work like walls between parts of a page: the FAQ list, each booking step and the footer, above and below the offices band, the line through "How a booking works", and along the top of the mobile booking bar. Status boxes (error summary, form outcomes) and photo placeholders also use `--wall`, in their own colours. The current header link and a hovered service title get a 2px underline.
 - Everything else is a 1px `--hairline` in `--color-line`, or white space.
 - Before adding another 2px line, check it divides the page the way a wall would. If it only decorates, use a hairline.
 - Corners: 0 on the plan (rooms and walls are square; the dashed add-a-room slot inside a room has a slight corner so it reads as a button). `--radius-control` (6px) on buttons, fields, photos, placeholders, badges, the price tag and the booking tag.
-- Elevation has two steps, both built from `--color-shadow`. `--shadow-2` lifts the home hero card and the estimator card, so they read as standing in front of the photo. `--shadow-1` is for a small control that sits on a photo (the video pause button). The pinned booking tag keeps its own shadow. Nothing else casts one.
-- Services, reviews and team are lists or rows, never grids of identical cards.
+- Elevation has two steps, both built from `--color-shadow`. `--shadow-2` lifts the home hero card, the estimator card and the closing band's card, so they read as standing in front of the photo. `--shadow-1` is for a small control that sits on a photo (the video pause button) and for the service and review cards. The pinned booking tag keeps its own shadow. Nothing else casts one.
+- Services are photo cards two across from 900px and reviews are quote cards, both on `--color-surface` with `--shadow-1`; nothing else on the home page is a card grid.
 
 ## Motion
 
@@ -139,14 +139,22 @@ A few named moments move, and everything else responds quickly or not at all. Th
 | The home hero leaves the screen (with a photo, from 768px) | Its photo scales 1 to 1.12; its card rises 6% of its own height and stays solid. Driven by `--p` | `HeroScene`, `src/layouts/motion.ts` |
 | The estimator arrives | The plan tilts from flat to a three-quarter view and its walls rise. A room added later rises in 180ms | `src/features/plan/scene3d.ts` |
 | A background video starts | It fades in over its still in `--dur-scene` (900ms) | `Scene` |
+| A block arrives (Reveal) | It fades in and rises `--space-5` once, 500ms (`--dur-reveal`) with `--ease-out`. Mark it `data-reveal`; set `--i` on a row's items to stagger them by 80ms each | `global.css`, `src/layouts/motion.ts` |
+| The process line | The line through "How a booking works" fills as the section scrolls, and each number darkens as the fill reaches it (`--fill` from `--p`) | `HowItWorks` |
+| Service photos and cards | Each photo drifts inside its frame as the list crosses the screen. On a fine pointer the card leans at most 4° toward the pointer, with a soft sheen on the photo | `ServicesList` |
+| Review cards | Each card drifts at its own rate as the section crosses the screen | `Reviews` |
+| The room stage | Before, action, sweep and after begin at 0.3, 0.6 and 0.9 of its progress; the living room fades instead of sweeping. Pinned for the scroll only at 1024px and wider, on screens tall enough, with no reduced-motion preference | `RoomStage`, `src/features/stage/stage.ts` |
+| The map arrives | Once, as it comes on screen: it lies back 12° and settles flat, then the pins drop in one after another | `CoverageMap` |
+| The offices and closing pictures | Each settles to scale 1 inside its frame as the band comes up the screen (from 1.1 and 1.08) | `OfficesBand`, `CtaBand` |
 
 - `--ease-out` is `cubic-bezier(0.23, 1, 0.32, 1)`: a strong ease-out, so a response starts at once and settles.
 - Transitions name their properties (`transform`, `opacity`, colours). Never `transition: all`.
 - The room fade runs only for pointer actions. A room added with the keyboard (Enter or Space on a dashed slot, or a stepper activated from the keyboard, where `event.detail === 0`) appears with no fade, because animating a keyboard action only slows it down.
 - The fade's 180ms and its curve are written in `fadeIn()`. `--dur-fill` records the value but is not read by it, so change both together.
 - Hover styles exist only inside `@media (hover: hover) and (pointer: fine)`, so touch screens never get a stuck hover state. No hover lifts or shadows.
+- Reveal and every scroll-driven rule are hidden or applied only under `html.motion` (set by `motion.ts`) and inside `@media screen`, so with JavaScript off the page reads in full and print shows every block finished. The fade's `transition` sits on the shown `.is-in` rule, so a block hidden when `.motion` arrives snaps instead of fading out; `motion.ts` marks blocks already on screen as shown first, so nothing on the first screen fades.
 - Scroll-linked motion is opt-in. Mark an element `data-progress` and `motion.ts` gives it `--p`: 0 where it first shows, 1 where it has left the top of the screen. Use `--p` for `transform` and `opacity` only. The pinned booking tag appears and disappears without animating.
-- `prefers-reduced-motion: reduce` removes movement: `global.css` cuts CSS animations and smooth scrolling, each component removes its press scale, and `motion.ts`, the background video and the 3D model never start. The short colour fades stay, because they show what changed without moving anything.
+- `prefers-reduced-motion: reduce` removes movement: `global.css` cuts CSS animations and smooth scrolling, each component removes its press scale, and `motion.ts` (so no Reveal and no `--p`), the stage's pinning and sweep, the background video and the 3D model never start. Bare pages (`body.is-bare`) get none of it. The short colour fades stay, because they show what changed without moving anything.
 
 ## Mobile baseline
 
@@ -166,7 +174,7 @@ Review every page against these before calling it done (spec §7.5). The copy ru
 - No all-caps labels, no eyebrow text above headings, no 01/02/03 markers except the booking sequence ("How a booking works" and the `/book` steps), no "→" on buttons, no single highlighted word in headlines.
 - No middle-dot (`·`) meta strings in UI copy.
 - No sky-blue and sparkle "cleaning" clichés, no stock "smiling cleaner with spray bottle" hero.
-- No identical-card grids with the same shadow.
+- No identical-card grids with the same shadow beyond the home page's two: services (told apart by photo) and reviews (by quote).
 - Copy names things the way a homeowner would; buttons say what happens ("Send booking request", not "Submit").
 
 ## Components
@@ -185,6 +193,7 @@ Industry-neutral primitives. They take everything as props and read no config.
 | `Photo` | `slot`, `alt`, `ratio?` ('4 / 3'), `sizes?`, `priority?`, `label?`, `class?` | AVIF and WebP `<Picture>` when `src/assets/photos/<slot>.*` exists, otherwise `Placeholder` |
 | `Scene` | `slot`, `portrait?`, `video?`, `alt?` (''), `priority?` | A backdrop that fills its positioned parent: a still, and a silent loop from `public/media/<video>.webm`/`.mp4` that `scene.ts` attaches only on screens 768px and wider, with motion allowed, Save-Data off and a connection better than 3G. A parent can set `--scene-scale` and `--scene-pause-bottom` |
 | `Placeholder` | `label`, `ratio?` | Room-coloured panel with a dashed border saying what photo goes there |
+| `.sample-tag` | a class in `global.css`, inside a `.sampled` wrapper | A solid chip, bottom left, reading "Sample photo". Goes on every demo picture of a person, shown while `demoMode` is on, so it never relies on the picture for contrast |
 
 Icons available: `phone`, `menu`, `close`, `check`, `plus`, `minus`, `home`, `shield`, `star`, `clock`, `key`, `map-pin`, `building`, `calendar`, `chevron-down`, `mail`, `copy`, `pause`, `play`. `/dev/ui/` (`src/pages/dev/ui.astro`) shows every primitive in both themes. It is not linked and not indexed.
 
@@ -196,7 +205,8 @@ Icons available: `phone`, `menu`, `close`, `check`, `plus`, `minus`, `home`, `sh
 | `plan/PlanControls` | `id` (same as its `FloorPlan`) | Type of clean, bedroom and bathroom steppers, study and laundry toggles, how often, "Add extras" |
 | `pricing/PriceTag` | none | Per-visit price, first-visit price when different, Choose a time |
 | `pricing/PriceLine` | none; default slot for extra actions | The same price hooks as `PriceTag` in a compact block, for the home hero |
-| `pricing/BookingTag` | none | Desktop only: a compact tag pinned under the header once the hero's price and the estimator are both off screen |
+| `pricing/BookingTag` | none | Desktop only: a compact tag pinned under the header once the hero's price and the estimator are both off screen. It steps aside again while any price line (the hero's or the closing band's) or the estimator is on screen |
+| `stage/RoomStage` | none | The before-and-after stage inside `RoomChecklist`: for kitchen, bathroom, bedroom and living room, the room before, an action beat (the kitchen has a clip, a still on phones), a sweep and the finished room with **Book a clean** and the caption "Illustration, not a client's home.". A room needs both stills (`room-<kind>-before` and `-after`) or it has no stage; a room whose pair is not from one camera position is given `fade: true` in the file. The stage is 16:9 and plays from `stage.ts`. Shown at rest without JavaScript and under reduced motion as the finished room |
 | `areas/SuburbCheck` | none | "Check your suburb" form. Uses the fixed id `suburb-input`, so one per page |
 | `areas/CoverageMap` | none | SVG map of `business.areas` around `business.base`. Larger dots are suburbs with a page |
 | `booking/BookingForm` | none | The five-step request on `/book/`, built from `booking/steps/{Step,Home,When,Access,You,Check}`. Below 1024px the price sits inside step 1; from 1024px it is a sticky tag beside the steps |
@@ -238,15 +248,15 @@ Page bands built from features and core UI.
 | `HeroScene` | none (the first screen: backdrop, headline card, live price, Choose a time, Price your home) |
 | `Estimator` | none (the calculator: heading, suburb check, plan, price tag, controls) |
 | `TrustRow` | none |
-| `RoomChecklist` | none |
-| `ServicesList` | none |
-| `Reviews` | `suburb?` (show that suburb's reviews first), `limit?` (3) |
-| `Vetting` | none |
-| `HowItWorks` | none |
+| `RoomChecklist` | none (the plan in read mode, the room stage beside it and the checklist for the chosen room and service; on tall screens 1024px and wider the block pins while the stage plays) |
+| `ServicesList` | none (four photo cards, two across from 900px, each a link with the photo, one line and the "from" price; photo drift and a pointer lean on fine pointers) |
+| `Reviews` | `suburb?` (show that suburb's reviews first), `limit?` (3). Quote cards on `--color-surface`, no photos or faces, each drifting at its own rate |
+| `Vetting` | none (the vetting checks, a team picture and the founder with a note, each picture marked "Sample photo" in the demo) |
+| `HowItWorks` | none (the four numbered steps with a line that fills as the section scrolls) |
 | `Coverage` | none |
-| `OfficesBand` | none |
+| `OfficesBand` | none (a photo, one line and the walk-through button; the photo is capped at 22.5rem while stacked and sits in a 240px column from 900px, and settles to scale 1) |
 | `Faq` | `tag: 'home' \| 'booking' \| 'offices' \| 'keys' \| 'payment'`, `limit?`, `title?`, `more?` (link to `/faq/`, default true) |
-| `CtaBand` | `title`, `text?` |
+| `CtaBand` | `title`, `text?`, `scene?` (a photo slot). With a `scene` that has a file, a solid card over the picture holds the live price (`PriceLine`) and the phone number; without one, or on inner pages, the plain band, which fades in |
 | `PageHeader` | `title`, `intro?`, default slot |
 | `SectionHead` | `id`, `title`, `intro?` |
 

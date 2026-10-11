@@ -2360,17 +2360,17 @@ git commit -m "docs: record the finished home page, the people rule and the meas
 
 | Item | Target | Before | After |
 |---|---|---|---|
-| Unit tests | all pass | 334 | |
-| E2E steps | all pass | 132 | |
-| `/` eager JavaScript, gzipped | ≤ 30 KB | 12.5 KB | |
-| Lazy JavaScript, gzipped | ≤ 150 KB | 130.8 KB | |
-| Home transfer, 375px, at load / after scrolling | report | 112 KB / 128 KB | |
-| Home transfer, 1280px, at load / after scrolling | report | 1111 KB / 1111 KB | |
-| `action-kitchen.mp4` / `.webm` | ≤ 2.5 MB / ≤ 1.5 MB | not present | |
-| Lighthouse mobile `/`: performance / accessibility | ≥ 90 / 100 | 99 / 100 (before the hero photo and clip) | |
-| Lighthouse mobile `/book/`: performance / accessibility | ≥ 90 / 100 | not re-run in part 1 | |
-| Layout shift, `/` | 0 | not re-run in part 1 | |
-| Firefox and WebKit through Playwright | pass where installed | not run | |
+| Unit tests | all pass | 334 | 340 |
+| E2E steps | all pass | 132 | 188 (12 files) |
+| `/` eager JavaScript, gzipped | ≤ 30 KB | 12.5 KB | 13.7 KB |
+| Lazy JavaScript, gzipped | ≤ 150 KB | 130.8 KB | 130.8 KB |
+| Home transfer, 375px, at load / after scrolling | report | 112 KB / 128 KB | 104 KB / 250 KB |
+| Home transfer, 1280px, at load / after scrolling | report | 1111 KB / 1111 KB | 1117 KB / 2085 KB |
+| `action-kitchen.mp4` / `.webm` | ≤ 2.5 MB / ≤ 1.5 MB | not present | 1,106,976 / 723,771 bytes |
+| Lighthouse mobile `/`: performance / accessibility | ≥ 90 / 100 | 99 / 100 (before the hero photo and clip) | 98 / 100 (median of 3) |
+| Lighthouse mobile `/book/`: performance / accessibility | ≥ 90 / 100 | not re-run in part 1 | 98 / 100 (median of 3) |
+| Layout shift, `/` | 0 | not re-run in part 1 | 0.026 (target not met; the web font loading, hero section) |
+| Firefox and WebKit through Playwright | pass where installed | not run | 4 of 4 passed (1280 and 390 wide, both engines) |
 
 ## Not covered by this plan (for the owner)
 

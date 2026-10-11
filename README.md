@@ -43,7 +43,7 @@ A client re-skin edits only the files in this table. [`docs/customising.md`](doc
 |---|---|---|
 | `src/core/` | Industry-neutral code: storage, formatting, validation, leads, JSON-LD, UI primitives | Only `src/core/` |
 | `src/domain/` | Cleaning logic several features share: the selection, the quote, checklists, the selection event | `core/`, `config/`, `content/` |
-| `src/features/` | One behaviour per folder (`plan`, `pricing`, `booking`, `messages`, `areas`, …): its pure logic, components and DOM wiring | `domain/`, `core/`, `config/`, `content/`. Never another feature |
+| `src/features/` | One behaviour per folder (`plan`, `pricing`, `booking`, `messages`, `areas`, `stage`, …): its pure logic, components and DOM wiring | `domain/`, `core/`, `config/`, `content/`. Never another feature |
 | `src/sections/` | Page bands built from features and core UI | Features and below |
 | `src/layouts/` | The page shell: head, theme, header, footer, mobile booking bar | Features and below |
 | `src/pages/` | Routes that compose layouts and sections | Anything |

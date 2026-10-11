@@ -38,7 +38,7 @@ function showPinned(): void {
 }
 
 function watchHero(): void {
-  // Wherever the page already shows the price in full: the estimator, and the home hero's price line.
+  // Wherever the page already shows the price in full: the estimator, and the price lines in the home hero and the closing band.
   const priced = all('#plan, [data-price-line]');
   if (!priced.length || !('IntersectionObserver' in window)) {
     heroVisible = !priced.length ? false : heroVisible;

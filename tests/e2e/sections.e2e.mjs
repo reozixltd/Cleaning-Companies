@@ -453,6 +453,7 @@ await step('the map lies back, settles flat, and its pins drop in', async (page)
   await go(page, '/');
   assert.equal(await page.locator('#areas [data-map-point]').count(), 12);
   assert.notEqual(await page.evaluate(mapTransform), 'none');
+  assert.deepEqual(await page.$$eval('#areas [data-map-point]', (els) => els.map((el) => getComputedStyle(el).opacity)), Array(12).fill('0'), 'the pins start hidden');
   await page.locator('#areas .map').scrollIntoViewIfNeeded();
   await page.waitForFunction(`(${mapTransform})() === 'none' || new DOMMatrix((${mapTransform})()).isIdentity`);
   await page.waitForFunction(() => [...document.querySelectorAll('#areas [data-map-point]')].every((el) => getComputedStyle(el).opacity === '1'));
@@ -501,7 +502,9 @@ await step("the closing band's price follows the estimator, on load and after a 
   await go(page, '/');
   assert.notEqual(await text(page, '#plan [data-price-per-visit]'), before);
   await same();
-  // At the foot of the page the price is on screen in full, so the pinned tag steps aside.
+  // Mid-page nothing priced is on screen, so the pinned tag shows. At the foot of the page the closing price is on screen in full, so it steps aside.
+  await page.locator('#how').scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => !document.querySelector('[data-booking-tag]').hidden);
   await closing.scrollIntoViewIfNeeded();
   await page.waitForFunction(() => document.querySelector('[data-booking-tag]').hidden);
   assert.equal(await page.locator('h1').count(), 1);
@@ -513,6 +516,7 @@ await step('the closing picture settles from 1.08 as the band comes up the scree
   assert.ok(Math.abs((await scale()) - 1.08) < 0.001, `starts at 1.08: ${await scale()}`);
   await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
   await page.waitForFunction(() => new DOMMatrix(getComputedStyle(document.querySelector('.cta--scenic [data-scene] img')).transform).a < 1.07);
+  await page.waitForFunction(() => new DOMMatrix(getComputedStyle(document.querySelector('.cta--scenic [data-scene] img')).transform).a < 1.001);
 }, { width: 1280 });
 
 await step('inner pages keep the plain closing band', async (page) => {

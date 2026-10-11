@@ -95,21 +95,27 @@ const SIZES = '(min-width: 900px) 50vw, 100vw';
     border-radius: 0;
   }
 
-  /* "After" is uncovered from left to right by two wrappers moving in opposite directions, so only transforms change. */
   .stage__after {
     overflow: hidden;
-    transform: translateX(calc((var(--sweep) - 1) * 100%));
   }
-  .stage__after-inner {
-    transform: translateX(calc((1 - var(--sweep)) * 100%));
-  }
-  /* Stills that do not line up fade instead (spec §18). */
-  .stage__room[data-fade] .stage__after {
-    transform: none;
-    opacity: var(--sweep);
-  }
-  .stage__room[data-fade] .stage__after-inner {
-    transform: none;
+  /* What the script plays (the sweep, the fade, the held-back button) is for screens only: paper shows the
+     finished room, as the page does without the script. */
+  @media screen {
+    /* "After" is uncovered from left to right by two wrappers moving in opposite directions, so only transforms change. */
+    .stage__after {
+      transform: translateX(calc((var(--sweep) - 1) * 100%));
+    }
+    .stage__after-inner {
+      transform: translateX(calc((1 - var(--sweep)) * 100%));
+    }
+    /* Stills that do not line up fade instead (spec §18). */
+    .stage__room[data-fade] .stage__after {
+      transform: none;
+      opacity: var(--sweep);
+    }
+    .stage__room[data-fade] .stage__after-inner {
+      transform: none;
+    }
   }
 
   /* Top right, clear of the pause button: the sweep uncovers from the left, so this stays in view until it ends. */
@@ -137,8 +143,10 @@ const SIZES = '(min-width: 900px) 50vw, 100vw';
     translate: -50% 0;
     background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-surface) 65%, transparent), transparent);
   }
-  .stage[data-phase='sweep'] .stage__band {
-    opacity: 1;
+  @media screen {
+    .stage[data-phase='sweep'] .stage__band {
+      opacity: 1;
+    }
   }
   .stage:has(.stage__room[data-fade]:not([hidden])) .stage__band {
     display: none;
@@ -152,9 +160,11 @@ const SIZES = '(min-width: 900px) 50vw, 100vw';
     z-index: 1;
     transition: opacity var(--dur-colour) linear;
   }
-  .stage.is-live:not([data-phase='after']) .stage__book {
-    visibility: hidden;
-    opacity: 0;
+  @media screen {
+    .stage.is-live:not([data-phase='after']) .stage__book {
+      visibility: hidden;
+      opacity: 0;
+    }
   }
 
   /* A layer that is off keeps its box (display stays on, against the global [hidden] rule), so its

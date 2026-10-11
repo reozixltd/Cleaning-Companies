@@ -78,6 +78,15 @@ await step('printing shows every block, scrolled to or not', async (page) => {
   await page.emulateMedia({ media: 'print' });
   const found = await opacities(page);
   assert.ok(found.length > 0 && found.every((o) => o === '1'), found.join(' '));
+  // The stage's script has run on the home page (it is still at "before" here), but paper shows the finished room and its button.
+  await go(page, '/');
+  assert.equal(await page.locator('#whats-included [data-stage]').getAttribute('data-phase'), 'before');
+  await page.emulateMedia({ media: 'print' });
+  const after = page.locator('[data-stage-room="kitchen"] .stage__after');
+  const [opacity, shift] = await after.evaluate((el) => [getComputedStyle(el).opacity, new DOMMatrix(getComputedStyle(el).transform).e]);
+  assert.equal(opacity, '1', 'the finished picture is not faded');
+  assert.equal(shift, 0, 'the finished picture is fully uncovered');
+  assert.ok(await page.locator('[data-stage-book] a').isVisible(), 'the booking button shows on paper');
 }, { width: 1280 });
 
 await step('the booking page has nothing that fades in', async (page) => {
@@ -417,6 +426,12 @@ await step('phones get a still of the cleaner in the action beat and never ask f
   assert.equal(await action.locator('img').count(), 1);
   assert.match(await action.locator('img').getAttribute('alt'), /cleaner/i);
   assert.equal(await action.locator('video source').count(), 0);
+  await page.waitForFunction(() => getComputedStyle(document.querySelector('[data-stage-action]')).opacity === '1');
+  const chip = action.locator('.sample-tag');
+  assert.equal((await chip.innerText()).trim(), 'Sample photo');
+  assert.ok(await chip.isVisible(), 'the cleaner is marked as a sample');
+  const [mark, picture] = await Promise.all([chip.boundingBox(), action.locator('img').boundingBox()]);
+  assert.ok(mark.x >= picture.x && mark.x + mark.width <= picture.x + picture.width && mark.y >= picture.y && mark.y + mark.height <= picture.y + picture.height, 'the mark sits on the cleaner picture');
   await passTo(page, 0.97);
   await untilPhase(page, 'after');
   await page.waitForTimeout(400);
@@ -449,6 +464,39 @@ await step('without JavaScript the stage shows the finished kitchen, its caption
   assert.equal((await page.locator('[data-stage-block] figcaption').innerText()).trim(), "Illustration, not a client's home.");
   assert.ok(await page.locator('[data-stage-action]').isHidden());
 }, { width: 1280, height: 900, javaScriptEnabled: false });
+
+// A heading's box runs to the edge of its column, so what the tag covers is measured on the words themselves.
+const rectOf = (el, words = false) => {
+  let target = el;
+  if (words) {
+    target = document.createRange();
+    target.selectNodeContents(el);
+  }
+  const r = target.getBoundingClientRect();
+  return { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+};
+const overlap = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+
+for (const width of [1024, 1280]) {
+  await step(`the pinned booking tag stays clear of the checklist heading and service label (${width})`, async (page) => {
+    await go(page, '/');
+    await page.locator('[data-plan-controls] [data-step="bedrooms"][data-delta="1"]').click();
+    await go(page, '/'); // a returning visitor: the saved selection shows the tag
+    assert.equal(await pinned(page), true);
+    await pinTo(page, 0.5);
+    await page.waitForFunction(() => !document.querySelector('[data-booking-tag]').hidden);
+    await page.waitForFunction(() =>
+      [...document.querySelectorAll('#whats-included [data-reveal]')].filter((el) => el.getBoundingClientRect().bottom > 0 && el.getBoundingClientRect().top < window.innerHeight).every((el) => {
+        const s = getComputedStyle(el);
+        return s.opacity === '1' && s.translate === 'none';
+      }));
+    const tag = await page.locator('[data-booking-tag]').evaluate(rectOf);
+    for (const part of ['h3', '.panel__service']) {
+      const rect = await page.locator(`[data-room-panel]:not([hidden]) ${part}`).evaluate(rectOf, true);
+      assert.ok(!overlap(tag, rect), `the tag ${JSON.stringify(tag)} covers the ${part} ${JSON.stringify(rect)}`);
+    }
+  }, { width, height: 800 });
+}
 
 // ── Team (spec §5.7, §7.3) ───────────────────────────────────
 /** The mark sits inside its picture's box. Reveal moves a block with `translate`, so wait for its block to land before measuring. */

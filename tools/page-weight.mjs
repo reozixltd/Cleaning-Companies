@@ -1,8 +1,8 @@
 /**
  * How many bytes the home page transfers, once loaded and after scrolling the
- * whole page, in Chromium, for a phone at device pixel ratio 1 (comparable with
- * the redesign's "Before" figures), the same phone at ratio 3 (what a current
- * phone downloads, because it fetches larger pictures), and a desktop. Needs a
+ * whole page, in Chromium, for a phone at device pixel ratio 1, the same phone
+ * at ratio 3 (what a current phone downloads, because it fetches larger
+ * pictures), and a desktop. Response bodies only, headers not counted. Needs a
  * running preview. Exits 1 if the home page does not answer with a success.
  *
  *   node tools/page-weight.mjs [baseUrl]

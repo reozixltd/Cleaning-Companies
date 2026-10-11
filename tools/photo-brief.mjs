@@ -69,7 +69,7 @@ function markdown({ rows }) {
     '',
     `Generated from \`${CONFIG}\` by \`npm run photos:status -- --write\`. Edit the config, not this file, then run the command again.`,
     '',
-    `To fill a slot, save the photo as \`${PHOTOS}/<slot>.jpg\` (or \`.jpeg\`, \`.png\`, \`.webp\`, \`.avif\`, lower case). A slot without a file shows a labelled placeholder. The build makes AVIF and WebP copies at several widths, so supply the largest good original you have (at least 1600px on the long side).`,
+    `To fill a slot, save the photo as \`${PHOTOS}/<slot>.jpg\` (or \`.jpeg\`, \`.png\`, \`.webp\`, \`.avif\`, lower case). A slot without a file shows a labelled placeholder, except the hero, room, action, team and closing slots, which leave their feature out. The build makes AVIF and WebP copies at several widths, so supply the largest good original you have (at least 1600px on the long side).`,
     '',
     'Rules for every photo:',
     '',

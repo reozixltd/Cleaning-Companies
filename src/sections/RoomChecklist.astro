@@ -130,23 +130,23 @@ import SectionHead from './SectionHead.astro';
      stage.ts reads `position` to know which way to measure, so the sticky rule is the only switch.
      The 120vh of travel is there from the first paint wherever scripts run (`scripting: enabled`), not
      only once .is-live is set: a browser that restores the scroll position of a reload before the script
-     has run (WebKit) would otherwise clamp it against a page 120vh short and land 120vh too far down. */
-  @media screen and (min-width: 64em) and (min-height: 48.75em) and (prefers-reduced-motion: no-preference) {
+     has run (WebKit) would otherwise clamp it against a page 120vh short and land 120vh too far down.
+     A browser that does not know `scripting` drops the whole block and plays the stage unpinned. */
+  @media screen and (min-width: 64em) and (min-height: 48.75em) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
     .included:global(:has(.stage.is-live)) {
       position: sticky;
       top: 5.5rem;
     }
-    @media (scripting: enabled) {
-      .included__track:global(:has(.stage))::after {
-        content: '';
-        display: block;
-        height: 120vh;
-      }
+    .included__track:global(:has(.stage))::after {
+      content: '';
+      display: block;
+      height: 120vh;
     }
     /* The pinned booking tag (fixed, top right, outside this component) sits over the top of the checklist
-       column while it shows. Up to 90em the words are under it, so the column starts below it; wider, they
-       are clear. The plan column sets the block's height, so this does not grow it. */
-    @media (max-width: 90em) {
+       column while it shows. Up to 96em the words are under it (its longest summary, a deep clean, reaches
+       them until about 1490px), so the column starts below it; wider, they are clear. While the stage shows,
+       the plan column sets the block's height, so this does not grow it. */
+    @media (max-width: 96em) {
       :global(body:has([data-booking-tag]:not([hidden]))) .included__lists {
         padding-top: 3.5rem;
       }

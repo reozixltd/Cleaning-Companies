@@ -477,10 +477,12 @@ const rectOf = (el, words = false) => {
 };
 const overlap = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
 
-for (const width of [1024, 1280]) {
-  await step(`the pinned booking tag stays clear of the checklist heading and service label (${width})`, async (page) => {
+// The tag is as wide as its summary, and a deep clean has the longest one: that is the case just above laptop widths.
+for (const [width, height, service] of [[1024, 800], [1280, 800], [1441, 900, 'deep']]) {
+  await step(`the pinned booking tag stays clear of the checklist heading and service label (${width}${service ? `, ${service}` : ''})`, async (page) => {
     await go(page, '/');
     await page.locator('[data-plan-controls] [data-step="bedrooms"][data-delta="1"]').click();
+    if (service) await page.locator(`[data-plan-controls] input[data-service][value="${service}"]`).check({ force: true });
     await go(page, '/'); // a returning visitor: the saved selection shows the tag
     assert.equal(await pinned(page), true);
     await pinTo(page, 0.5);
@@ -495,7 +497,7 @@ for (const width of [1024, 1280]) {
       const rect = await page.locator(`[data-room-panel]:not([hidden]) ${part}`).evaluate(rectOf, true);
       assert.ok(!overlap(tag, rect), `the tag ${JSON.stringify(tag)} covers the ${part} ${JSON.stringify(rect)}`);
     }
-  }, { width, height: 800 });
+  }, { width, height });
 }
 
 // ── Team (spec §5.7, §7.3) ───────────────────────────────────

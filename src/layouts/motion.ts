@@ -21,6 +21,7 @@ if (!still && 'IntersectionObserver' in window) {
     const viewport = window.innerHeight;
     for (const el of tracked) {
       const r = el.getBoundingClientRect();
+      if (!r.height) continue;
       const top = r.top + window.scrollY;
       const from = Math.max(top - viewport, 0);
       const p = Math.min(Math.max((window.scrollY - from) / (top + r.height - from), 0), 1).toFixed(4);

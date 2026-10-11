@@ -42,12 +42,14 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
     for (const card of document.querySelectorAll<HTMLElement>('[data-tilt]')) {
       card.addEventListener('pointermove', (e) => {
         const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width;
-        const y = (e.clientY - r.top) / r.height;
+        const x = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1);
+        const y = Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1);
+        // The sheen covers the photo only, so its height is measured against the photo, not the whole card.
+        const photo = card.querySelector<HTMLElement>('.service__photo')!.getBoundingClientRect();
         card.style.setProperty('--tilt-x', `${((0.5 - y) * 8).toFixed(2)}deg`);
         card.style.setProperty('--tilt-y', `${((x - 0.5) * 8).toFixed(2)}deg`);
         card.style.setProperty('--sheen-x', `${(x * 100).toFixed(1)}%`);
-        card.style.setProperty('--sheen-y', `${(y * 100).toFixed(1)}%`);
+        card.style.setProperty('--sheen-y', `${(((e.clientY - photo.top) / photo.height) * 100).toFixed(1)}%`);
       });
       card.addEventListener('pointerleave', () => {
         card.style.removeProperty('--tilt-x');

@@ -93,6 +93,20 @@ await step('scroll progress is exactly 0 below the screen and exactly 1 above it
   await page.waitForFunction(() => document.querySelector('.scene-hero').style.getPropertyValue('--p') === '1.0000');
 }, { width: 1280 });
 
+await step('a hidden progress element never gets a NaN, and the others keep a number from 0 to 1', async (page) => {
+  await go(page, '/');
+  await page.locator('.scene-hero').evaluate((el) => (el.style.display = 'none')); // zero box, at the top of the page
+  const twoFrames = () => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+  await page.evaluate(() => window.scrollTo({ top: 200, behavior: 'instant' }));
+  await twoFrames();
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' })); // scrolled back to 0: the hidden box measures 0 / 0
+  await twoFrames();
+  const found = await page.$$eval('[data-progress]', (els) => els.map((el) => el.style.getPropertyValue('--p')));
+  assert.ok(found.length > 1, 'more than one tracked element');
+  assert.ok(!found.includes('NaN'), found.join(' '));
+  assert.ok(found.every((p) => Number(p) >= 0 && Number(p) <= 1), found.join(' '));
+}, { width: 1280 });
+
 // ── Trust, process, FAQ (spec §5.3, §5.8, §5.10) ─────────────
 await step('the four trust proofs rise one after another', async (page) => {
   await go(page, '/');
@@ -106,7 +120,17 @@ await step('the four trust proofs rise one after another', async (page) => {
   assert.ok(delays[3] > delays[0], delays.join(' '));
 }, { width: 1280 });
 
-const fillOf = () => new DOMMatrix(getComputedStyle(document.querySelector('#how .steps'), '::after').transform).a;
+await step('the trust icons start hidden and show with their proofs', async (page) => {
+  await go(page, '/');
+  assert.ok(await page.locator('.trust').evaluate((el) => el.getBoundingClientRect().top > window.innerHeight), 'the trust row starts below the fold');
+  const icons = () => page.$$eval('.trust__item .icon', (els) => els.map((el) => getComputedStyle(el).opacity));
+  assert.deepEqual(await icons(), ['0', '0', '0', '0'], 'the icons start hidden');
+  await page.locator('.trust__item').last().scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => [...document.querySelectorAll('.trust__item .icon')].every((el) => getComputedStyle(el).opacity === '1'));
+  assert.deepEqual(await icons(), ['1', '1', '1', '1']);
+}, { width: 1280, height: 500 });
+
+const fillOf = () =>new DOMMatrix(getComputedStyle(document.querySelector('#how .steps'), '::after').transform).a;
 const lastNumber = (page) => page.locator('#how .steps li').last().evaluate((li) => Number(getComputedStyle(li, '::before').opacity));
 
 await step('the process line fills, and its numbers darken, as the steps cross the screen', async (page) => {
@@ -127,6 +151,17 @@ await step('under reduced motion the process line is complete from the start', a
   assert.equal(await page.evaluate(fillOf), 1);
   assert.equal(await lastNumber(page), 1);
 }, { width: 1280, reducedMotion: 'reduce' });
+
+await step('on a phone the process line fills downwards as the steps cross the screen', async (page) => {
+  await go(page, '/');
+  const fillDown = () => new DOMMatrix(getComputedStyle(document.querySelector('#how .steps'), '::after').transform).d;
+  const toSteps = (fromTop) =>
+    page.locator('#how .steps').evaluate((ol, y) => window.scrollTo({ top: ol.getBoundingClientRect().top + window.scrollY - y, behavior: 'instant' }), fromTop);
+  await toSteps(780); // the list has only just come on screen
+  assert.ok((await page.evaluate(fillDown)) < 1, `the fill starts short: ${await page.evaluate(fillDown)}`);
+  await page.locator('#how .steps').evaluate((ol) => window.scrollTo({ top: ol.getBoundingClientRect().bottom + window.scrollY + 10, behavior: 'instant' })); // the list is above the screen
+  await page.waitForFunction(`(${fillDown})() === 1`);
+}, { width: 375 });
 
 await step('the FAQ keeps its native accordion', async (page) => {
   await go(page, '/');
@@ -175,6 +210,29 @@ await step('a service card leans toward a fine pointer by at most 4 degrees', as
   await page.waitForFunction(() => document.querySelector('#services [data-tilt]').style.getPropertyValue('--tilt-x') === '');
 }, { width: 1280 });
 
+await step('a pointer event outside the card still leans it by at most 4 degrees', async (page) => {
+  await go(page, '/');
+  const card = page.locator('#services [data-tilt]').first();
+  await card.scrollIntoViewIfNeeded();
+  await servicesSettled(page);
+  const box = await card.boundingBox();
+  await card.dispatchEvent('pointermove', { clientX: box.x + box.width + 40, clientY: box.y + box.height + 40 });
+  const [x, y] = await card.evaluate((el) => ['--tilt-x', '--tilt-y'].map((v) => parseFloat(el.style.getPropertyValue(v))));
+  assert.ok(Math.abs(x) <= 4 && Math.abs(y) <= 4, `${x} ${y}`);
+}, { width: 1280 });
+
+await step('the sheen sits under the pointer on the photo', async (page) => {
+  await go(page, '/');
+  const card = page.locator('#services [data-tilt]').first();
+  await card.scrollIntoViewIfNeeded();
+  await servicesSettled(page);
+  const photo = await card.locator('.service__photo').boundingBox();
+  await page.mouse.move(photo.x + photo.width / 2, photo.y + photo.height / 2);
+  await page.waitForFunction(() => document.querySelector('#services [data-tilt]').style.getPropertyValue('--sheen-y') !== '');
+  const sheenY = await card.evaluate((el) => parseFloat(el.style.getPropertyValue('--sheen-y')));
+  assert.ok(Math.abs(sheenY - 50) <= 8, `--sheen-y is ${sheenY}%`);
+}, { width: 1280 });
+
 await step('a service card keeps its lean with the pointer near its edge', async (page) => {
   await go(page, '/');
   const card = page.locator('#services [data-tilt]').first();
@@ -184,7 +242,9 @@ await step('a service card keeps its lean with the pointer near its edge', async
   await page.mouse.move(box.x + box.width - 3, box.y + box.height / 2);
   await page.waitForTimeout(400);
   assert.notEqual(await card.evaluate((el) => el.style.getPropertyValue('--tilt-y')), '');
-  assert.ok(await card.locator('.service').evaluate((el) => el.matches(':hover') || el.parentElement.matches(':hover')));
+  // The card is really turned on screen, not just holding the variable: the rendered matrix has a rotation about Y.
+  const turned = await card.locator('.service').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m13);
+  assert.notEqual(turned, 0, 'the card is turned');
 }, { width: 1280 });
 
 for (const [name, options] of [['a touch screen', { hasTouch: true, isMobile: true }], ['reduced motion', { width: 1280, reducedMotion: 'reduce' }]]) {

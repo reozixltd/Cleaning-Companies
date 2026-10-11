@@ -14,7 +14,7 @@ const steps = [
 <section class="band" id="how" aria-labelledby="how-title">
   <div class="wrap">
     <SectionHead id="how-title" title="How a booking works" />
-    <ol class="steps" data-progress>
+    <ol class="steps" data-progress style={`--n: ${steps.length}`}>
       {steps.map((s, i) => (
         <li style={`--i: ${i}`}>
           <h3>{s.title}</h3>
@@ -71,7 +71,7 @@ const steps = [
     font-weight: var(--weight-bold);
     line-height: 1;
     font-variant-numeric: tabular-nums;
-    opacity: clamp(0.55, 0.55 + var(--fill) * 4 - var(--i), 1);
+    opacity: clamp(0.55, 0.55 + var(--fill) * var(--n) - var(--i), 1);
   }
   .steps h3 {
     font-size: var(--text-18);

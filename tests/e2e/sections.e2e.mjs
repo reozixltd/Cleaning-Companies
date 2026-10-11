@@ -307,6 +307,21 @@ await step('choosing a room swaps the stage where it stands, and a room without 
   assert.deepEqual(await shownRooms(page), ['kitchen']);
 }, { width: 1280, height: 900 });
 
+await step('a stage shown again after a room without pictures picks up where the page is', async (page) => {
+  await go(page, '/');
+  await page.locator('#plan [data-room-id="add-study"]').click();
+  await passTo(page, 0.1);
+  await untilPhase(page, 'before');
+  await page.locator('#whats-included .room--included[data-kind="study"]').first().click();
+  await page.locator('[data-stage-block]').waitFor({ state: 'hidden' });
+  await page.evaluate(() => window.scrollBy(0, 5)); // a scroll while the stage has no box measures it as finished
+  await untilPhase(page, 'after');
+  await page.locator('#whats-included [data-room-id="kitchen"]').click();
+  await page.locator('[data-stage-block]').waitFor();
+  await untilPhase(page, 'before');
+  assert.ok(!(await page.locator('[data-stage-book] a').isVisible()));
+}, { width: 1280, height: 700 });
+
 await step('the living room fades to its finished state instead of sweeping', async (page) => {
   await go(page, '/');
   await pinTo(page, 0.75);
@@ -366,6 +381,8 @@ await step('reduced motion: the finished room, the booking button, no pinning, n
 
 await step('without JavaScript the stage shows the finished kitchen, its caption and the booking button', async (page) => {
   await go(page, '/');
+  assert.equal(await pinned(page), false);
+  assert.equal(await page.locator('[data-stage-pin]').evaluate((el) => el.parentElement.offsetHeight - el.offsetHeight), 0, 'no empty travel');
   assert.deepEqual(await shownRooms(page), ['kitchen']);
   assert.equal(await page.locator(STAGE).getAttribute('data-phase'), 'after');
   assert.ok(await page.locator('[data-stage-book] a').isVisible());

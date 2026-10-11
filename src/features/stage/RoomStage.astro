@@ -112,6 +112,14 @@ const SIZES = '(min-width: 900px) 50vw, 100vw';
     transform: none;
   }
 
+  /* Top right, clear of the pause button: the sweep uncovers from the left, so this stays in view until it ends. */
+  .stage__action :global(.sample-tag) {
+    left: auto;
+    bottom: auto;
+    top: var(--space-2);
+    right: var(--space-2);
+  }
+
   /* The light band rides the sweep's edge. */
   .stage__band {
     opacity: 0;

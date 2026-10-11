@@ -58,6 +58,7 @@ export function initStage(): void {
   };
   window.addEventListener('scroll', queue, { passive: true });
   window.addEventListener('resize', queue, { passive: true });
+  new ResizeObserver(queue).observe(stage); // a stage shown again after being hidden has a box to measure
   stage.classList.add('is-live');
   measure();
 }

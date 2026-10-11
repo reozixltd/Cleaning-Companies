@@ -122,14 +122,15 @@ import SectionHead from './SectionHead.astro';
     }
   }
   /* Tall desktop screens: the plan, stage and checklist hold still for 120vh of scrolling while the stage
-     plays (spec §5.5). Only where the whole block fits under the header, and never under reduced motion.
+     plays (spec §5.5). Only where the whole block fits under the header, never under reduced motion, and
+     only once the stage's script is running (.is-live), so nothing pins without a show to watch.
      stage.ts reads `position` to know which way to measure, so this rule is the only switch. */
-  @media screen and (min-width: 1024px) and (min-height: 780px) and (prefers-reduced-motion: no-preference) {
-    .included {
+  @media screen and (min-width: 64em) and (min-height: 48.75em) and (prefers-reduced-motion: no-preference) {
+    .included:global(:has(.stage.is-live)) {
       position: sticky;
       top: 5.5rem;
     }
-    .included__track::after {
+    .included__track:global(:has(.stage.is-live))::after {
       content: '';
       display: block;
       height: 120vh;

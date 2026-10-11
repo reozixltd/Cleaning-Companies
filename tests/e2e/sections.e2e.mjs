@@ -136,6 +136,76 @@ await step('the FAQ keeps its native accordion', async (page) => {
   assert.ok(await first.locator('p').isVisible());
 });
 
+// ── Services and reviews (spec §5.4, §5.6) ───────────────────
+/** Reveal moves a card with `translate`; wait until every service block that has come on screen has landed before reading boxes or aiming the mouse. */
+const servicesSettled = (page) =>
+  page.waitForFunction(() =>
+    [...document.querySelectorAll('#services [data-reveal]')].filter((el) => el.getBoundingClientRect().top < window.innerHeight).every((el) => {
+      const s = getComputedStyle(el);
+      return (!document.documentElement.classList.contains('motion') || el.classList.contains('is-in')) && s.opacity === '1' && s.translate === 'none';
+    }));
+
+await step('the four services are cards, two across on a desktop, each with its link and from price', async (page) => {
+  await go(page, '/');
+  const cards = page.locator('#services [data-tilt]');
+  assert.equal(await cards.count(), 4);
+  for (let i = 0; i < 4; i++) {
+    assert.equal(await cards.nth(i).locator('a[href^="/services/"]').count(), 1);
+    assert.match(await cards.nth(i).innerText(), /from \$\d+/);
+  }
+  await cards.first().scrollIntoViewIfNeeded();
+  await cards.nth(2).scrollIntoViewIfNeeded();
+  await servicesSettled(page);
+  const [a, b, c] = await Promise.all([0, 1, 2].map((i) => cards.nth(i).boundingBox()));
+  assert.ok(Math.abs(a.y - b.y) < 2 && b.x > a.x + a.width - 2, 'the first two sit side by side');
+  assert.ok(c.y > a.y + a.height - 2, 'the third starts a new row');
+}, { width: 1280 });
+
+await step('a service card leans toward a fine pointer by at most 4 degrees', async (page) => {
+  await go(page, '/');
+  const card = page.locator('#services [data-tilt]').first();
+  await card.scrollIntoViewIfNeeded();
+  await servicesSettled(page);
+  const box = await card.boundingBox();
+  await page.mouse.move(box.x + 4, box.y + 4);
+  await page.waitForFunction(() => document.querySelector('#services [data-tilt]').style.getPropertyValue('--tilt-x') !== '');
+  const [x, y] = await card.evaluate((el) => ['--tilt-x', '--tilt-y'].map((v) => parseFloat(el.style.getPropertyValue(v))));
+  assert.ok(Math.abs(x) > 2 && Math.abs(x) <= 4 && Math.abs(y) > 2 && Math.abs(y) <= 4, `${x} ${y}`);
+  await page.mouse.move(0, 0);
+  await page.waitForFunction(() => document.querySelector('#services [data-tilt]').style.getPropertyValue('--tilt-x') === '');
+}, { width: 1280 });
+
+for (const [name, options] of [['a touch screen', { hasTouch: true, isMobile: true }], ['reduced motion', { width: 1280, reducedMotion: 'reduce' }]]) {
+  await step(`a service card stays flat for ${name}`, async (page) => {
+    await go(page, '/');
+    const card = page.locator('#services [data-tilt]').first();
+    await card.scrollIntoViewIfNeeded();
+    await servicesSettled(page);
+    const box = await card.boundingBox();
+    await page.mouse.move(box.x + 4, box.y + 4);
+    await page.waitForTimeout(200);
+    assert.equal(await card.evaluate((el) => el.style.getPropertyValue('--tilt-x')), '');
+  }, options);
+}
+
+const reviewShift = (page) => page.$$eval('#reviews [data-review] figure', (els) => els.map((el) => new DOMMatrix(getComputedStyle(el).transform).f));
+
+await step('review cards drift at different rates, with no faces', async (page) => {
+  await go(page, '/');
+  assert.equal(await page.locator('#reviews img').count(), 0);
+  await page.locator('#reviews').evaluate((el) => window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.7, behavior: 'instant' }));
+  await page.waitForFunction(() => Number(getComputedStyle(document.querySelector('#reviews')).getPropertyValue('--p')) > 0);
+  const shifts = await reviewShift(page);
+  assert.equal(shifts.length, 3);
+  assert.equal(new Set(shifts.map((s) => s.toFixed(1))).size, 3, shifts.join(' '));
+}, { width: 1280 });
+
+await step('review cards hold still under reduced motion', async (page) => {
+  await go(page, '/');
+  await page.locator('#reviews').scrollIntoViewIfNeeded();
+  assert.deepEqual(await reviewShift(page), [0, 0, 0]);
+}, { width: 1280, reducedMotion: 'reduce' });
+
 // ── After every block has shown ──────────────────────────────
 for (const theme of THEMES) {
   for (const width of [375, 1280]) {

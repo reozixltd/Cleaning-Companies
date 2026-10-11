@@ -19,7 +19,7 @@ const reviews = [...local, ...all.filter((r) => !local.includes(r))].slice(0, li
 const year = (date: string) => date.slice(0, 4);
 ---
 
-<section class="band" id="reviews" aria-labelledby="reviews-title">
+<section class="band" id="reviews" aria-labelledby="reviews-title" data-progress>
   <div class="wrap reviews">
     <div class="reviews__head">
       <h2 id="reviews-title">What clients say</h2>
@@ -29,8 +29,8 @@ const year = (date: string) => date.slice(0, 4);
       <Button href="/book/" data-choose-time>Book a clean</Button>
     </div>
     <ul class="reviews__list" role="list">
-      {reviews.map((r) => (
-        <li data-review>
+      {reviews.map((r, i) => (
+        <li data-review data-reveal style={`--i: ${i}`}>
           <figure>
             <p class="stars" role="img" aria-label={`Rated ${r.rating} out of 5`}>
               {Array.from({ length: 5 }, (_, i) => <Icon name="star" size={18} class={i < r.rating ? 'star star--on' : 'star'} />)}
@@ -62,15 +62,32 @@ const year = (date: string) => date.slice(0, 4);
   }
   .reviews__list {
     display: grid;
-    gap: var(--space-5);
+    gap: var(--space-6);
     padding: 0;
     list-style: none;
   }
+  /* Editorial quote cards. Each drifts a little as the section crosses the screen, at its own rate. */
   figure {
     display: grid;
-    gap: var(--space-2);
-    padding-left: var(--space-4);
-    border-left: var(--wall) solid var(--color-ink);
+    gap: var(--space-3);
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border-radius: var(--radius-control);
+    box-shadow: var(--shadow-1);
+  }
+  li:nth-child(3n + 1) figure {
+    --drift: 16px;
+  }
+  li:nth-child(3n + 2) figure {
+    --drift: 40px;
+  }
+  li:nth-child(3n) figure {
+    --drift: 28px;
+  }
+  @media screen {
+    :global(.motion) figure {
+      transform: translateY(calc((0.5 - var(--p)) * var(--drift)));
+    }
   }
   .stars {
     display: flex;
@@ -83,7 +100,7 @@ const year = (date: string) => date.slice(0, 4);
   }
   blockquote {
     margin: 0;
-    font-size: var(--text-18);
+    font-size: var(--text-22);
   }
   figcaption {
     color: var(--color-ink-muted);
@@ -93,6 +110,9 @@ const year = (date: string) => date.slice(0, 4);
     .reviews {
       grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
       gap: var(--space-8);
+    }
+    li:nth-child(even) {
+      margin-left: var(--space-7);
     }
   }
 </style>

@@ -24,7 +24,7 @@ const scenic = scene !== undefined && hasPhoto(scene);
 {
   scenic ? (
     <section class="cta cta--scenic" aria-labelledby="cta-title" data-progress>
-      <Scene slot={scene!} />
+      <Scene slot={scene!} portrait={`${scene}-portrait`} />
       <div class="wrap cta__front">
         <div class="cta__card" data-reveal>
           <div>

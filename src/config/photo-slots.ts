@@ -37,6 +37,7 @@ export const photoSlots = {
   'action-kitchen-still': { alt: 'A cleaner in a charcoal apron wiping down the kitchen bench', brief: 'A frame from the middle of the kitchen clip with the cleaner at work: what phones show instead of the clip. 1920×1080.', search: '(frame at 4 s of clip C1 in the redesign spec)', orientation: 'landscape' },
   team: { alt: 'Two cleaners in charcoal aprons arriving at a Queenslander home with their caddy and vacuum', brief: 'Demo: a generated picture of cleaners arriving, marked "Sample photo" on the page. Live client: the real team, with their permission. Plain clothing, no logo. 3:2.', search: '(demo: prompt T2 in the redesign spec; live: the client\'s own photo)', orientation: 'landscape' },
   closing: { alt: 'The open-plan kitchen and living area in late afternoon light, with the door open to the garden', brief: 'The home from `hero` later in the day, as the backdrop of the closing band. The card sits on the left. 2400×1350.', search: '(generated: prompt G7 in the redesign spec)', orientation: 'landscape' },
+  'closing-portrait': { alt: 'A kitchen island with a vase of eucalyptus under a black pendant light, in late afternoon sun', brief: 'The upright crop of `closing` that phones get, 760×1350, cut from the same file: island, pendant light and eucalyptus in frame, not the sofa.', search: '(cropped from `closing`)', orientation: 'portrait' },
 } satisfies Record<string, PhotoSlot>;
 
 export type PhotoSlotName = keyof typeof photoSlots;

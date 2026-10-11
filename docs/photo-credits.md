@@ -32,3 +32,4 @@ One row for every file in `src/assets/photos/`. Add the row when you add the fil
 | `founder` | `founder.jpg` | Generated with Google Flow for this site (prompt T1), approved by the owner. A generated person, not a real one | Owner's own | Generated image |
 | `team` | `team.jpg` | Generated with Google Flow for this site (prompt T2), approved by the owner. Generated people, not real ones | Owner's own | Generated image |
 | `closing` | `closing.jpg` | Generated with Google Flow for this site (prompt G7), approved by the owner | Owner's own | Generated image |
+| `closing-portrait` | `closing-portrait.jpg` | Cropped from `closing` (the same owner-approved picture, cut upright at 760×1350; nothing new generated) | Owner's own | Generated image |

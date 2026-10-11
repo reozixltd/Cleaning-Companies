@@ -589,6 +589,20 @@ await step('inner pages keep the plain closing band', async (page) => {
   assert.equal((await page.locator('.cta [data-choose-time]').innerText()).trim(), 'Book a clean');
 });
 
+for (const [width, axis, box] of [[375, 'naturalHeight', 'offsetHeight'], [1280, 'naturalWidth', 'offsetWidth']]) {
+  await step(`the closing picture is not stretched (${width})`, async (page) => {
+    await go(page, '/');
+    const img = page.locator('.cta--scenic [data-scene] img');
+    await img.scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => {
+      const el = document.querySelector('.cta--scenic [data-scene] img');
+      return el.complete && el.naturalWidth > 0;
+    });
+    const [natural, shown] = await img.evaluate((el, [a, b]) => [el[a], el[b]], [axis, box]);
+    assert.ok(natural >= shown, `${axis} ${natural} is below the box ${box} ${shown}`);
+  }, { width });
+}
+
 // ── After every block has shown ──────────────────────────────
 for (const theme of THEMES) {
   for (const width of [375, 1280]) {

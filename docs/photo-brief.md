@@ -11,7 +11,7 @@ Rules for every photo:
 - People, live client: replace every picture of a person with a real photograph of the client's own people, with their permission, before going live.
 - Demo photos must be licence-free or generated for this site. Record each one in [`photo-credits.md`](photo-credits.md).
 
-## Status: 24 of 24 filled
+## Status: 25 of 25 filled
 
 | Slot | Orientation | File |
 |---|---|---|
@@ -39,6 +39,7 @@ Rules for every photo:
 | `action-kitchen-still` | landscape | `action-kitchen-still.jpg` |
 | `team` | landscape | `team.jpg` |
 | `closing` | landscape | `closing.jpg` |
+| `closing-portrait` | portrait | `closing-portrait.jpg` |
 
 ## Shot list
 
@@ -209,3 +210,10 @@ Rules for every photo:
 - Alt text: The open-plan kitchen and living area in late afternoon light, with the door open to the garden
 - Brief: The home from `hero` later in the day, as the backdrop of the closing band. The card sits on the left. 2400×1350.
 - Search terms: (generated: prompt G7 in the redesign spec)
+
+### `closing-portrait`
+
+- Orientation: portrait
+- Alt text: A kitchen island with a vase of eucalyptus under a black pendant light, in late afternoon sun
+- Brief: The upright crop of `closing` that phones get, 760×1350, cut from the same file: island, pendant light and eucalyptus in frame, not the sofa.
+- Search terms: (cropped from `closing`)

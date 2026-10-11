@@ -437,6 +437,7 @@ The hero's backdrop is a `Scene` (`src/core/ui/Scene.astro`): a still, and optio
 
 - `src/assets/photos/hero.jpg`: the wide still, 2880×1620. Keep the left 40% calm, because the headline card sits there.
 - `src/assets/photos/hero-portrait.jpg`: the upright crop phones get, 1440×2560. Without it phones get the wide still, cropped.
+- `src/assets/photos/closing-portrait.jpg`: the upright crop of `closing` that phones get for the closing band, 760×1350, cut from the same file. Without it phones get the wide picture, cropped and soft.
 - `public/media/hero-loop.mp4` and `public/media/hero-loop.webm`: the loop, 1920×1080, no audio, at most 2.5 MB and 1.5 MB. Its first frame should match the still. Encode a source clip with:
 
 ```bash

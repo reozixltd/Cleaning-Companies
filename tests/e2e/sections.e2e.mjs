@@ -13,7 +13,7 @@ async function revealAll(page) {
   await page.evaluate(async () => {
     for (let y = 0; y < document.documentElement.scrollHeight; y += window.innerHeight * 0.6) {
       window.scrollTo({ top: y, behavior: 'instant' });
-      await new Promise((r) => setTimeout(r, 60));
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     }
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' });
   });

@@ -6,12 +6,12 @@ To fill a slot, save the photo as `src/assets/photos/<slot>.jpg` (or `.jpeg`, `.
 
 Rules for every photo:
 
-- Show rooms and results: finished, tidy spaces in daylight.
-- Never show people presented as the business's staff unless they are the client's real staff, with their permission.
-- Demo photos must be licence-free. Record each one in [`photo-credits.md`](photo-credits.md).
-- A live client uses their own photos. The `founder` slot is always the real person.
+- Show rooms and results: finished, tidy spaces in daylight. "Before" pictures show an ordinary lived-in week, never filth.
+- People, demo site: generated illustrations only (cleaners working or arriving, and one founder portrait in `founder`), in plain clothing with no logo. The page marks each one "Sample photo". Never a face on a review, never a child, never a real or recognisable person.
+- People, live client: replace every picture of a person with a real photograph of the client's own people, with their permission, before going live.
+- Demo photos must be licence-free or generated for this site. Record each one in [`photo-credits.md`](photo-credits.md).
 
-## Status: 11 of 12 filled
+## Status: 24 of 24 filled
 
 | Slot | Orientation | File |
 |---|---|---|
@@ -25,8 +25,20 @@ Rules for every photo:
 | `area-aspley` | landscape | `area-aspley.jpg` |
 | `area-albany-creek` | landscape | `area-albany-creek.jpg` |
 | `area-everton-park` | landscape | `area-everton-park.jpg` |
-| `founder` | portrait | missing |
+| `founder` | portrait | `founder.jpg` |
 | `offices` | landscape | `offices.jpg` |
+| `room-kitchen-before` | landscape | `room-kitchen-before.jpg` |
+| `room-kitchen-after` | landscape | `room-kitchen-after.jpg` |
+| `room-bath-before` | landscape | `room-bath-before.jpg` |
+| `room-bath-after` | landscape | `room-bath-after.jpg` |
+| `room-living-before` | landscape | `room-living-before.jpg` |
+| `room-living-after` | landscape | `room-living-after.jpg` |
+| `room-bed-before` | landscape | `room-bed-before.jpg` |
+| `room-bed-after` | landscape | `room-bed-after.jpg` |
+| `action-kitchen` | landscape | `action-kitchen.jpg` |
+| `action-kitchen-still` | landscape | `action-kitchen-still.jpg` |
+| `team` | landscape | `team.jpg` |
+| `closing` | landscape | `closing.jpg` |
 
 ## Shot list
 
@@ -104,8 +116,8 @@ Rules for every photo:
 
 - Orientation: portrait
 - Alt text: Founder of the business
-- Brief: The real founder, half-length, approachable. Must be the real person for a live client.
-- Search terms: (use the client's own photo)
+- Brief: Demo: a generated portrait, marked "Sample photo" on the page. Live client: the real founder, half-length, approachable. 4:5.
+- Search terms: (demo: prompt T1 in the redesign spec; live: the client's own photo)
 
 ### `offices`
 
@@ -113,3 +125,87 @@ Rules for every photo:
 - Alt text: A clean, empty meeting room with a long table
 - Brief: An open-plan office after hours, clean desks and floor.
 - Search terms: clean empty office
+
+### `room-kitchen-before`
+
+- Orientation: landscape
+- Alt text: The kitchen before a clean: a crumpled tea towel and crumbs on the bench after an ordinary week
+- Brief: The kitchen in an ordinary lived-in week, never filthy. Same camera position as the "after" still. 1920×1080.
+- Search terms: (generated: prompt G3 in the redesign spec)
+
+### `room-kitchen-after`
+
+- Orientation: landscape
+- Alt text: The same kitchen after a clean: a clear bench, a folded tea towel and a shining cooktop
+- Brief: The same kitchen, same camera position, after a clean. 1920×1080.
+- Search terms: (generated: prompt G3 in the redesign spec)
+
+### `room-bath-before`
+
+- Orientation: landscape
+- Alt text: The bathroom before a clean: smudged glass and mirror and a crumpled towel on the rail
+- Brief: The bathroom in an ordinary lived-in week. Same camera position as the "after" still. 1920×1080.
+- Search terms: (generated: prompt G4 in the redesign spec)
+
+### `room-bath-after`
+
+- Orientation: landscape
+- Alt text: The same bathroom after a clean: clear glass, a bright mirror and a neatly hung towel
+- Brief: The same bathroom, same camera position, after a clean. 1920×1080.
+- Search terms: (generated: prompt G4 in the redesign spec)
+
+### `room-living-before`
+
+- Orientation: landscape
+- Alt text: The living room before a clean: rumpled cushions on the sofa and a cup and magazine on the coffee table
+- Brief: The living room in an ordinary lived-in week. 1920×1080.
+- Search terms: (generated: prompt G5 in the redesign spec)
+
+### `room-living-after`
+
+- Orientation: landscape
+- Alt text: The living room after a clean: plumped cushions on the sofa and a tidy coffee table
+- Brief: The living room after a clean. If it is not from the same camera position as the "before" still, the stage fades between them instead of sweeping. 1920×1080.
+- Search terms: (generated: prompt G5 in the redesign spec)
+
+### `room-bed-before`
+
+- Orientation: landscape
+- Alt text: The bedroom before a clean: an unmade bed with a rumpled duvet and loose pillows
+- Brief: The bedroom in an ordinary lived-in week. Same camera position as the "after" still. 1920×1080.
+- Search terms: (generated: prompt G6 in the redesign spec)
+
+### `room-bed-after`
+
+- Orientation: landscape
+- Alt text: The same bedroom after a clean: a made bed with a smooth duvet and neat pillows
+- Brief: The same bedroom, same camera position, after a clean. 1920×1080.
+- Search terms: (generated: prompt G6 in the redesign spec)
+
+### `action-kitchen`
+
+- Orientation: landscape
+- Alt text: The kitchen bench before a clean
+- Brief: The first frame of the kitchen clip (public/media/action-kitchen.*): its poster on screens 768px and wider. 1920×1080.
+- Search terms: (first frame of clip C1 in the redesign spec)
+
+### `action-kitchen-still`
+
+- Orientation: landscape
+- Alt text: A cleaner in a charcoal apron wiping down the kitchen bench
+- Brief: A frame from the middle of the kitchen clip with the cleaner at work: what phones show instead of the clip. 1920×1080.
+- Search terms: (frame at 4 s of clip C1 in the redesign spec)
+
+### `team`
+
+- Orientation: landscape
+- Alt text: Two cleaners in charcoal aprons arriving at a Queenslander home with their caddy and vacuum
+- Brief: Demo: a generated picture of cleaners arriving, marked "Sample photo" on the page. Live client: the real team, with their permission. Plain clothing, no logo. 3:2.
+- Search terms: (demo: prompt T2 in the redesign spec; live: the client's own photo)
+
+### `closing`
+
+- Orientation: landscape
+- Alt text: The open-plan kitchen and living area in late afternoon light, with the door open to the garden
+- Brief: The home from `hero` later in the day, as the backdrop of the closing band. The card sits on the left. 2400×1350.
+- Search terms: (generated: prompt G7 in the redesign spec)

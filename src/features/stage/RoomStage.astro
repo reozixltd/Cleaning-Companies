@@ -1,0 +1,177 @@
+---
+/**
+ * The room stage (spec §5.5): the chosen room before and after a clean, played by
+ * scroll progress (stage.ts). Rooms without both stills are left out, and with no
+ * rooms at all nothing renders, so the checklist never waits on a picture.
+ *
+ * It rests on the finished room: that is what shows without the script and under
+ * reduced motion. The owner of the plan picks the room by hiding all but one
+ * [data-stage-room], and hides [data-stage-block] for a room that has none.
+ */
+import { business } from '@/config/business';
+import { photoSlots } from '@/config/photo-slots';
+import type { RoomKind } from '@/config/rooms';
+import { hasPhoto } from '@/core/photos';
+import Button from '@/core/ui/Button.astro';
+import Photo from '@/core/ui/Photo.astro';
+import Scene from '@/core/ui/Scene.astro';
+
+/** `fade`: the two stills are not from the same camera position, so "after" fades in instead of sweeping across. */
+const ROOMS: { kind: RoomKind; slot: string; fade?: boolean }[] = [
+  { kind: 'kitchen', slot: 'room-kitchen' },
+  { kind: 'bathroom', slot: 'room-bath' },
+  { kind: 'bedroom', slot: 'room-bed' },
+  { kind: 'living', slot: 'room-living', fade: true },
+];
+const staged = ROOMS.filter((r) => hasPhoto(`${r.slot}-before`) && hasPhoto(`${r.slot}-after`));
+const alt = (slot: string) => (photoSlots as Record<string, { alt: string }>)[slot].alt;
+const FIRST: RoomKind = 'kitchen';
+const SIZES = '(min-width: 900px) 50vw, 100vw';
+---
+
+{
+  staged.length > 0 && (
+    <figure class="stage-block" data-stage-block hidden={!staged.some((r) => r.kind === FIRST)}>
+      <div class="stage" data-stage data-phase="after">
+        {staged.map((r) => (
+          <div class="stage__room" data-stage-room={r.kind} data-fade={r.fade ? '' : undefined} hidden={r.kind !== FIRST}>
+            <Photo slot={`${r.slot}-before`} alt={alt(`${r.slot}-before`)} ratio="16 / 9" sizes={SIZES} class="stage__img" />
+            {r.kind === 'kitchen' && hasPhoto('action-kitchen') && (
+              <div class="stage__action" data-stage-action hidden>
+                <Scene slot="action-kitchen" portrait="action-kitchen-still" video="action-kitchen" alt={alt('action-kitchen-still')} />
+                {business.demoMode && <span class="sample-tag">Sample photo</span>}
+              </div>
+            )}
+            <div class="stage__after">
+              <div class="stage__after-inner">
+                <Photo slot={`${r.slot}-after`} alt={alt(`${r.slot}-after`)} ratio="16 / 9" sizes={SIZES} class="stage__img" />
+              </div>
+            </div>
+          </div>
+        ))}
+        <div class="stage__band" aria-hidden="true" />
+        <div class="stage__book" data-stage-book>
+          <Button href="/book/" data-choose-time>Book a clean</Button>
+        </div>
+      </div>
+      <figcaption>Illustration, not a client's home.</figcaption>
+    </figure>
+  )
+}
+
+<script>
+  import { initStage } from './stage';
+  initStage();
+</script>
+
+<style>
+  .stage-block {
+    display: grid;
+    gap: var(--space-2);
+  }
+  figcaption {
+    color: var(--color-ink-muted);
+    font-size: var(--text-14);
+  }
+  /* --sweep is how much of "after" is uncovered. It rests at 1; stage.ts moves it. */
+  .stage {
+    --sweep: 1;
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-control);
+    background: var(--color-room);
+  }
+  .stage__room,
+  .stage__action,
+  .stage__after,
+  .stage__after-inner,
+  .stage__band,
+  .stage :global(.stage__img) {
+    position: absolute;
+    inset: 0;
+  }
+  .stage :global(.stage__img) {
+    border-radius: 0;
+  }
+
+  /* "After" is uncovered from left to right by two wrappers moving in opposite directions, so only transforms change. */
+  .stage__after {
+    overflow: hidden;
+    transform: translateX(calc((var(--sweep) - 1) * 100%));
+  }
+  .stage__after-inner {
+    transform: translateX(calc((1 - var(--sweep)) * 100%));
+  }
+  /* Stills that do not line up fade instead (spec §18). */
+  .stage__room[data-fade] .stage__after {
+    transform: none;
+    opacity: var(--sweep);
+  }
+  .stage__room[data-fade] .stage__after-inner {
+    transform: none;
+  }
+
+  /* The light band rides the sweep's edge. */
+  .stage__band {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(calc(var(--sweep) * 100%));
+    transition: opacity var(--dur-colour) linear;
+  }
+  .stage__band::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 14%;
+    translate: -50% 0;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-surface) 65%, transparent), transparent);
+  }
+  .stage[data-phase='sweep'] .stage__band {
+    opacity: 1;
+  }
+  .stage:has(.stage__room[data-fade]:not([hidden])) .stage__band {
+    display: none;
+  }
+
+  /* The booking button belongs to the finished room. A solid button, so it never relies on the picture. */
+  .stage__book {
+    position: absolute;
+    left: var(--space-4);
+    bottom: var(--space-4);
+    z-index: 1;
+    transition: opacity var(--dur-colour) linear;
+  }
+  .stage.is-live:not([data-phase='after']) .stage__book {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  /* A layer that is off keeps its box (display stays on, against the global [hidden] rule), so its
+     lazy pictures are measured where they are, below the fold, not at 0,0 as display:none ones are.
+     It is invisible, out of the accessibility tree, and shifted outside the stage's clip, so the
+     Scene in the action beat does not count as on screen and its clip neither loads nor plays. */
+  .stage__room[hidden],
+  .stage__action[hidden] {
+    display: block !important;
+    visibility: hidden;
+    opacity: 0;
+    translate: -200% 0;
+  }
+  /* A layer fades in when it is switched on, and fades out before it leaves. */
+  @media (prefers-reduced-motion: no-preference) {
+    .stage__room,
+    .stage__action {
+      transition: opacity var(--dur-reveal) var(--ease-out);
+    }
+    .stage__room[hidden],
+    .stage__action[hidden] {
+      transition:
+        opacity var(--dur-reveal) var(--ease-out),
+        visibility 0s var(--dur-reveal),
+        translate 0s var(--dur-reveal);
+    }
+  }
+</style>

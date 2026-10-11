@@ -218,6 +218,161 @@ await step('review cards hold still under reduced motion', async (page) => {
   assert.deepEqual(await reviewShift(page), [0, 0, 0]);
 }, { width: 1280, reducedMotion: 'reduce' });
 
+// ── Room stage (spec §5.5) ───────────────────────────────────
+const STAGE = '#whats-included [data-stage]';
+const untilPhase = (page, want) => page.waitForFunction((w) => document.querySelector('#whats-included [data-stage]').dataset.phase === w, want);
+const shownRooms = (page) => page.$$eval('[data-stage-room]:not([hidden])', (els) => els.map((el) => el.dataset.stageRoom));
+const pinned = (page) => page.locator('[data-stage-pin]').evaluate((el) => getComputedStyle(el).position === 'sticky');
+
+/** Pinned layout: scroll to fraction f (0 to 1) of the stage's travel. */
+const pinTo = (page, f) =>
+  page.evaluate((f) => {
+    const pin = document.querySelector('[data-stage-pin]');
+    const track = pin.parentElement;
+    const start = track.getBoundingClientRect().top + window.scrollY - parseFloat(getComputedStyle(pin).top);
+    window.scrollTo({ top: start + (track.offsetHeight - pin.offsetHeight) * f, behavior: 'instant' });
+  }, f);
+
+/** Unpinned layout: put the stage's centre where its progress is f. */
+const passTo = (page, f) =>
+  page.evaluate((f) => {
+    const r = document.querySelector('#whats-included [data-stage]').getBoundingClientRect();
+    window.scrollTo({ top: window.scrollY + r.top + r.height / 2 - window.innerHeight * (0.85 - 0.55 * f), behavior: 'instant' });
+  }, f);
+
+function clipRequests(page) {
+  const urls = [];
+  page.on('request', (request) => {
+    if (request.url().includes('/media/action-kitchen')) urls.push(request.url());
+  });
+  return urls;
+}
+
+await step('on a tall desktop screen the stage holds still and plays before, action, sweep, after', async (page) => {
+  await go(page, '/');
+  assert.equal(await pinned(page), true);
+  const pin = page.locator('[data-stage-pin]');
+  await pinTo(page, 0.1);
+  await untilPhase(page, 'before');
+  assert.deepEqual(await shownRooms(page), ['kitchen']);
+  assert.ok(!(await page.locator('[data-stage-book] a').isVisible()), 'no booking button yet');
+  const box = await pin.boundingBox();
+  assert.ok(box.y + box.height <= 900, `the pinned block fits the screen (bottom at ${box.y + box.height})`);
+  await pinTo(page, 0.45);
+  await untilPhase(page, 'action');
+  assert.equal(Math.round((await pin.boundingBox()).y), Math.round(box.y), 'still pinned in the action beat');
+  await pinTo(page, 0.75);
+  await untilPhase(page, 'sweep');
+  const sweep = await page.locator(STAGE).evaluate((el) => Number(el.style.getPropertyValue('--sweep')));
+  assert.ok(sweep > 0.3 && sweep < 0.7, `--sweep is ${sweep}`);
+  await pinTo(page, 1);
+  await untilPhase(page, 'after');
+  const book = page.locator('[data-stage-book] a');
+  await book.waitFor();
+  assert.match(await book.getAttribute('href'), /^\/book\//);
+  assert.equal((await book.innerText()).trim(), 'Book a clean');
+  assert.equal((await page.locator('[data-stage-block] figcaption').innerText()).trim(), "Illustration, not a client's home.");
+  for (const img of await page.locator('[data-stage-room]:not([hidden]) img').all()) assert.ok((await img.getAttribute('alt')).length > 20, 'before and after pictures are described');
+}, { width: 1280, height: 900 });
+
+await step('a wide screen plays the kitchen clip in the action beat and stops it afterwards', async (page) => {
+  const urls = clipRequests(page);
+  await go(page, '/');
+  await pinTo(page, 0.1);
+  await page.waitForTimeout(500);
+  assert.deepEqual(urls, [], 'nothing is fetched before the beat');
+  await pinTo(page, 0.45);
+  await page.locator('[data-stage-action] [data-scene][data-playing]').waitFor();
+  assert.ok(urls.some((u) => /\/media\/action-kitchen\.(webm|mp4)$/.test(u)), urls.join(', '));
+  assert.ok(await page.locator('[data-stage-action] [data-scene-toggle]').isVisible(), 'the clip has a pause button');
+  assert.ok(await page.locator('[data-stage-action] .sample-tag').isVisible(), 'the cleaner is marked as a sample');
+  await pinTo(page, 1);
+  await untilPhase(page, 'after');
+  await page.waitForFunction(() => document.querySelector('[data-stage-action] video').paused);
+}, { width: 1280, height: 900 });
+
+await step('choosing a room swaps the stage where it stands, and a room without pictures hides it', async (page) => {
+  await go(page, '/');
+  await page.locator('#plan [data-room-id="add-study"]').click(); // a study has a checklist and no pictures
+  await pinTo(page, 1);
+  await untilPhase(page, 'after');
+  await page.locator('#whats-included .room--included[data-kind="bathroom"]').first().click();
+  assert.deepEqual(await shownRooms(page), ['bathroom']);
+  assert.equal(await page.locator(STAGE).getAttribute('data-phase'), 'after');
+  await page.locator('#whats-included .room--included[data-kind="study"]').first().click();
+  assert.ok(await page.locator('[data-stage-block]').isHidden());
+  assert.equal((await page.locator('#whats-included [data-room-panel]:visible h3').innerText()).trim(), 'Study');
+  await page.locator('#whats-included [data-room-id="kitchen"]').click();
+  assert.ok(await page.locator('[data-stage-block]').isVisible());
+  assert.deepEqual(await shownRooms(page), ['kitchen']);
+}, { width: 1280, height: 900 });
+
+await step('the living room fades to its finished state instead of sweeping', async (page) => {
+  await go(page, '/');
+  await pinTo(page, 0.75);
+  await untilPhase(page, 'sweep');
+  await page.locator('#whats-included .room--included[data-kind="living"]').first().click();
+  const after = page.locator('[data-stage-room="living"] .stage__after');
+  const [opacity, transform] = await after.evaluate((el) => [Number(getComputedStyle(el).opacity), getComputedStyle(el).transform]);
+  assert.ok(opacity > 0.3 && opacity < 0.7, `opacity is ${opacity}`);
+  assert.equal(transform, 'none');
+  assert.ok(await page.locator(`${STAGE} .stage__band`).isHidden(), 'no light band over a fade');
+}, { width: 1280, height: 900 });
+
+await step('on a short desktop screen nothing pins and the stage plays as it crosses the screen', async (page) => {
+  await go(page, '/');
+  assert.equal(await pinned(page), false);
+  assert.equal(await page.locator('[data-stage-pin]').evaluate((el) => el.parentElement.offsetHeight - el.offsetHeight), 0, 'no empty travel');
+  await passTo(page, 0.1);
+  await untilPhase(page, 'before');
+  await passTo(page, 0.97);
+  await untilPhase(page, 'after');
+  await page.locator('[data-stage-book] a').waitFor();
+  assert.ok(await page.locator('#whats-included [data-room-panel]:visible h3').isVisible(), 'the checklist is in reach');
+}, { width: 1280, height: 700 });
+
+await step('phones get a still of the cleaner in the action beat and never ask for the clip', async (page) => {
+  const urls = clipRequests(page);
+  await go(page, '/');
+  assert.equal(await pinned(page), false);
+  await passTo(page, 0.45);
+  await untilPhase(page, 'action');
+  const action = page.locator('[data-stage-action]');
+  await action.waitFor();
+  assert.equal(await action.locator('img').count(), 1);
+  assert.match(await action.locator('img').getAttribute('alt'), /cleaner/i);
+  assert.equal(await action.locator('video source').count(), 0);
+  await passTo(page, 0.97);
+  await untilPhase(page, 'after');
+  await page.waitForTimeout(400);
+  assert.deepEqual(urls, []);
+});
+
+await step('reduced motion: the finished room, the booking button, no pinning, no clip', async (page) => {
+  const urls = clipRequests(page);
+  await go(page, '/');
+  assert.equal(await pinned(page), false);
+  const stage = page.locator(STAGE);
+  await stage.scrollIntoViewIfNeeded();
+  assert.equal(await stage.getAttribute('data-phase'), 'after');
+  assert.ok(!(await stage.evaluate((el) => el.classList.contains('is-live'))));
+  assert.equal(await page.locator('[data-stage-room="kitchen"] .stage__after').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).e), 0, '"after" is fully uncovered');
+  assert.ok(await page.locator('[data-stage-book] a').isVisible());
+  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+  await page.waitForTimeout(400);
+  assert.equal(await stage.getAttribute('data-phase'), 'after');
+  assert.deepEqual(urls, []);
+}, { width: 1280, height: 900, reducedMotion: 'reduce' });
+
+await step('without JavaScript the stage shows the finished kitchen, its caption and the booking button', async (page) => {
+  await go(page, '/');
+  assert.deepEqual(await shownRooms(page), ['kitchen']);
+  assert.equal(await page.locator(STAGE).getAttribute('data-phase'), 'after');
+  assert.ok(await page.locator('[data-stage-book] a').isVisible());
+  assert.equal((await page.locator('[data-stage-block] figcaption').innerText()).trim(), "Illustration, not a client's home.");
+  assert.ok(await page.locator('[data-stage-action]').isHidden());
+}, { width: 1280, height: 900, javaScriptEnabled: false });
+
 // ── After every block has shown ──────────────────────────────
 for (const theme of THEMES) {
   for (const width of [375, 1280]) {

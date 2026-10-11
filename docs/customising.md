@@ -84,6 +84,7 @@ The site's address (canonical links, the sitemap, sharing links and structured d
 - "Sample prices." under the price tag and "(sample)" beside the rating go.
 - The trust row says "Read them on Google." instead of "Sample rating for this demo."
 - `business.rating` is published in the `LocalBusiness` JSON-LD as `aggregateRating`. Only publish a rating that is real and current. If the client has no public rating, the rating item in `src/sections/TrustRow.astro` and the score in `src/sections/Reviews.astro` have to come out (a component change).
+- The "Sample photo" marks on pictures of people disappear, so every picture of a person has to be replaced with a real photograph first.
 - The booking success screen stops showing a preview of the confirmation SMS.
 - In the owner console (`/console`), message rows stop saying "Preview, not sent". The console itself is still a demo (see [Going live](#going-live-checklist)).
 
@@ -410,7 +411,7 @@ A few sentences are written in components rather than config. Each is a claim ab
 | `src/sections/OfficesBand.astro` | "send insurance certificates on request" |
 | `src/sections/TrustRow.astro` | "Police-checked cleaners" |
 | `src/features/pricing/PriceTag.astro` | "priced as a deep clean so we start from clean" |
-| `src/features/pricing/PriceLine.astro` | The same "priced as a deep clean so we start from clean" line, in the home hero |
+| `src/features/pricing/PriceLine.astro` | The same "priced as a deep clean so we start from clean" line, in the home hero and the closing band |
 | `src/pages/index.astro` | The home page description mentions "Brisbane's north" |
 
 The other pages (`/offices`, `/careers`, `/refer`, `/about`, `/book` and the end-of-lease service page) carry more of the same kind: the certificate turnaround, the careers pay range, the referral reward, the REIQ checklist, the 72-hour re-clean promise and the "Nothing to pay now" line beside the booking button. Read each page for claims before launch.
@@ -427,7 +428,7 @@ npm run photos:status -- --write   # also rewrite docs/photo-brief.md
 The status also lists files that match no slot, such as a misspelt name or an upper-case `.JPG`.
 
 - A live client uses their own photos.
-- Demo photos of rooms are licence-free or generated. Pictures of people follow one rule: in the demo they are generated illustrations (cleaners working or arriving, one founder portrait), each marked "Sample photo" on the page while `demoMode` is on; never a face on a review, never a child, never a real person presented as staff, founder or client. The one real street photograph (`area-chermside`, credited in [`photo-credits.md`](photo-credits.md)) has a single passer-by far away and seen from behind. "Before" pictures show an ordinary week. Replace every image of a person with a real photograph before a real business goes live.
+- Demo photos of rooms are licence-free or generated. Pictures of people follow one rule: in the demo they are generated illustrations (cleaners working or arriving, one founder portrait), each marked "Sample photo" on the page while `demoMode` is on; never a face on a review, never a child, never a real person presented as staff, founder or client. The one real, credited photograph that shows a person (`area-chermside`, the Westfield Chermside atrium, credited in [`photo-credits.md`](photo-credits.md)) has a single shopper, seen from behind. "Before" pictures show an ordinary week. Replace every image of a person with a real photograph before a real business goes live.
 - Record every file in [`photo-credits.md`](photo-credits.md). Remove the demo rows when the client's photos go in.
 - To change what a slot asks for, edit its `brief`, `search` and `alt`, then run `--write`.
 
@@ -453,7 +454,7 @@ The `closing` slot (`src/assets/photos/closing.jpg`, 2400×1350) is the backdrop
 
 ### Room stage
 
-"What we clean, room by room" has a before-and-after stage (`src/features/stage/RoomStage.astro`) beside the plan. It reads eight stills from `src/assets/photos/`, 1920×1080 each:
+"What we clean, room by room" has a before-and-after stage (`src/features/stage/RoomStage.astro`) under the plan, in the same column, with the checklist beside both. It reads eight stills from `src/assets/photos/`, 1920×1080 each:
 
 - `room-kitchen-before`, `room-kitchen-after`
 - `room-bath-before`, `room-bath-after`

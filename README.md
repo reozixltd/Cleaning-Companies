@@ -56,7 +56,8 @@ Imports point one way: `pages → layouts | sections → features → domain →
 
 - `tests/unit/*.test.ts`: Vitest (jsdom), run by `npm test`. Includes the colour contrast check for every theme in `tokens.css`.
 - `tests/e2e/`: Playwright against a running preview.
-  - `harness.mjs` is the shared harness: it launches Chromium, gives each `step()` a fresh browser context, and prints ✓ or ✗ per step.
+  - `harness.mjs` is the shared harness: it launches Chromium, gives each `step()` a fresh browser context, and prints ✓ or ✗ per step. `browsers.e2e.mjs` launches Playwright's Firefox and WebKit as well; one that is not installed is reported as skipped (a line starting with –) and left out of the step count.
   - One `*.e2e.mjs` file per area of the site (for example `home.e2e.mjs`), so work on different pages never edits the same test file.
   - `run.mjs` runs every file: `node tests/e2e/run.mjs [baseUrl] [filter]`. `baseUrl` defaults to `http://localhost:4321`; `filter` runs only files whose name contains it (`node tests/e2e/run.mjs http://localhost:4321 home`). `STEP=<regex>` runs only matching steps. `npm run e2e` is the same with the defaults.
+- `tools/page-weight.mjs [baseUrl]`: what the home page transfers in Chromium, at load and after scrolling the whole page, for a 375px phone at pixel ratio 1, the same phone at pixel ratio 3 and a 1280px desktop (one line each, in KB). It exits 1 if the home page does not answer with a success.
 - `tools/shot.mjs <path> <width> <out.png>`: a screenshot of the preview for visual review (`SHOT_BASE` changes the base URL).

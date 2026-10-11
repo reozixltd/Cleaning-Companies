@@ -2361,16 +2361,22 @@ git commit -m "docs: record the finished home page, the people rule and the meas
 | Item | Target | Before | After |
 |---|---|---|---|
 | Unit tests | all pass | 334 | 340 |
-| E2E steps | all pass | 132 | 188 (12 files) |
+| E2E steps | all pass | 132 | 193 (12 files, none skipped) |
 | `/` eager JavaScript, gzipped | ≤ 30 KB | 12.5 KB | 13.7 KB |
 | Lazy JavaScript, gzipped | ≤ 150 KB | 130.8 KB | 130.8 KB |
-| Home transfer, 375px, at load / after scrolling | report | 112 KB / 128 KB | 104 KB / 250 KB |
-| Home transfer, 1280px, at load / after scrolling | report | 1111 KB / 1111 KB | 1117 KB / 2085 KB |
+| Home transfer, phone 375px at pixel ratio 1, at load / after scrolling | report | 112 KB / 128 KB | 76 KB / 212 KB |
+| Home transfer, phone 375px at pixel ratio 3 (what a current phone downloads), at load / after scrolling | report | not measured | 97 KB / 491 KB |
+| Home transfer, desktop 1280px at pixel ratio 1, at load / after scrolling | report | 1111 KB / 1111 KB | 1088 KB / 2052 KB |
 | `action-kitchen.mp4` / `.webm` | ≤ 2.5 MB / ≤ 1.5 MB | not present | 1,106,976 / 723,771 bytes |
 | Lighthouse mobile `/`: performance / accessibility | ≥ 90 / 100 | 99 / 100 (before the hero photo and clip) | 98 / 100 (median of 3) |
 | Lighthouse mobile `/book/`: performance / accessibility | ≥ 90 / 100 | not re-run in part 1 | 98 / 100 (median of 3) |
-| Layout shift, `/` | 0 | not re-run in part 1 | 0.026 (target not met; the web font loading, hero section) |
-| Firefox and WebKit through Playwright | pass where installed | not run | 4 of 4 passed (1280 and 390 wide, both engines) |
+| Layout shift, `/` | 0 | not re-run in part 1 | 0.026 (target not met; see the note below the table) |
+| Layout shift, `/book/` | 0 | not re-run in part 1 | 0.074 (target not met; the same cause) |
+| Firefox and WebKit through Playwright | pass where installed | not run | 5 of 5 passed (1280 and 390 wide, both engines, and a WebKit reload at 1280); a missing engine is reported as skipped |
+
+The page-weight figures in the "After" column come from the final `tools/page-weight.mjs`, which adds up every chunk of every response body (`Network.dataReceived`, headers not counted) in Chromium. The "Before" figures came from the first version of the tool, which counted only responses that finished, so the columns are not exactly like for like. Three identical runs of the final tool gave the same lines. The pixel ratio 3 line is what a current phone downloads, because it fetches the larger pictures; the pixel ratio 1 line is kept so it can be compared with the "Before" column. At 1280 wide the growth after load (about 964 KB) was measured as the kitchen clip, 707 KB as WebM in Chromium, and about 257 KB of lazy pictures, 99 KB of them the room stills; nothing else grew. Phones never request either clip. A browser that takes the MP4 files would fetch more, and that has not been measured.
+
+The layout shift is not the hero. At about 412px wide the demo ribbon's sentence (`src/layouts/DemoRibbon.astro`) fits on one line in the fallback font and wraps to two when the web font loads, which pushes `main` down 22px (measured at 412 wide: `main` moves from 118 to 140px, and the ribbon's theme line from 26 to 49px) on both pages. There is no shift of note at 375 wide or 1280 wide (0.003 or less). The ribbon renders only in demo mode, and it predates the redesign and was left unchanged. The 0.026 and 0.074 are Lighthouse's phone-profile figures.
 
 ## Not covered by this plan (for the owner)
 
@@ -2378,3 +2384,5 @@ git commit -m "docs: record the finished home page, the people rule and the meas
 - The home model's frame rate was not measured in part 1 and is not measured here.
 - `tests/e2e/quality.e2e.mjs:204` has a stale comment ("The home page has no hero photo"). The spec allows edits to only two existing test files, so it is left for the owner to approve.
 - Four service photos are under 1600px wide and `service-move-in.jpg` is a portrait picture in a landscape slot (carried over from part 1).
+- Known issue: the demo ribbon wraps to a second line when the web font loads at about 412px wide, shifting the page 22px (0.026 on `/`, 0.074 on `/book/`, against a target of 0). It shows only in demo mode and was not changed.
+- All eight room stills load once the stage is near, although one room shows. Loading only the chosen room's pair would save most of that on phones, at the cost of a short wait when another room is tapped.

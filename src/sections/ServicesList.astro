@@ -18,8 +18,8 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
       {services.map((s, i) => {
         const slot = `service-${s.data.service}` as keyof typeof photoSlots;
         return (
-          <li data-reveal style={`--i: ${i % 2}`}>
-            <div class="service" data-tilt>
+          <li data-reveal data-tilt style={`--i: ${i % 2}`}>
+            <div class="service">
               <Photo slot={slot} alt={photoSlots[slot].alt} ratio="3 / 2" sizes="(min-width: 900px) 560px, 100vw" class="service__photo" />
               <div class="service__body">
                 <h3><a href={`/services/${s.id}/`}>{s.data.title}</a></h3>
@@ -36,6 +36,7 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
 
 <script>
   // Fine pointers only: a card leans up to 4° toward the pointer, with a soft sheen where it points.
+  // The listener sits on the list item, which never tilts, so the leaning card cannot pull its own edge out from under the pointer.
   // Touch screens and reduced motion keep the flat card; nothing here is needed to read or use it.
   if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     for (const card of document.querySelectorAll<HTMLElement>('[data-tilt]')) {
@@ -74,14 +75,13 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
     background: var(--color-surface);
     border-radius: var(--radius-control);
     box-shadow: var(--shadow-1);
-    transform: perspective(60rem) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
-    transition: transform var(--dur-fill) var(--ease-out);
   }
-  /* The sheen: a soft light where the pointer is. It never takes a click. */
+  /* The sheen: a soft light on the photo where the pointer is. It never takes a click. */
   .service::after {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: 0 0 auto 0;
+    aspect-ratio: 3 / 2;
     pointer-events: none;
     opacity: 0;
     background: radial-gradient(circle at var(--sheen-x, 50%) var(--sheen-y, 50%), color-mix(in srgb, var(--color-surface) 35%, transparent), transparent 55%);
@@ -127,10 +127,14 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
     }
   }
   @media (hover: hover) and (pointer: fine) {
-    .service:hover::after {
+    .service {
+      transform: perspective(60rem) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+      transition: transform var(--dur-fill) var(--ease-out);
+    }
+    li:hover .service::after {
       opacity: 1;
     }
-    .service:hover h3 a {
+    li:hover .service h3 a {
       text-decoration: underline;
       text-decoration-thickness: var(--wall);
     }

@@ -167,12 +167,24 @@ await step('a service card leans toward a fine pointer by at most 4 degrees', as
   await card.scrollIntoViewIfNeeded();
   await servicesSettled(page);
   const box = await card.boundingBox();
-  await page.mouse.move(box.x + 4, box.y + 4);
+  await page.mouse.move(box.x + 24, box.y + 24);
   await page.waitForFunction(() => document.querySelector('#services [data-tilt]').style.getPropertyValue('--tilt-x') !== '');
   const [x, y] = await card.evaluate((el) => ['--tilt-x', '--tilt-y'].map((v) => parseFloat(el.style.getPropertyValue(v))));
   assert.ok(Math.abs(x) > 2 && Math.abs(x) <= 4 && Math.abs(y) > 2 && Math.abs(y) <= 4, `${x} ${y}`);
   await page.mouse.move(0, 0);
   await page.waitForFunction(() => document.querySelector('#services [data-tilt]').style.getPropertyValue('--tilt-x') === '');
+}, { width: 1280 });
+
+await step('a service card keeps its lean with the pointer near its edge', async (page) => {
+  await go(page, '/');
+  const card = page.locator('#services [data-tilt]').first();
+  await card.scrollIntoViewIfNeeded();
+  await servicesSettled(page);
+  const box = await card.boundingBox();
+  await page.mouse.move(box.x + box.width - 3, box.y + box.height / 2);
+  await page.waitForTimeout(400);
+  assert.notEqual(await card.evaluate((el) => el.style.getPropertyValue('--tilt-y')), '');
+  assert.ok(await card.locator('.service').evaluate((el) => el.matches(':hover') || el.parentElement.matches(':hover')));
 }, { width: 1280 });
 
 for (const [name, options] of [['a touch screen', { hasTouch: true, isMobile: true }], ['reduced motion', { width: 1280, reducedMotion: 'reduce' }]]) {
@@ -182,7 +194,7 @@ for (const [name, options] of [['a touch screen', { hasTouch: true, isMobile: tr
     await card.scrollIntoViewIfNeeded();
     await servicesSettled(page);
     const box = await card.boundingBox();
-    await page.mouse.move(box.x + 4, box.y + 4);
+    await page.mouse.move(box.x + 24, box.y + 24);
     await page.waitForTimeout(200);
     assert.equal(await card.evaluate((el) => el.style.getPropertyValue('--tilt-x')), '');
   }, options);

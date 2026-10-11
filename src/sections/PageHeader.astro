@@ -1,23 +1,61 @@
 ---
-/** Top of an inner page: the page's h1 and an optional one-line intro. */
+/** Top of an inner page: the page's h1, an optional eyebrow above it and an optional one-line intro. */
 interface Props {
   title: string;
   intro?: string;
+  eyebrow?: string;
 }
-const { title, intro } = Astro.props;
+const { title, intro, eyebrow } = Astro.props;
 ---
 
-<div class="page-header wrap">
-  <h1>{title}</h1>
-  {intro && <p class="page-header__intro">{intro}</p>}
-  <slot />
+<div class="page-top">
+  <div class="page-header wrap">
+    {/* Decorative: the logo's floor plan, drawn large behind the heading. */}
+    <svg class="page-top__plan" viewBox="0 0 64 40" aria-hidden="true">
+      <rect class="page-top__room" x="1" y="1" width="22" height="18"></rect>
+      <path d="M1 1h62v38H1zM23 1v18M1 19h30M43 1v22M31 19v20M43 23h20"></path>
+    </svg>
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1>{title}</h1>
+    {intro && <p class="page-header__intro">{intro}</p>}
+    <slot />
+  </div>
 </div>
 
 <style>
+  .page-top {
+    margin-bottom: var(--space-5);
+    background: var(--color-card);
+    border-bottom: var(--hairline) solid var(--color-card-border);
+    overflow: hidden;
+  }
   .page-header {
+    position: relative;
     display: grid;
     gap: var(--space-3);
-    padding-block: var(--space-7) var(--space-5);
+    padding-block: var(--space-7) var(--space-6);
+  }
+  .page-header > :not(.page-top__plan) {
+    position: relative;
+  }
+  .page-top__plan {
+    display: none;
+    position: absolute;
+    right: var(--gutter);
+    top: var(--space-5);
+    width: 22rem;
+    fill: none;
+    stroke: var(--color-card-border);
+    stroke-width: 0.5;
+  }
+  .page-top__room {
+    fill: var(--color-room);
+    stroke: none;
+  }
+  @media (min-width: 1024px) {
+    .page-top__plan {
+      display: block;
+    }
   }
   .page-header__intro {
     font-size: var(--text-18);

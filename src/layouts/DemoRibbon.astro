@@ -21,14 +21,17 @@ const names: Record<string, string> = { floorplan: 'Floor plan', eucalyptus: 'Eu
 
 <style>
   .ribbon {
-    background: var(--color-ink);
-    color: var(--color-on-ink);
-    font-size: var(--text-14);
+    background: var(--color-highlight);
+    color: var(--color-ink);
+    font-size: var(--text-13);
+    font-weight: var(--weight-medium);
   }
   .ribbon__inner {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: center;
+    min-height: 2.25rem;
     gap: 0 var(--space-4);
     padding-block: var(--space-1);
   }
@@ -38,9 +41,5 @@ const names: Record<string, string> = { floorplan: 'Floor plan', eucalyptus: 'Eu
   }
   .ribbon a {
     color: inherit;
-  }
-  /* The usual ink ring would vanish on the ink ribbon. */
-  .ribbon a:focus-visible {
-    outline-color: var(--color-on-ink);
   }
 </style>

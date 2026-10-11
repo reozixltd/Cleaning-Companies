@@ -1,5 +1,5 @@
 ---
-/** The four home services as a list: photo, one line, from price. Not a card grid. */
+/** The four home services as cards: photo, one line, from price. */
 import { getCollection } from 'astro:content';
 import { photoSlots } from '@/config/photo-slots';
 import { pricing } from '@/config/pricing';
@@ -18,8 +18,8 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
       {services.map((s) => {
         const slot = `service-${s.data.service}` as keyof typeof photoSlots;
         return (
-          <li class="service">
-            <Photo slot={slot} alt={photoSlots[slot].alt} ratio="3 / 2" sizes="(min-width: 900px) 280px, 100vw" class="service__photo" />
+          <li class="service card">
+            <Photo slot={slot} alt={photoSlots[slot].alt} ratio="3 / 2" sizes="(min-width: 1200px) 280px, (min-width: 768px) 45vw, 100vw" class="service__photo" />
             <div class="service__body">
               <h3><a href={`/services/${s.id}/`}>{s.data.title}</a></h3>
               <p>{s.data.summary}</p>
@@ -35,20 +35,24 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
 <style>
   .services {
     display: grid;
+    gap: var(--space-4);
     padding: 0;
     list-style: none;
-    border-top: var(--wall) solid var(--color-ink);
   }
   .service {
     position: relative;
     display: grid;
+    grid-template-rows: auto 1fr auto;
     gap: var(--space-4);
-    padding-block: var(--space-5);
-    border-bottom: var(--hairline) solid var(--color-line);
+    transition: border-color var(--dur-colour) ease;
   }
   .service__body {
     display: grid;
     gap: var(--space-2);
+    align-content: start;
+  }
+  .service h3 {
+    font-size: var(--text-20);
   }
   .service h3 a {
     text-decoration: none;
@@ -59,25 +63,37 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
     inset: 0;
   }
   .service__body p {
-    color: var(--color-ink-muted);
+    font-size: var(--text-14);
   }
   .service__price {
-    font-size: var(--text-18);
+    font-size: var(--text-14);
   }
   .service__price strong {
-    font-size: var(--text-28);
+    color: var(--color-ink);
+    font-size: var(--text-22);
   }
-  @media (min-width: 900px) {
-    .service {
-      grid-template-columns: 240px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: var(--space-6);
+  .service__price::after {
+    content: '\2192';
+    float: right;
+    color: var(--color-ink);
+    font-size: var(--text-18);
+  }
+  @media (min-width: 768px) {
+    .services {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1200px) {
+    .services {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
   @media (hover: hover) and (pointer: fine) {
+    .service:hover {
+      border-color: var(--color-ink);
+    }
     .service:hover h3 a {
       text-decoration: underline;
-      text-decoration-thickness: var(--wall);
     }
   }
 </style>

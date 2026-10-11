@@ -19,7 +19,7 @@ const items: { icon: IconName; title: string; text: string }[] = [
 <section class="trust" aria-label="Why people trust us">
   <ul class="wrap trust__list" role="list">
     {items.map((i) => (
-      <li class="trust__item">
+      <li class="trust__item card">
         <Icon name={i.icon} size={24} />
         <div>
           <p class="trust__title">{i.title}</p>
@@ -31,28 +31,25 @@ const items: { icon: IconName; title: string; text: string }[] = [
 </section>
 
 <style>
-  .trust {
-    border-block: var(--hairline) solid var(--color-line);
-    background: var(--color-surface);
-  }
   .trust__list {
     display: grid;
-    padding-block: var(--space-5);
-    gap: var(--space-5);
+    padding-block: var(--space-6);
+    gap: var(--space-4);
     list-style: none;
   }
   .trust__item {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-3);
-    align-items: start;
+    align-content: start;
   }
   .trust__title {
+    color: var(--color-ink);
+    font-size: var(--text-18);
     font-weight: var(--weight-bold);
   }
   .trust__text {
-    color: var(--color-ink-muted);
-    font-size: var(--text-16);
+    font-size: var(--text-14);
   }
   @media (min-width: 768px) {
     .trust__list {

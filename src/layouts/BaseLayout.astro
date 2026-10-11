@@ -57,6 +57,8 @@ const schemas = [businessSchema, ...(schema ? (Array.isArray(schema) ? schema : 
     {!bare && bookingBar && <MobileBookingBar />}
     <script>
       import './site';
+      import { initReveal } from './reveal';
+      initReveal();
     </script>
   </body>
 </html>

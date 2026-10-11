@@ -1,8 +1,9 @@
 ---
 /**
  * Button, or a link styled as one.
- *   primary   ink fill: the one main action in a view
- *   secondary ink outline
+ *   accent    pink pill: the single primary action on a screen (header only)
+ *   primary   ink pill: main action inside content
+ *   secondary ink outline, 8px corners
  *   quiet     underlined text with a full-size tap target
  * Press feedback: scale(0.97) on :active (removed for reduced motion).
  */
@@ -12,7 +13,7 @@ import type { IconName } from './icons';
 
 interface Props extends Omit<HTMLAttributes<'a'> & HTMLAttributes<'button'>, 'type'> {
   href?: string;
-  variant?: 'primary' | 'secondary' | 'quiet';
+  variant?: 'primary' | 'secondary' | 'quiet' | 'accent';
   size?: 'md' | 'lg';
   type?: 'button' | 'submit';
   icon?: IconName;
@@ -42,9 +43,9 @@ const Tag = href ? 'a' : 'button';
     min-height: var(--target);
     padding: 0 var(--space-5);
     border: var(--hairline) solid transparent;
-    border-radius: var(--radius-control);
-    font-size: var(--text-16);
-    font-weight: var(--weight-medium);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-14);
+    font-weight: var(--weight-semibold);
     line-height: 1.2;
     text-decoration: none;
     white-space: nowrap;
@@ -52,7 +53,8 @@ const Tag = href ? 'a' : 'button';
     transition:
       transform var(--dur-press) var(--ease-out),
       background-color var(--dur-colour) ease,
-      border-color var(--dur-colour) ease;
+      border-color var(--dur-colour) ease,
+      color var(--dur-colour) ease;
   }
   .btn:active {
     transform: scale(0.97);
@@ -60,7 +62,7 @@ const Tag = href ? 'a' : 'button';
   .btn--lg {
     min-height: 3.25rem;
     padding: 0 var(--space-6);
-    font-size: var(--text-18);
+    font-size: var(--text-16);
   }
   .btn--block {
     display: flex;
@@ -70,12 +72,19 @@ const Tag = href ? 'a' : 'button';
     background: var(--color-ink);
     color: var(--color-on-ink);
   }
+  .btn--accent {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    font-weight: var(--weight-bold);
+  }
   .btn--secondary {
+    border-radius: var(--radius-control);
     background: transparent;
     color: var(--color-ink);
     border-color: var(--color-ink);
   }
   .btn--quiet {
+    border-radius: var(--radius-control);
     padding-inline: var(--space-2);
     background: transparent;
     color: var(--color-ink);
@@ -90,6 +99,10 @@ const Tag = href ? 'a' : 'button';
   @media (hover: hover) and (pointer: fine) {
     .btn--primary:hover {
       background: var(--color-ink-hover);
+    }
+    .btn--accent:hover {
+      background: var(--color-ink);
+      color: var(--color-on-ink);
     }
     .btn--secondary:hover,
     .btn--quiet:hover {

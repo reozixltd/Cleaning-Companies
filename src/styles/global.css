@@ -1,5 +1,5 @@
 /* Base styles. Raw values live in tokens.css. */
-@import '@fontsource-variable/schibsted-grotesk';
+@import '@fontsource-variable/inter';
 @import './tokens.css';
 
 *,
@@ -22,7 +22,7 @@ html {
 body {
   margin: 0;
   background: var(--color-paper);
-  color: var(--color-ink);
+  color: var(--color-ink-muted);
   font-family: var(--font-sans);
   font-size: var(--body-size);
   line-height: var(--leading-body);
@@ -31,19 +31,36 @@ body {
 
 h1, h2, h3, h4 {
   margin: 0;
+  color: var(--color-ink);
   line-height: var(--leading-tight);
   font-weight: var(--weight-bold);
   text-wrap: balance;
 }
 
-h1, .display {
-  font-size: var(--text-hero);
-  letter-spacing: var(--tracking-display);
+h1 {
+  font-size: var(--text-48);
+  line-height: 1.03;
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-heading);
 }
 
-h2 { font-size: var(--text-28); }
-h3 { font-size: var(--text-22); }
-h4 { font-size: var(--text-18); }
+/* The one oversized headline per page (home hero). */
+.display {
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-variant-ligatures: none;
+  overflow-wrap: break-word;
+}
+
+h2 {
+  font-size: var(--text-28);
+  line-height: 1.15;
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-heading);
+}
+h3 { font-size: var(--text-22); line-height: 1.2; letter-spacing: var(--tracking-heading); }
+h4 { font-size: var(--text-20); line-height: 1.35; }
 
 p, ul, ol, dl, figure { margin: 0; }
 p { max-width: var(--measure); }
@@ -87,13 +104,37 @@ button, [role='button'], summary {
 }
 
 .band {
-  padding-block: var(--space-7);
+  padding-block: var(--space-6);
 }
 
 @media (min-width: 1024px) {
   .band {
-    padding-block: var(--space-8);
+    padding-block: calc(var(--space-section) / 2);
   }
+}
+
+/* Space before the footer, unless the page ends in the closing band, which meets it. */
+main:not(:has(> .cta:last-child)) {
+  padding-bottom: var(--space-8);
+}
+
+/* Band tones: alternate these down a page so sections read as separate. */
+.band--cream {
+  background: var(--color-card);
+}
+.band--tint {
+  background: var(--color-room);
+}
+
+/* Dark surface: remaps the ink tokens so text, rules, logos and focus rings inside read on the panel.
+   Don't put primary (ink) buttons inside: --color-on-ink is not remapped. */
+.on-dark {
+  --color-ink: var(--color-on-ink);
+  --color-ink-muted: var(--color-on-panel-muted);
+  --color-focus: var(--color-on-ink);
+  --color-line: var(--color-field-border);
+  background: var(--color-panel);
+  color: var(--color-ink-muted);
 }
 
 .muted {
@@ -130,6 +171,95 @@ button, [role='button'], summary {
   font-variant-numeric: tabular-nums;
 }
 
+/* Card: cream fill, lilac hairline, hard 4px corners, no shadow. */
+.card {
+  padding: var(--space-5);
+  border: var(--hairline) solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: var(--space-6);
+  }
+}
+
+/* Question rows: native <details>, hairline dividers, plus/minus in a tint circle. */
+.accordion {
+  border-top: var(--hairline) solid var(--color-line);
+}
+.accordion details {
+  border-bottom: var(--hairline) solid var(--color-line);
+}
+.accordion summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 56px;
+  padding-block: var(--space-3);
+  color: var(--color-ink);
+  font-size: var(--text-18);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  list-style: none;
+}
+.accordion summary::-webkit-details-marker {
+  display: none;
+}
+.accordion summary::after {
+  content: '+';
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-highlight);
+  color: var(--color-ink);
+  font-size: var(--text-20);
+  font-weight: var(--weight-regular);
+  line-height: 1;
+}
+.accordion details[open] summary::after {
+  content: '\2212';
+}
+.accordion details p {
+  padding-bottom: var(--space-4);
+}
+
+/* Small uppercase label above a heading. */
+.eyebrow {
+  color: var(--color-ink);
+  font-size: var(--text-13);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+/* Text link with a trailing arrow. The arrow is CSS so copy stays plain. */
+.arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target);
+  color: var(--color-ink);
+  font-size: var(--text-14);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.arrow-link::after {
+  content: '\2192';
+}
+@media (hover: hover) and (pointer: fine) {
+  .arrow-link:hover {
+    text-decoration: underline;
+  }
+}
+
 /* Reduced motion: no movement; short colour fades stay because they show what changed. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -149,7 +279,7 @@ button, [role='button'], summary {
 .form-done {
   padding: var(--space-5);
   border: var(--wall) solid var(--color-success);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-card);
   background: var(--color-success-soft);
   font-size: var(--text-18);
 }

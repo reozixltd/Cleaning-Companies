@@ -1,5 +1,5 @@
 ---
-/** Shown where a photo slot has no file yet: plan paper, a dashed outline and what the photo should be. */
+/** Shown where a photo slot has no file yet: a tinted panel naming what the photo should be. */
 interface Props {
   label: string;
   ratio?: string;
@@ -16,11 +16,11 @@ const { label, ratio = '4 / 3' } = Astro.props;
     display: grid;
     place-items: center;
     padding: var(--space-4);
-    border: var(--wall) dashed var(--color-line);
-    border-radius: var(--radius-control);
+    border-radius: var(--radius-card);
     background: var(--color-room);
-    color: var(--color-ink-muted);
-    font-size: var(--text-14);
+    color: var(--color-ink);
+    font-size: var(--text-18);
+    font-weight: var(--weight-bold);
     text-align: center;
   }
 </style>

@@ -8,3 +8,4 @@ dist-static/
 !src/assets/**/*.png
 .DS_Store
 .claude/worktrees/
+shots/

@@ -334,33 +334,36 @@ Full token reference goes in `docs/design-system.md`. Raw values live only in `s
 
 | Token | Hex | Role |
 |---|---|---|
-| `--color-paper` | `#F4F7F8` | Page canvas |
-| `--color-ink` | `#17323F` | Text, plan walls, primary button fill |
-| `--color-ink-muted` | `#4E6874` | Secondary text (AA on paper and white) |
-| `--color-room` | `#DCEBE9` | Unselected rooms, quiet panels |
-| `--color-highlight` | `#F2C14E` | Selected rooms and the price tag only; always with ink text, never as a text colour |
-| `--color-line` | `#9FB6BF` | Hairlines (decorative) |
-| `--color-field-border` | `#6F8F9B` | Text field outlines, 3:1 on paper and surface (added in the build, §15) |
-| `--color-surface` | `#FFFFFF` | Form surfaces |
+| `--color-paper` | `#ffffff` | Page canvas |
+| `--color-ink` | `#000000` | Headings, plan walls, primary button fill |
+| `--color-ink-muted` | `#333333` | Body text and captions |
+| `--color-room` | `#f7e1f7` | Quiet tint: selected rooms, hover |
+| `--color-highlight` | `#ffc5ee` | Strong tint: price tag, priced rooms; always with ink text |
+| `--color-card`, `--color-card-border` | `#fffcf6`, `#c4c9dd` | Cards |
+| `--color-line` | `#cccccc` | Hairlines (decorative) |
+| `--color-field-border` | `#8c8c8c` | Field outlines, 3:1 on paper, card and panel |
+| `--color-surface` | `#ffffff` | Form surfaces |
+| `--color-accent`, `--color-on-accent` | `#ff83da`, `#ffffff` | The one primary action per screen (approved 2.2:1 exception, see design-system.md) |
+| `--color-panel`, `--color-on-panel-muted` | `#161616`, `#cccccc` | Dark hero panel |
 
 Semantic success, warning and danger tokens follow the Trades set, checked for AA against paper.
 
-Theme `eucalyptus` (D12): paper `#F5F7F2`, ink `#1E3B30`, room `#DDE8DA`, highlight `#9CC5E8`. Theme selection: `theme` in `config/business.ts`; in demo mode only, `?theme=` overrides it for the session.
+Theme `eucalyptus` (D12): paper `#ffffff`, ink `#142a22`, room `#dcebdf`, highlight `#cfe5d2`, accent `#2f7d5b`. Theme selection: `theme` in `config/business.ts`; in demo mode only, `?theme=` overrides it for the session.
 
 ### 7.2 Type
 
-- Schibsted Grotesk (variable, 400–700), self-hosted, Latin subset. One family.
-- Scale: 14, 16, 18, 22, 28, 36; hero headline `clamp(2.5rem, 5vw, 3.5rem)`.
-- Body 17px, line height 1.6, line length up to 68ch.
-- Headlines 700 with negative tracking (−0.02em); nothing else uses that treatment.
+- Inter (variable, 400–900), self-hosted. One family.
+- Scale: 12, 13, 14, 16, 18, 20, 22, 28, 48; display headline `clamp(2.75rem, 6.5vw, 6rem)`.
+- Body 16px, line height 1.5, colour `#333`, line length up to 68ch.
+- Headlines 700 to 900 with negative tracking (−0.015em; −0.025em on the display headline).
 - Sentence case everywhere, left-aligned throughout.
 
 ### 7.3 Layout and shape
 
 - 12-column grid at ≥1024px, single column below 768px, 16px side gutter on mobile.
 - The plan is the one bold element: 2px ink "walls" are the only heavy lines on the site. Elsewhere: hairlines and white space.
-- Corners: 0 on the plan, 6px on controls and photos.
-- Services, reviews and team are lists or rows, not grids of identical rounded cards.
+- Corners: 0 on the plan, 4px on cards and photos, 8px on controls, pills on buttons and tags.
+- Trust items, the four home services and reviews are cream cards; no shadows.
 
 ### 7.4 Motion
 

@@ -59,7 +59,7 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
   .services {
     padding: 0;
     list-style: none;
-    border-top: var(--wall) solid var(--color-ink);
+    border-top: var(--hairline) solid var(--color-line);
   }
   .service {
     display: grid;
@@ -137,7 +137,6 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
   @media (hover: hover) and (pointer: fine) {
     .service h2 a:hover {
       text-decoration: underline;
-      text-decoration-thickness: var(--wall);
     }
   }
 </style>

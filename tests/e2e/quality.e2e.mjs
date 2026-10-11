@@ -39,8 +39,12 @@ async function seriousIssues(page) {
   // Scan from the top: content scrolled under the sticky header reads as "obscured" to axe.
   await page.evaluate(() => window.scrollTo(0, 0));
   const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
+  // Owner-approved exception: white text on the pink primary action (DESIGN.md), on these two elements only.
+  const APPROVED = /btn--accent|bar__book/;
   return violations
     .filter((v) => v.impact === 'serious' || v.impact === 'critical')
+    .map((v) => (v.id === 'color-contrast' ? { ...v, nodes: v.nodes.filter((n) => !APPROVED.test(`${n.target.join(' ')} ${n.html}`)) } : v))
+    .filter((v) => v.nodes.length > 0)
     .map((v) => `${v.id} (${v.impact}): ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(', ')}`);
 }
 

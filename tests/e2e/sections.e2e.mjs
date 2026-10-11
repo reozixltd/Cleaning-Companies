@@ -73,6 +73,18 @@ await step('the owner console gets no motion', async (page) => {
   assert.ok(!(await page.evaluate(() => document.documentElement.classList.contains('motion'))));
 }, { width: 1280 });
 
+await step('printing shows every block, scrolled to or not', async (page) => {
+  await go(page, '/services/end-of-lease/');
+  await page.emulateMedia({ media: 'print' });
+  const found = await opacities(page);
+  assert.ok(found.length > 0 && found.every((o) => o === '1'), found.join(' '));
+}, { width: 1280 });
+
+await step('the booking page has nothing that fades in', async (page) => {
+  await go(page, '/book/');
+  assert.equal(await page.locator('[data-reveal]').count(), 0);
+}, { width: 1280 });
+
 await step('scroll progress is exactly 0 below the screen and exactly 1 above it', async (page) => {
   await go(page, '/');
   const p = () => page.locator('.scene-hero').evaluate((el) => el.style.getPropertyValue('--p'));

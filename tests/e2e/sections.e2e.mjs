@@ -390,6 +390,38 @@ await step('without JavaScript the stage shows the finished kitchen, its caption
   assert.ok(await page.locator('[data-stage-action]').isHidden());
 }, { width: 1280, height: 900, javaScriptEnabled: false });
 
+// ── Team (spec §5.7, §7.3) ───────────────────────────────────
+await step('the team section shows the founder and the team, each marked as a sample photo', async (page) => {
+  await go(page, '/');
+  const team = page.locator('#team');
+  assert.equal(await team.locator('.checks li[data-reveal]').count(), 4);
+  assert.equal(await team.locator('img').count(), 2);
+  const tags = team.locator('.sample-tag');
+  assert.equal(await tags.count(), 2);
+  for (const tag of await tags.all()) {
+    assert.equal((await tag.innerText()).trim(), 'Sample photo');
+    assert.ok(await tag.evaluate((el) => el.closest('.sampled')?.querySelector('img') !== null), 'the mark sits on its picture');
+    assert.equal(await tag.evaluate((el) => getComputedStyle(el).backgroundColor), 'rgb(255, 255, 255)', 'on a solid chip');
+  }
+  assert.match(await team.locator('.founder img').getAttribute('alt'), /Mel Hartigan/);
+});
+
+await step('the checks tick in one after another', async (page) => {
+  await go(page, '/');
+  await page.locator('#team .checks li').last().scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => [...document.querySelectorAll('#team .checks .icon')].every((el) => getComputedStyle(el).opacity === '1'));
+  const delays = await page.$$eval('#team .checks .icon', (els) => els.map((el) => parseFloat(getComputedStyle(el).transitionDelay)));
+  assert.ok(delays[3] > delays[0], delays.join(' '));
+}, { width: 1280 });
+
+await step('the founder picture on the about page is marked as a sample photo', async (page) => {
+  await go(page, '/about/');
+  const tag = page.locator('.founder .sample-tag');
+  assert.equal(await tag.count(), 1);
+  assert.ok(await tag.isVisible());
+  assert.equal(await page.locator('.founder img').getAttribute('loading'), 'eager');
+});
+
 // ── After every block has shown ──────────────────────────────
 for (const theme of THEMES) {
   for (const width of [375, 1280]) {

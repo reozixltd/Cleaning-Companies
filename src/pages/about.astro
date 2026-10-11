@@ -8,6 +8,7 @@ import NumberedSteps from '@/sections/NumberedSteps.astro';
 import CtaBand from '@/sections/CtaBand.astro';
 import Photo from '@/core/ui/Photo.astro';
 import { business } from '@/config/business';
+import { hasPhoto } from '@/core/photos';
 
 const founder = (await getEntry('team', 'mel'))!.data;
 const team = (await getCollection('team')).filter((m) => m.id !== 'mel').map((m) => m.data);
@@ -37,7 +38,10 @@ const cover = [
   <PageHeader title="About us" intro={`A local team of employed cleaners, cleaning homes across ${business.region} for ${years} years.`} />
 
   <section class="wrap founder" aria-labelledby="founder-title">
-    <Photo slot="founder" priority alt={`${founder.name}, ${founder.role.toLowerCase()}`} label={`${founder.name}, ${founder.role.toLowerCase()}`} ratio="4 / 5" sizes="(min-width: 900px) 360px, 100vw" />
+    <div class="sampled founder__photo">
+      <Photo slot="founder" priority alt={`${founder.name}, ${founder.role.toLowerCase()}`} label={`${founder.name}, ${founder.role.toLowerCase()}`} ratio="4 / 5" sizes="(min-width: 900px) 360px, 100vw" />
+      {business.demoMode && hasPhoto('founder') && <span class="sample-tag">Sample photo</span>}
+    </div>
     <div class="founder__text">
       <h2 id="founder-title">Why {business.shortName} exists</h2>
       <blockquote>{founder.note}</blockquote>
@@ -99,8 +103,7 @@ const cover = [
     gap: var(--space-6);
     padding-bottom: var(--space-7);
   }
-  .founder :global(.placeholder),
-  .founder :global(.photo) {
+  .founder__photo {
     max-width: 360px;
   }
   .founder__text {

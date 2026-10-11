@@ -2,6 +2,8 @@
 /** "Who comes to your home": the answer to the stranger-in-my-house worry, with the founder's face and words. */
 import { getEntry } from 'astro:content';
 import { business } from '@/config/business';
+import { photoSlots } from '@/config/photo-slots';
+import { hasPhoto } from '@/core/photos';
 import Photo from '@/core/ui/Photo.astro';
 import Icon from '@/core/ui/Icon.astro';
 import SectionHead from './SectionHead.astro';
@@ -17,14 +19,25 @@ const checks = [
 
 <section class="band vetting" id="team" aria-labelledby="team-title">
   <div class="wrap vetting__grid">
-    <div>
+    <div class="vetting__checks">
       <SectionHead id="team-title" title="Who comes to your home" />
       <ul class="checks" role="list">
-        {checks.map((c) => <li><Icon name="check" size={22} />{c}</li>)}
+        {checks.map((c, i) => <li data-reveal style={`--i: ${i}`}><Icon name="check" size={22} />{c}</li>)}
       </ul>
+      {
+        hasPhoto('team') && (
+          <div class="sampled vetting__team" data-reveal>
+            <Photo slot="team" alt={photoSlots.team.alt} ratio="3 / 2" sizes="(min-width: 900px) 640px, 100vw" />
+            {business.demoMode && <span class="sample-tag">Sample photo</span>}
+          </div>
+        )
+      }
     </div>
-    <figure class="founder">
-      <Photo slot="founder" alt={`${founder.name}, ${founder.role}`} label={`${founder.name}, ${founder.role}`} ratio="4 / 5" sizes="(min-width: 900px) 320px, 100vw" />
+    <figure class="founder" data-reveal>
+      <div class="sampled">
+        <Photo slot="founder" alt={`${founder.name}, ${founder.role}`} label={`${founder.name}, ${founder.role}`} ratio="4 / 5" sizes="(min-width: 900px) 320px, 100vw" />
+        {business.demoMode && hasPhoto('founder') && <span class="sample-tag">Sample photo</span>}
+      </div>
       <blockquote>{founder.note}</blockquote>
       <figcaption>{founder.name}, {founder.role.toLowerCase()} since {founder.since}</figcaption>
     </figure>
@@ -52,10 +65,27 @@ const checks = [
     gap: var(--space-3);
     font-size: var(--text-18);
   }
+  /* Each check ticks in a beat after its line rises. */
+  @media screen {
+    :global(.motion) .checks li :global(.icon) {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    :global(.motion) .checks li.is-in :global(.icon) {
+      opacity: 1;
+      transform: none;
+      transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
+      transition-delay: calc(var(--i, 0) * 80ms + 250ms);
+    }
+  }
+  .vetting__team {
+    margin-top: var(--space-6);
+  }
   .founder {
     display: grid;
     gap: var(--space-3);
     max-width: 360px;
+    align-self: start;
   }
   .founder blockquote {
     margin: 0;

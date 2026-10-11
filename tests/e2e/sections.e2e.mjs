@@ -477,6 +477,10 @@ await step('the offices band shows its photo, which settles from 1.1 to 1, and k
   assert.ok((await scale()) > 1.08, `starts near 1.1: ${await scale()}`);
   await band.evaluate((el) => window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'instant' }));
   await page.waitForFunction(() => new DOMMatrix(getComputedStyle(document.querySelector('.offices img')).transform).a === 1);
+  // On a tablet the stacked photo stays a thumbnail instead of filling the band.
+  await page.setViewportSize({ width: 768, height: 900 });
+  const photoWidth = await band.locator('.photo').evaluate((el) => el.getBoundingClientRect().width);
+  assert.ok(photoWidth <= 361, `the photo stays at most 360 wide at 768: ${photoWidth}`);
 }, { width: 1280 });
 
 const text = (page, selector) => page.locator(selector).innerText();

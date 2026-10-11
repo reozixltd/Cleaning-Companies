@@ -7,7 +7,7 @@ import Photo from '@/core/ui/Photo.astro';
 
 <section class="offices" aria-labelledby="offices-title" data-progress>
   <div class="wrap offices__inner">
-    <Photo slot="offices" alt={photoSlots.offices.alt} ratio="3 / 2" sizes="(min-width: 900px) 240px, 100vw" class="offices__photo" />
+    <Photo slot="offices" alt={photoSlots.offices.alt} ratio="3 / 2" sizes="(min-width: 900px) 240px, (min-width: 392px) 360px, 100vw" class="offices__photo" />
     <div>
       <h2 id="offices-title">Managing an office, clinic or strata building?</h2>
       <p>We price commercial cleaning after a walk-through of your site, and send insurance certificates on request.</p>
@@ -28,6 +28,7 @@ import Photo from '@/core/ui/Photo.astro';
   }
   .offices :global(.offices__photo) {
     width: 100%;
+    max-width: 22.5rem;
   }
   /* The photo settles from 1.1 to 1 inside its frame as the band comes up the screen. */
   @media screen {

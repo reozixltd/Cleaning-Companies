@@ -11,12 +11,12 @@ Rules for every photo:
 - Demo photos must be licence-free. Record each one in [`photo-credits.md`](photo-credits.md).
 - A live client uses their own photos. The `founder` slot is always the real person.
 
-## Status: 9 of 12 filled
+## Status: 11 of 12 filled
 
 | Slot | Orientation | File |
 |---|---|---|
-| `hero` | landscape | missing |
-| `hero-portrait` | portrait | missing |
+| `hero` | landscape | `hero.jpg` |
+| `hero-portrait` | portrait | `hero-portrait.jpg` |
 | `service-regular` | landscape | `service-regular.jpg` |
 | `service-deep` | landscape | `service-deep.jpg` |
 | `service-end-of-lease` | landscape | `service-end-of-lease.webp` |

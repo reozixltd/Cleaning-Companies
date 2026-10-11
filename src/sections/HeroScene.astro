@@ -53,6 +53,7 @@ const scenic = hasPhoto('hero');
   }
   .scene-hero__scene {
     position: relative;
+    height: 52vh; /* for browsers without svh */
     height: 52svh;
     margin-bottom: var(--space-6);
   }
@@ -62,6 +63,7 @@ const scenic = hasPhoto('hero');
     .scene-hero--scenic {
       display: grid;
       align-items: center;
+      min-height: min(88vh, 52rem); /* for browsers without svh */
       min-height: min(88svh, 52rem);
       padding-block: var(--space-7);
       /* As the hero leaves the screen the still pushes in and the card rises. The card stays solid, so its buttons read clearly for as long as they can be used. */

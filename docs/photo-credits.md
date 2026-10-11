@@ -22,3 +22,5 @@ One row for every file in `src/assets/photos/`. Add the row when you add the fil
 | `area-aspley` | `area-aspley.jpg` | https://commons.wikimedia.org/wiki/File:Cumulus_mediocris_Gympie_Rd_Aspley_P1430322.jpg | CC0 | John Robert McPherson |
 | `area-albany-creek` | `area-albany-creek.jpg` | https://commons.wikimedia.org/wiki/File:Albany_Creek_Queensland.gjm.JPG | Public domain | Gmcgarry |
 | `area-everton-park` | `area-everton-park.jpg` | https://commons.wikimedia.org/wiki/File:Everton_Park_Library_South_Pine_Rd_Everton_Park_P1330239.jpg | CC0 | John Robert McPherson |
+| `hero` | `hero.jpg` | Generated with Google Flow for this site (prompt G0 in the redesign spec), approved by the owner | Owner's own | Generated image |
+| `hero-portrait` | `hero-portrait.jpg` | Generated with Google Flow for this site (prompt G2 in the redesign spec), approved by the owner | Owner's own | Generated image |

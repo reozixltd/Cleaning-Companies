@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Work on branch `design/cinematic-3d`, created from `main` (`d5053fe`) in its own worktree. Never touch, stash or commit the `design/mews-restyle` checkout except to copy files out of it.
+- Work on branch `design/cinematic-3d`, created from `main` (`d5053fe`) in its own worktree.
 - Commit locally only. Never push. End every commit message with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 - Do not change `src/config/*` (except adding photo slots), `src/domain/*`, `src/content/*`, the `/book/` flow, any form, or the owner console.
 - The estimator section keeps `id="plan"` and class `hero`, and contains exactly one of each `data-price-*` hook.

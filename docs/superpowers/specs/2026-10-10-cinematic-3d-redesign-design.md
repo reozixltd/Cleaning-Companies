@@ -17,7 +17,7 @@ Success means:
 
 | # | Decision | Consequence |
 |---|---|---|
-| 1 | Build on the live site | Work branches from `main` (`d5053fe`). `design/mews-restyle` and its uncommitted work stay untouched. |
+| 1 | Build on the live site | Work branches from `main` (`d5053fe`). |
 | 2 | Default palette | The live default theme `floorplan` (navy ink, yellow rooms) stays the default. `eucalyptus` stays as the alternate. Generated imagery is theme-neutral. |
 | 3 | Real-time 3D | three.js is added. The JavaScript budget is split into an eager and a lazy limit (§9). |
 | 4 | Generate people | Generated cleaners, a team image and a founder portrait are used, under the rules in §7.3. |

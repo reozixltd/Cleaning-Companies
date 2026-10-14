@@ -9,29 +9,37 @@ import { ROOM_KINDS, rooms } from '@/config/rooms';
 import { SERVICE_IDS, SERVICE_LABELS } from '@/config/pricing';
 import { checklistFor } from '@/domain/checklist';
 import FloorPlan from '@/features/plan/FloorPlan.astro';
+import RoomStage from '@/features/stage/RoomStage.astro';
 import Icon from '@/core/ui/Icon.astro';
 import SectionHead from './SectionHead.astro';
 ---
 
-<section class="band band--cream" id="whats-included" aria-labelledby="included-title">
+<section class="band" id="whats-included" aria-labelledby="included-title">
   <div class="wrap">
     <SectionHead id="included-title" title="What we clean, room by room" intro="Choose a room on the plan. Deep and end of lease cleans add more to every list." />
-    <div class="included">
-      <FloorPlan id="included-plan" mode="read" title="Your home. Choose a room to see its checklist." selected="kitchen" />
-      <div class="included__lists" data-room-panels>
-        {SERVICE_IDS.flatMap((service) =>
-          ROOM_KINDS.map((kind) => (
-            <div class="panel" data-room-panel data-room-kind={kind} data-service={service} hidden={!(kind === 'kitchen' && service === 'regular')}>
-              <h3>{rooms.rooms[kind].label}</h3>
-              <p class="panel__service">{SERVICE_LABELS[service]}</p>
-              <ul role="list">
-                {checklistFor(kind, service, rooms).map((item) => (
-                  <li><Icon name="check" size={20} />{item}</li>
-                ))}
-              </ul>
-            </div>
-          )),
-        )}
+    <div class="included__track">
+      <div class="included" data-stage-pin>
+        <div class="included__plan">
+          <div class="included__map">
+            <FloorPlan id="included-plan" mode="read" title="Your home. Choose a room to see its checklist." selected="kitchen" />
+          </div>
+          <RoomStage />
+        </div>
+        <div class="included__lists" data-room-panels>
+          {SERVICE_IDS.flatMap((service) =>
+            ROOM_KINDS.map((kind) => (
+              <div class="panel" data-room-panel data-room-kind={kind} data-service={service} hidden={!(kind === 'kitchen' && service === 'regular')}>
+                <h3>{rooms.rooms[kind].label}</h3>
+                <p class="panel__service">{SERVICE_LABELS[service]}</p>
+                <ul role="list">
+                  {checklistFor(kind, service, rooms).map((item) => (
+                    <li><Icon name="check" size={20} />{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )),
+          )}
+        </div>
       </div>
     </div>
   </div>
@@ -49,10 +57,17 @@ import SectionHead from './SectionHead.astro';
   let kind = 'kitchen';
   let service: string = loadSelection(getStorage(), pricing, rooms.max)?.service ?? 'regular';
 
-  const show = () =>
+  const stageBlock = section.querySelector<HTMLElement>('[data-stage-block]');
+  const stageRooms = [...section.querySelectorAll<HTMLElement>('[data-stage-room]')];
+
+  const show = () => {
     section.querySelectorAll<HTMLElement>('[data-room-panel]').forEach((p) => {
       p.hidden = !(p.dataset.roomKind === kind && p.dataset.service === service);
     });
+    // The stage shows the same room. A room with no pictures has no stage: the checklist is all there is, as before.
+    stageRooms.forEach((r) => (r.hidden = r.dataset.stageRoom !== kind));
+    if (stageBlock) stageBlock.hidden = !stageRooms.some((r) => r.dataset.stageRoom === kind);
+  };
 
   section.addEventListener(ROOM_EVENT, (e) => {
     kind = (e as CustomEvent<{ kind: string }>).detail.kind;
@@ -71,6 +86,10 @@ import SectionHead from './SectionHead.astro';
     gap: var(--space-6);
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
+  }
+  .included__plan {
+    display: grid;
+    gap: var(--space-5);
   }
   .panel {
     display: grid;
@@ -92,10 +111,45 @@ import SectionHead from './SectionHead.astro';
     padding-block: var(--space-2);
     border-bottom: var(--hairline) solid var(--color-line);
   }
+  /* The plan is the room picker, so from tablets up it stays the size it is on a phone; stretched across a
+     tablet it would put the checklist a screen and a half below the room that was tapped. */
+  @media (min-width: 48em) {
+    .included__map {
+      max-width: 20rem;
+    }
+  }
   @media (min-width: 900px) {
     .included {
-      grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
       gap: var(--space-8);
+    }
+  }
+  /* Tall desktop screens: the plan, stage and checklist hold still for 120vh of scrolling while the stage
+     plays (spec §5.5). Only where the whole block fits under the header, never under reduced motion, and
+     only once the stage's script is running (.is-live), so nothing pins without a show to watch.
+     stage.ts reads `position` to know which way to measure, so the sticky rule is the only switch.
+     The 120vh of travel is there from the first paint wherever scripts run (`scripting: enabled`), not
+     only once .is-live is set: a browser that restores the scroll position of a reload before the script
+     has run (WebKit) would otherwise clamp it against a page 120vh short and land 120vh too far down.
+     A browser that does not know `scripting` drops the whole block and plays the stage unpinned. */
+  @media screen and (min-width: 64em) and (min-height: 48.75em) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+    .included:global(:has(.stage.is-live)) {
+      position: sticky;
+      top: 5.5rem;
+    }
+    .included__track:global(:has(.stage))::after {
+      content: '';
+      display: block;
+      height: 120vh;
+    }
+    /* The pinned booking tag (fixed, top right, outside this component) sits over the top of the checklist
+       column while it shows. Up to 96em the words are under it (its longest summary, a deep clean, reaches
+       them until about 1490px), so the column starts below it; wider, they are clear. While the stage shows,
+       the plan column sets the block's height, so this does not grow it. */
+    @media (max-width: 96em) {
+      :global(body:has([data-booking-tag]:not([hidden]))) .included__lists {
+        padding-top: 3.5rem;
+      }
     }
   }
 </style>

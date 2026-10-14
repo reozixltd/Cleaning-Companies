@@ -1,0 +1,70 @@
+---
+/**
+ * The price as a compact block for the home hero and the closing band. It uses the same data-price-*
+ * hooks as PriceTag, so price-tag.ts keeps both in step with the visitor's
+ * selection. Server-rendered for the default home; nothing here is a typed-in
+ * price. The default slot takes extra actions beside Choose a time. While this
+ * block is on screen, price-tag.ts keeps the pinned tag hidden (data-price-line).
+ */
+import { business } from '@/config/business';
+import { pricing } from '@/config/pricing';
+import { formatMoney } from '@/core/format';
+import { describeSelection } from '@/domain/describe';
+import { quote } from '@/domain/quote';
+import { DEFAULT_SELECTION, toParams } from '@/domain/selection';
+import Button from '@/core/ui/Button.astro';
+
+const q = quote(DEFAULT_SELECTION, pricing);
+---
+
+<div class="line" data-price-line>
+  <p class="line__summary" data-price-summary>{describeSelection(DEFAULT_SELECTION)}</p>
+  <p class="line__price">
+    <span class="line__amount tabular" data-price-per-visit>{formatMoney(q.perVisit)}</span>
+    <span data-price-unit>a visit</span>
+  </p>
+  <p class="line__small" data-price-first-visit-row hidden={q.firstVisit === q.perVisit}>
+    First visit <strong class="tabular" data-price-first-visit>{formatMoney(q.firstVisit)}</strong>, priced as a deep clean so we start from clean.
+  </p>
+  <p class="line__small">GST included.{business.demoMode && ' Sample prices.'}</p>
+  <div class="line__actions">
+    <Button href={`/book/?${toParams(DEFAULT_SELECTION)}`} size="lg" data-choose-time>Choose a time</Button>
+    <slot />
+  </div>
+</div>
+
+<script>
+  import { initPriceTags } from './price-tag';
+  initPriceTags();
+</script>
+
+<style>
+  .line {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .line__summary {
+    font-weight: var(--weight-medium);
+  }
+  .line__price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    line-height: 1;
+  }
+  .line__amount {
+    font-size: var(--text-36);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-display);
+  }
+  .line__small {
+    font-size: var(--text-16);
+    color: var(--color-ink-muted);
+  }
+  .line__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+</style>

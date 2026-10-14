@@ -12,15 +12,15 @@ const { tone = 'neutral' } = Astro.props;
   .badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.125rem var(--space-3);
-    border-radius: var(--radius-pill);
+    padding: 0.125rem var(--space-2);
+    border-radius: var(--radius-control);
     font-size: var(--text-14);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-medium);
     line-height: 1.5;
     white-space: nowrap;
   }
   .badge--neutral { background: var(--color-room); color: var(--color-ink); }
   .badge--success { background: var(--color-success-soft); color: var(--color-success); }
   .badge--warning { background: var(--color-warning-soft); color: var(--color-warning); }
-  .badge--highlight { background: var(--color-lime); color: var(--color-ink); }
+  .badge--highlight { background: var(--color-highlight); color: var(--color-ink); }
 </style>

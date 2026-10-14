@@ -1,6 +1,7 @@
 /**
- * Keeps every price display in step with the visitor's selection: the hero tag,
- * the pinned desktop tag and the mobile booking bar all use the same data-* hooks.
+ * Keeps every price display in step with the visitor's selection: the hero's price
+ * line, the estimator's tag, the pinned desktop tag and the mobile booking bar all
+ * use the same data-* hooks.
  * It listens for selection events; it never imports the floor plan.
  */
 import { formatMoney } from '@/core/format';
@@ -37,19 +38,26 @@ function showPinned(): void {
 }
 
 function watchHero(): void {
-  const hero = document.querySelector('#plan');
-  if (!hero || !('IntersectionObserver' in window)) {
-    heroVisible = !hero ? false : heroVisible;
+  // Wherever the page already shows the price in full: the estimator, and the price lines in the home hero and the closing band.
+  const priced = all('#plan, [data-price-line]');
+  if (!priced.length || !('IntersectionObserver' in window)) {
+    heroVisible = !priced.length ? false : heroVisible;
     return;
   }
-  // The top margin matches the sticky header: a hero hidden under it counts as gone.
-  new IntersectionObserver(
-    ([entry]) => {
-      heroVisible = entry.isIntersecting;
+  const onScreen = new Set<Element>();
+  // The top margin matches the sticky header: a price hidden under it counts as gone.
+  const watcher = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) onScreen.add(entry.target);
+        else onScreen.delete(entry.target);
+      }
+      heroVisible = onScreen.size > 0;
       showPinned();
     },
     { rootMargin: '-80px 0px 0px 0px' },
-  ).observe(hero);
+  );
+  priced.forEach((el) => watcher.observe(el));
 }
 
 let started = false;

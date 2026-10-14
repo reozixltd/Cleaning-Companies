@@ -13,7 +13,7 @@ const { id, title, items } = Astro.props;
 
 <section class="questions" aria-labelledby={id}>
   <h2 id={id}>{title}</h2>
-  <div class="questions__list accordion">
+  <div class="questions__list">
     {items.map((f) => (
       <details>
         <summary>{f.q}</summary>
@@ -27,5 +27,39 @@ const { id, title, items } = Astro.props;
   .questions {
     display: grid;
     gap: var(--space-4);
+  }
+  .questions__list {
+    border-top: var(--wall) solid var(--color-ink);
+  }
+  details {
+    border-bottom: var(--hairline) solid var(--color-line);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 56px;
+    padding-block: var(--space-3);
+    font-size: var(--text-18);
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '+';
+    flex: none;
+    font-size: var(--text-28);
+    font-weight: var(--weight-regular);
+    line-height: 1;
+  }
+  details[open] summary::after {
+    content: '−';
+  }
+  details p {
+    padding-bottom: var(--space-4);
   }
 </style>

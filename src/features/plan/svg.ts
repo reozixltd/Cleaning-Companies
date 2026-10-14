@@ -10,7 +10,7 @@
 import type { Plan, PlanRoom } from './layout';
 
 export const UNIT = 40;
-const PAD = 4;
+export const PAD = 4;
 
 /** Short words inside the dashed slots, so they fit narrow rooms on a phone. */
 const SHORT: Record<string, string> = { bedroom: 'bed', bathroom: 'bath', study: 'study', laundry: 'laundry' };

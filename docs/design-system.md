@@ -10,30 +10,19 @@ Two themes ship. `floorplan` is the default: its block is `:root, [data-theme='f
 
 | Token | `floorplan` | `eucalyptus` | Role |
 |---|---|---|---|
-| `--color-paper` | `#ffffff` | `#ffffff` | Page canvas, empty plan rooms |
-| `--color-ink` | `#000000` | `#142a22` | Headings, plan walls, primary button fill |
-| `--color-ink-hover` | `#333333` | `#1e3b30` | Primary button on hover |
-| `--color-ink-muted` | `#333333` | `#33483f` | Body text, captions, hints |
-| `--color-room` | `#f7e1f7` | `#dcebdf` | Quiet tint: selected rooms, done steps, active nav pill, hover |
-| `--color-highlight` | `#ffc5ee` | `#cfe5d2` | Strong tint: price tag, priced rooms, FAQ toggle, announcement bar. Always with ink text |
-| `--color-card` | `#fffcf6` | `#f7f9f3` | Card and panel fill |
-| `--color-card-border` | `#c4c9dd` | `#bccabc` | Card edge (decorative) |
-| `--color-line` | `#cccccc` | `#c9d3c9` | Hairline dividers (decorative, so no contrast minimum) |
-| `--color-field-border` | `#8c8c8c` | `#728f72` | Text field outlines. 3:1 on paper, card and panel, WCAG 1.4.11 |
+| `--color-paper` | `#f4f7f8` | `#f5f7f2` | Page canvas, empty plan rooms |
+| `--color-ink` | `#17323f` | `#1e3b30` | Text, plan walls, primary button fill, rules |
+| `--color-ink-hover` | `#0e2430` | `#142a22` | Primary button on hover |
+| `--color-ink-muted` | `#4e6874` | `#4c6458` | Secondary text, captions, hints |
+| `--color-room` | `#dcebe9` | `#dde8da` | Living and kitchen on the plan, quiet panels, photo placeholders |
+| `--color-highlight` | `#f2c14e` | `#9cc5e8` | Selected rooms and the price tag only. Always with ink text, never as a text colour |
+| `--color-line` | `#9fb6bf` | `#a9bca9` | Hairlines, panel edges, dashed add-a-room slots (decorative, so no contrast minimum) |
+| `--color-field-border` | `#6f8f9b` | `#728f72` | Text field outlines (inputs, selects, text areas, the suburb check). 3:1 on paper and surface, WCAG 1.4.11 |
 | `--color-surface` | `#ffffff` | `#ffffff` | Form fields and controls |
-| `--color-on-ink` | `#ffffff` | `#ffffff` | Text on ink (primary buttons) |
-| `--color-focus` | `#000000` | `#142a22` | Focus ring (3px solid, 2px offset) |
-| `--color-shade` | `rgb(0 0 0 / 0.06)` | `rgb(20 42 34 / 0.06)` | Hover wash on secondary and quiet buttons |
-| `--color-accent` | `#ff83da` | `#2f7d5b` | The one primary action per screen (`accent` button) |
-| `--color-on-accent` | `#ffffff` | `#ffffff` | Text on accent |
-| `--color-panel` | `#161616` | `#142a22` | Dark hero panel |
-| `--color-on-panel-muted` | `#cccccc` | `#c9d3c9` | Secondary text on the dark panel |
-
-`--color-ice` (`#d2f4ff`) and `--color-lime` (`#e8ff5b`, the highlight badge) are shared by both themes. There are no shadows, so the old shadow token is gone.
-
-### Known accessibility exception
-
-White text on `#ff83da` is 2.21:1. This is limited to `.btn--accent` (header Book button) and `.bar__book` (phone booking bar). The owner chose it to match DESIGN.md. `tests/e2e/quality.e2e.mjs` exempts `color-contrast` for those selectors only, and `tests/unit/contrast.test.ts` has no accent pair. The eucalyptus accent passes AA (4.99:1). Hover (on the header button) switches to black with white text.
+| `--color-on-ink` | `#ffffff` | `#ffffff` | Text on ink (primary buttons, demo ribbon) |
+| `--color-focus` | `#17323f` | `#1e3b30` | Focus ring (3px solid, 2px offset) |
+| `--color-shade` | `rgb(23 50 63 / 0.08)` | `rgb(30 59 48 / 0.08)` | Hover wash on secondary and quiet buttons |
+| `--color-shadow` | `rgb(23 50 63 / 0.12)` | `rgb(30 59 48 / 0.12)` | Shadows: the two elevation steps and the pinned booking tag |
 
 Semantic colours are shared by every theme (the plain `:root` block):
 
@@ -49,7 +38,7 @@ Semantic colours are shared by every theme (the plain `:root` block):
 
 Rules for using colour:
 
-- Highlight marks what the visitor chose or can act on: included bedrooms, bathrooms, study and laundry on the hero plan, the chosen room on the checklist plan, the price tag, the pinned booking tag, suburbs with their own page on the coverage map, the `highlight` badge, and the filled room in the logo. Don't add it anywhere else: if everything is yellow, the plan stops standing out.
+- Highlight marks what the visitor chose or can act on: included bedrooms, bathrooms, study and laundry on the estimator's plan, the chosen room on the checklist plan, the price tag, the pinned booking tag, suburbs with their own page on the coverage map, the `highlight` badge, and the filled room in the logo. Don't add it anywhere else: if everything is yellow, the plan stops standing out.
 - Text on highlight is always `--color-ink`. Never put `--color-ink-muted` on highlight: it drops to about 3.5:1.
 - Living and kitchen use `--color-room`, not highlight: they are always included, so they are not a choice.
 - Status always pairs the strong colour with its `-soft` background, or sits on paper.
@@ -91,27 +80,26 @@ Axe can't measure two things, so `tests/e2e/quality.e2e.mjs` measures them in th
 
 ## Type
 
-One family: Inter Variable (400 to 900), self-hosted through `@fontsource-variable/inter` (imported at the top of `src/styles/global.css`), with system fallbacks in `--font-sans`.
+One family: Schibsted Grotesk Variable (400 to 700), self-hosted through `@fontsource-variable/schibsted-grotesk` (imported at the top of `src/styles/global.css`), with system fallbacks in `--font-sans`.
 
 | Token | Size | Used for |
 |---|---|---|
-| `--text-12`, `--text-13` | 12, 13px | Fine print, announcement bar, eyebrow |
-| `--text-14` | 14px | Captions, badges, nav links, buttons, the mobile bar summary |
-| `--text-16` | 16px | Body text, hints, field errors, footer |
-| `--text-18` | 18px | Section intros, lead lines, review quotes |
-| `--text-20` | 20px | h4, card titles |
+| `--text-14` | 14px | Smallest text: captions, the demo ribbon, badges, the mobile bar summary |
+| `--text-16` | 16px | Buttons, hints, field errors, footer |
+| `--body-size` | 17px | Body text |
+| `--text-18` | 18px | Section intros, lead lines, review quotes, h4 |
 | `--text-22` | 22px | h3, the logo wordmark, stepper counts |
 | `--text-28` | 28px | h2 |
-| `--text-48` | `clamp(2rem, 5vw, 3rem)` | h1, step numbers, the price on the price tag |
-| `--text-display` | `clamp(2.75rem, 6.5vw, 6rem)` | `.display`: the home hero headline |
+| `--text-36` | 36px | Step numbers in "How a booking works" |
+| `--text-hero` | `clamp(2.5rem, 5vw, 3.5rem)` | h1, `.display`, the price on the price tag |
 
-- Body: 16px, `--leading-body` 1.5, colour `--color-ink-muted`, line length up to `--measure` (68ch) on paragraphs.
-- Headings: ink, weight 700 (h1 and h2 900), `--leading-tight` 1.1, `text-wrap: balance`. `.display` is 900 at 0.9 leading.
-- `--tracking-display` (−0.025em) is for `.display` and the price-tag amount; `--tracking-heading` (−0.015em) for h1 to h3; `--tracking-caps` (0.03em) for uppercase labels.
-- Weights: `--weight-regular` 400, `--weight-medium` 500 (labels, buttons), `--weight-semibold` 600, `--weight-bold` 700, `--weight-black` 900.
+- Body: `--leading-body` 1.6, line length up to `--measure` (68ch) on paragraphs.
+- Headings: weight 700, `--leading-tight` 1.1, `text-wrap: balance`.
+- `--tracking-display` (−0.02em) is used only on h1, `.display`, the price-tag amount and the logo wordmark.
+- Weights: `--weight-regular` 400, `--weight-medium` 500 (labels, buttons), `--weight-bold` 700.
 - Prices and counts use `.tabular` (tabular figures) so they don't jump as they change.
-- Sentence case everywhere, left-aligned throughout. Capitals only on `.eyebrow` and `.arrow-link`, in CSS.
-- Text is never smaller than `--text-13` (the announcement bar and eyebrow). The exception is SVG labels on the floor plan and coverage map: they are set in px (15 to 20px) in drawing units, so they shrink with the drawing on a phone. `FloorPlan.astro` enlarges them below 600px to compensate. That is the one place px font sizes appear in components.
+- Sentence case everywhere, left-aligned throughout. Nothing is set in capitals.
+- Text is never smaller than `--text-14`. The exception is SVG labels on the floor plan and coverage map: they are set in px (15 to 20px) in drawing units, so they shrink with the drawing on a phone. `FloorPlan.astro` enlarges them below 600px to compensate. That is the one place px font sizes appear in components.
 
 ## Space and layout
 
@@ -119,48 +107,54 @@ One family: Inter Variable (400 to 900), self-hosted through `@fontsource-variab
 |---|---|
 | `--space-1` … `--space-8` | 4, 8, 12, 16, 24, 32, 48, 64 px |
 | `--gutter` | 16px below 768px, 32px from 768px |
-| `--page-max` | 80rem (1280px) |
-| `--space-section` | 5rem (80px between sections; `.band` is half of it top and bottom) |
+| `--page-max` | 75rem (1200px) |
 | `--target` | 44px, the minimum tap target |
 
-- `.wrap` centres content at `--page-max` with `--gutter` on each side. `.band` gives a section 32px of vertical padding, 40px from 1024px.
-- Band tones separate sections down a page: plain (page white), `.band--cream` (`--color-card`), `.band--tint` (`--color-room`) and `.on-dark` (`--color-panel`). Don't put two of the same tone next to each other.
-- `.on-dark` remaps `--color-ink`, `--color-ink-muted`, `--color-line` and `--color-focus` for whatever is inside it, so text, rules, the logo and focus rings read on the panel. How it works and the footer use it. Don't put a primary (ink) button inside: `--color-on-ink` is not remapped.
-- `main` has 64px of bottom padding unless the page ends in the closing `CtaBand`, which sits directly on the dark footer.
+- `.wrap` centres content at `--page-max` with `--gutter` on each side. `.band` gives a section 48px of vertical padding, 64px from 1024px.
 - Single column below 768px with a 16px side gutter. Everything must work at 375px (and 320px) with no horizontal scroll.
-- From 1024px the layout follows a 12-column grid (spec §7.3). There is no grid utility class: each section sets its own `grid-template-columns`. Hero: `5fr 6fr` from 1024px. Reviews: `4fr 7fr` from 900px. Room checklist: `5fr 4fr` from 900px. Vetting: text beside a 320px founder column. Coverage: two equal columns. Most bands pair a wide column with a narrow one, all left-aligned.
-- Breakpoints in use: 480px (plan segments go four across), 600px (plan labels stop being enlarged), 768px (header shows the phone number and Book a clean, the mobile booking bar goes away, step lists go four across), 900px (two-column bands), 1024px (header navigation, two-column hero), 1200px (trust row four across).
+- From 1024px the layout follows a 12-column grid (spec §7.3). There is no grid utility class: each section sets its own `grid-template-columns`. Estimator: `5fr 6fr` from 1024px. Reviews: `4fr 7fr` from 900px. Room checklist: `6fr 5fr` from 900px. Vetting: text beside a 320px founder column. Coverage: two equal columns. Most bands pair a wide column with a narrow one, all left-aligned.
+- Breakpoints in use: 480px (plan segments go four across), 600px (plan labels stop being enlarged), 768px (header shows the phone number and Book a clean, the mobile booking bar goes away, step lists go four across), 900px (two-column bands), 1024px (header navigation, two-column estimator), 1200px (trust row four across).
 - Targets are at least 44px with at least 8px between them.
 
 ## Shape: one bold element
 
 The floor plan is the one bold element on the site. Everything else stays quiet so the plan reads as the thing to use.
 
-- `--wall` (2px) is the only heavy line weight. The plan's walls use it, the current booking step and status boxes (error summary, form outcomes) too.
+- `--wall` (2px) is the only heavy line weight. The plan's walls use it, and the outer wall of the house is drawn at 4px. Outside the plan, 2px ink rules work like walls between parts of a page: the FAQ list, each booking step and the footer, above and below the offices band, the line through "How a booking works", and along the top of the mobile booking bar. Status boxes (error summary, form outcomes) and photo placeholders also use `--wall`, in their own colours. The current header link and a hovered service title get a 2px underline.
 - Everything else is a 1px `--hairline` in `--color-line`, or white space.
-- Corners: 0 on the plan. `--radius-card` (4px) on cards, panels, photos, placeholders and the price tag. `--radius-control` (8px) on fields, ghost buttons and segments. `--radius-pill` on buttons, badges and the booking tag.
-- No shadows.
-- Shared classes in `global.css`: `.card` (cream fill, lilac hairline, 4px), `.accordion` (native `<details>` rows with a plus/minus in a tint circle), `.eyebrow` and `.arrow-link` (uppercase labels).
-- Trust items, the four home services and reviews are cards (4, 2, 1 columns where they are grids). Other services lists and team are rows.
+- Before adding another 2px line, check it divides the page the way a wall would. If it only decorates, use a hairline.
+- Corners: 0 on the plan (rooms and walls are square; the dashed add-a-room slot inside a room has a slight corner so it reads as a button). `--radius-control` (6px) on buttons, fields, photos, placeholders, badges, the price tag and the booking tag.
+- Elevation has two steps, both built from `--color-shadow`. `--shadow-2` lifts the home hero card, the estimator card and the closing band's card, so they read as standing in front of the photo. `--shadow-1` is for a small control that sits on a photo (the video pause button) and for the service and review cards. The pinned booking tag keeps its own shadow. Nothing else casts one.
+- Services are photo cards two across from 900px and reviews are quote cards, both on `--color-surface` with `--shadow-1`; nothing else on the home page is a card grid.
 
 ## Motion
 
-The floor plan has the one interactive moment; sections reveal quietly as they scroll in; everything else responds quickly or not at all. These rules follow Emil Kowalski's design-engineering guidance.
+A few named moments move, and everything else responds quickly or not at all. These rules follow Emil Kowalski's design-engineering guidance.
 
 | What | How | Where |
 |---|---|---|
 | A room is added | Its fill fades from paper to its colour in about 180ms with `--ease-out` | `fadeIn()` in `src/features/plan/plan.ts` (Web Animations API) |
 | A button is pressed | `transform: scale(0.97)` on `:active` over `--dur-press` (160ms) with `--ease-out`. Plan stepper buttons use 0.94 | `Button`, plan segments and steppers, suburb check button, mobile bar |
-| A section scrolls into view | Its blocks fade in and rise 16px over 500ms with `--ease-out`, 80ms apart, once. Sections on the first screen don't animate. The hidden state is set by the script, so the page is complete without JavaScript | `initReveal()` in `src/layouts/reveal.ts` (Motion: `animate`, `inView`, `stagger`) |
 | A colour changes | `background-color`, `border-color`, `color` or `fill` over `--dur-colour` (150ms) | Buttons, fields, plan segments and rooms |
+| The home hero leaves the screen (with a photo, from 768px) | Its photo scales 1 to 1.12; its card rises 6% of its own height and stays solid. Driven by `--p` | `HeroScene`, `src/layouts/motion.ts` |
+| The estimator arrives | The plan tilts from flat to a three-quarter view and its walls rise. A room added later rises in 180ms | `src/features/plan/scene3d.ts` |
+| A background video starts | It fades in over its still in `--dur-scene` (900ms) | `Scene` |
+| A block arrives (Reveal) | It fades in and rises `--space-4` (16px) once, 500ms (`--dur-reveal`) with `--ease-out`. Mark it `data-reveal`; set `--i` on a row's items to stagger them by 80ms each | `global.css`, `src/layouts/motion.ts` |
+| The process line | The line through "How a booking works" fills as the section scrolls, and each number darkens as the fill reaches it (`--fill` from `--p`) | `HowItWorks` |
+| Service photos and cards | Each photo drifts inside its frame as the list crosses the screen. On a fine pointer the card leans at most 4° toward the pointer, with a soft sheen on the photo | `ServicesList` |
+| Review cards | Each card drifts at its own rate as the section crosses the screen | `Reviews` |
+| The room stage | The action begins at 0.3 of its progress, the sweep at 0.6 and the finished room at 0.9; the living room fades instead of sweeping. Pinned for the scroll only at 1024px and wider, on screens tall enough, with no reduced-motion preference | `RoomStage`, `src/features/stage/stage.ts` |
+| The map arrives | Once, as it comes on screen: it lies back 12° and settles flat, then the pins drop in one after another | `CoverageMap` |
+| The offices and closing pictures | Each settles to scale 1 inside its frame as the band comes up the screen (from 1.1 and 1.08) | `OfficesBand`, `CtaBand` |
 
 - `--ease-out` is `cubic-bezier(0.23, 1, 0.32, 1)`: a strong ease-out, so a response starts at once and settles.
 - Transitions name their properties (`transform`, `opacity`, colours). Never `transition: all`.
 - The room fade runs only for pointer actions. A room added with the keyboard (Enter or Space on a dashed slot, or a stepper activated from the keyboard, where `event.detail === 0`) appears with no fade, because animating a keyboard action only slows it down.
 - The fade's 180ms and its curve are written in `fadeIn()`. `--dur-fill` records the value but is not read by it, so change both together.
 - Hover styles exist only inside `@media (hover: hover) and (pointer: fine)`, so touch screens never get a stuck hover state. No hover lifts or shadows.
-- The pinned booking tag appears and disappears without animating.
-- `prefers-reduced-motion: reduce` removes movement: `global.css` cuts CSS animations and smooth scrolling, `initReveal()` does nothing, and each component removes its press scale. The short colour fades stay, because they show what changed without moving anything.
+- Reveal is hidden only under `html.motion` (set by `motion.ts`), and every scroll-driven rule added after the hero (the room stage, the closing band, the offices band, services, reviews and how-it-works) sits inside `@media screen`. The hero's own rules (`HeroScene.astro`) are not under `@media screen`: they read `--p`, which stays 0 until the script moves it and never moves under reduced motion. So with JavaScript off the page reads in full and print shows every block finished. The fade's `transition` sits on the shown `.is-in` rule, so a block hidden when `.motion` arrives snaps instead of fading out; `motion.ts` marks blocks already on screen as shown first, so nothing on the first screen fades.
+- Scroll-linked motion is opt-in. Mark an element `data-progress` and `motion.ts` gives it `--p`: 0 where it first shows, 1 where it has left the top of the screen. Use `--p` for `transform` and `opacity` only. The pinned booking tag appears and disappears without animating.
+- `prefers-reduced-motion: reduce` removes movement: `global.css` cuts CSS animations and smooth scrolling, each component removes its press scale, and `motion.ts` (so no Reveal and no `--p`), the stage's pinning and sweep, the background video and the 3D model never start. Bare pages (`body.is-bare`) get none of it. The short colour fades stay, because they show what changed without moving anything.
 
 ## Mobile baseline
 
@@ -180,7 +174,7 @@ Review every page against these before calling it done (spec §7.5). The copy ru
 - No all-caps labels, no eyebrow text above headings, no 01/02/03 markers except the booking sequence ("How a booking works" and the `/book` steps), no "→" on buttons, no single highlighted word in headlines.
 - No middle-dot (`·`) meta strings in UI copy.
 - No sky-blue and sparkle "cleaning" clichés, no stock "smiling cleaner with spray bottle" hero.
-- No identical-card grids with the same shadow.
+- No identical-card grids with the same shadow beyond the home page's two: services (told apart by photo) and reviews (by quote).
 - Copy names things the way a homeowner would; buttons say what happens ("Send booking request", not "Submit").
 
 ## Components
@@ -191,15 +185,17 @@ Industry-neutral primitives. They take everything as props and read no config.
 
 | Component | Props | Notes |
 |---|---|---|
-| `Button` | `href?`, `variant?: 'primary' \| 'secondary' \| 'quiet' \| 'accent'` (default primary), `size?: 'md' \| 'lg'`, `type?: 'button' \| 'submit'`, `icon?: IconName`, `block?: boolean`, plus any `<a>`/`<button>` attribute | A link when `href` is set, otherwise a button. Accent is the pink pill and the single primary action on a screen (the header button at 768px and up, the booking bar below). Primary is an ink pill with on-ink text, secondary an ink outline with 8px corners, quiet an underlined text button with a full-size target |
+| `Button` | `href?`, `variant?: 'primary' \| 'secondary' \| 'quiet'` (default primary), `size?: 'md' \| 'lg'`, `type?: 'button' \| 'submit'`, `icon?: IconName`, `block?: boolean`, plus any `<a>`/`<button>` attribute | A link when `href` is set, otherwise a button. Primary is ink with on-ink text, secondary an ink outline, quiet an underlined text button with a full-size target |
 | `Field` | `name`, `label`, `type?: 'text' \| 'email' \| 'tel' \| 'textarea' \| 'select' \| 'number'`, `required?`, `autocomplete?`, `inputmode?`, `hint?`, `options?: { value, label }[]`, `value?`, `placeholder?`, `maxlength?` | Input id is `field-<name>`. Writes "(optional)" after the label when not required. Errors go in `[data-error-for=<name>]` |
 | `ErrorSummary` | `title?` (default "Check these and try again:") | Empty `role="alert"` box, hidden until `core/forms.ts` fills it with links to the fields and focuses it |
 | `Icon` | `name: IconName`, `size?` (20), `label?`, `class?` | 24×24 outline icons from `icons.ts`. Decorative unless `label` is set. To add one, add a path to `icons.ts` |
 | `Badge` | `tone?: 'neutral' \| 'success' \| 'warning' \| 'highlight'` | Short status label |
 | `Photo` | `slot`, `alt`, `ratio?` ('4 / 3'), `sizes?`, `priority?`, `label?`, `class?` | AVIF and WebP `<Picture>` when `src/assets/photos/<slot>.*` exists, otherwise `Placeholder` |
-| `Placeholder` | `label`, `ratio?` | Room-coloured panel naming the photo that goes there. Only the `founder` slot still shows one |
+| `Scene` | `slot`, `portrait?`, `video?`, `alt?` (''), `priority?` | A backdrop that fills its positioned parent: a still, and a silent loop from `public/media/<video>.webm`/`.mp4` that `scene.ts` attaches only on screens 768px and wider, with motion allowed, Save-Data off and a connection better than 3G. A parent can set `--scene-scale` and `--scene-pause-bottom` |
+| `Placeholder` | `label`, `ratio?` | Room-coloured panel with a dashed border saying what photo goes there |
+| `.sample-tag` | a class in `global.css`, inside a `.sampled` wrapper | A solid chip, bottom left, reading "Sample photo" (top right on the room stage's action picture). Goes on every demo picture of a person, shown while `demoMode` is on, so it never relies on the picture for contrast |
 
-Icons available: `phone`, `menu`, `close`, `check`, `plus`, `minus`, `home`, `shield`, `star`, `clock`, `key`, `map-pin`, `building`, `calendar`, `chevron-down`, `mail`, `copy`. `/dev/ui/` (`src/pages/dev/ui.astro`) shows every primitive in both themes. It is not linked and not indexed.
+Icons available: `phone`, `menu`, `close`, `check`, `plus`, `minus`, `home`, `shield`, `star`, `clock`, `key`, `map-pin`, `building`, `calendar`, `chevron-down`, `mail`, `copy`, `pause`, `play`. `/dev/ui/` (`src/pages/dev/ui.astro`) shows every primitive in both themes. It is not linked and not indexed.
 
 ### Features (`src/features/`)
 
@@ -208,7 +204,9 @@ Icons available: `phone`, `menu`, `close`, `check`, `plus`, `minus`, `home`, `sh
 | `plan/FloorPlan` | `id`, `mode: 'edit' \| 'read'`, `title`, `selected?` | The plan drawing, generated by `layout()` and `renderPlanSvg()`. Edit mode: dashed slots add rooms. Read mode: rooms are buttons that announce `clearday:room` (`ROOM_EVENT`) for the checklist |
 | `plan/PlanControls` | `id` (same as its `FloorPlan`) | Type of clean, bedroom and bathroom steppers, study and laundry toggles, how often, "Add extras" |
 | `pricing/PriceTag` | none | Per-visit price, first-visit price when different, Choose a time |
-| `pricing/BookingTag` | none | Desktop only: a compact tag pinned under the header after the hero scrolls away |
+| `pricing/PriceLine` | none; default slot for extra actions | The same price hooks as `PriceTag` in a compact block, for the home hero and the closing band |
+| `pricing/BookingTag` | none | Desktop only: a compact tag pinned under the header once the hero's price and the estimator are both off screen. It steps aside again while any price line (the hero's or the closing band's) or the estimator is on screen |
+| `stage/RoomStage` | none | The before-and-after stage inside `RoomChecklist`: for kitchen, bathroom, bedroom and living room, the room before, an action beat (the kitchen has a clip, a still on phones), a sweep and the finished room with **Book a clean** and the caption "Illustration, not a client's home.". A room needs both stills (`room-<kind>-before` and `-after`) or it has no stage; a room whose pair is not from one camera position is given `fade: true` in the file. The stage is 16:9 and plays from `stage.ts`. Shown at rest without JavaScript and under reduced motion as the finished room |
 | `areas/SuburbCheck` | none | "Check your suburb" form. Uses the fixed id `suburb-input`, so one per page |
 | `areas/CoverageMap` | none | SVG map of `business.areas` around `business.base`. Larger dots are suburbs with a page |
 | `booking/BookingForm` | none | The five-step request on `/book/`, built from `booking/steps/{Step,Home,When,Access,You,Check}`. Below 1024px the price sits inside step 1; from 1024px it is a sticky tag beside the steps |
@@ -218,6 +216,8 @@ Icons available: `phone`, `menu`, `close`, `check`, `plus`, `minus`, `home`, `sh
 | `referral/ReferralCode` | none | A 6-character code saved on the visitor's device, with a Copy button |
 
 The waitlist, careers and booking forms all use field ids `field-<name>`, so put one form per page. The console's message timeline is drawn by `features/messages/timeline.ts` (DOM, not a component): filled squares for messages that will send, dashed outlines for ones waiting on something.
+
+The edit plan's 3D model is not a component. `plan.ts` loads `plan/scene3d.ts` (the only file that imports three.js) when the screen is 768px or wider, motion is allowed, Save-Data is off and WebGL2 exists. `plan/model.ts` turns the plan into wall and furniture boxes; the SVG drawing itself is the floor, so every room stays a real, focusable element.
 
 Price displays are wired by `data-*` hooks, so a price can sit anywhere on a page and `price-tag.ts` keeps it current:
 
@@ -245,18 +245,19 @@ Page bands built from features and core UI.
 
 | Section | Props |
 |---|---|
-| `Hero` | none (the calculator: headline, suburb check, plan, price tag, controls) |
+| `HeroScene` | none (the first screen: backdrop, headline card, live price, Choose a time, Price your home) |
+| `Estimator` | none (the calculator: heading, suburb check, plan, price tag, controls) |
 | `TrustRow` | none |
-| `RoomChecklist` | none |
-| `ServicesList` | none |
-| `Reviews` | `suburb?` (show that suburb's reviews first), `limit?` (3) |
-| `Vetting` | none |
-| `HowItWorks` | none |
+| `RoomChecklist` | none (the plan in read mode, the room stage under it in the same column, with the checklist beside both, for the chosen room and service; on tall screens 1024px and wider the block pins while the stage plays) |
+| `ServicesList` | none (four photo cards, two across from 900px, each a link with the photo, one line and the "from" price; photo drift and a pointer lean on fine pointers) |
+| `Reviews` | `suburb?` (show that suburb's reviews first), `limit?` (3). Quote cards on `--color-surface`, no photos or faces, each drifting at its own rate |
+| `Vetting` | none (the vetting checks, a team picture and the founder with a note, each picture marked "Sample photo" in the demo) |
+| `HowItWorks` | none (the four numbered steps with a line that fills as the section scrolls) |
 | `Coverage` | none |
-| `OfficesBand` | none |
+| `OfficesBand` | none (a photo, one line and the walk-through button; the photo is capped at 22.5rem while stacked and sits in a 240px column from 900px, and settles to scale 1) |
 | `Faq` | `tag: 'home' \| 'booking' \| 'offices' \| 'keys' \| 'payment'`, `limit?`, `title?`, `more?` (link to `/faq/`, default true) |
-| `CtaBand` | `title`, `text?` |
-| `PageHeader` | `title`, `intro?`, default slot (full-width cream band; from 1024px the logo's floor plan is drawn behind it as decoration) |
+| `CtaBand` | `title`, `text?`, `scene?` (a photo slot). With a `scene` that has a file, a solid card over the picture holds the live price (`PriceLine`) and the phone number; without one, or on inner pages, the plain band, which fades in |
+| `PageHeader` | `title`, `intro?`, default slot |
 | `SectionHead` | `id`, `title`, `intro?` |
 
 ## Import boundaries

@@ -1,0 +1,87 @@
+---
+/**
+ * The estimator: heading, suburb check and controls on the left, the floor plan
+ * and its price on the right. On phones the order is heading, plan, price,
+ * controls. From 768px it is a raised card, and under a photo hero it overlaps
+ * the hero's lower edge. It keeps id="plan" and class "hero": the price tags
+ * and the tests find it by those.
+ */
+import FloorPlan from '@/features/plan/FloorPlan.astro';
+import PlanControls from '@/features/plan/PlanControls.astro';
+import PriceTag from '@/features/pricing/PriceTag.astro';
+import SuburbCheck from '@/features/areas/SuburbCheck.astro';
+---
+
+<section class="hero" id="plan" aria-labelledby="plan-title">
+  <div class="wrap">
+    <div class="hero__grid">
+      <div class="hero__copy">
+        <h2 id="plan-title">Price your home</h2>
+        <SuburbCheck />
+      </div>
+      <div class="hero__plan">
+        <FloorPlan id="home-plan" mode="edit" title="Your home. Press a dashed room to add it." />
+        <PriceTag />
+      </div>
+      <div class="hero__controls">
+        <PlanControls id="home-plan" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: var(--space-6) var(--space-7);
+    scroll-margin-top: calc(var(--space-8) + var(--space-4)); /* a jump to #plan lands clear of the 64px sticky header */
+  }
+  .hero__grid {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'copy' 'plan' 'controls';
+  }
+  .hero__copy {
+    grid-area: copy;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    align-content: start;
+  }
+  .hero__plan {
+    grid-area: plan;
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+  .hero__controls {
+    grid-area: controls;
+  }
+  @media (min-width: 768px) {
+    .hero__grid {
+      padding: var(--space-6);
+      background: var(--color-surface);
+      border-radius: var(--radius-control);
+      box-shadow: var(--shadow-2);
+    }
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      padding-block: var(--space-6) var(--space-8);
+    }
+    /* Under a photo hero the card rides up over the hero's lower edge. */
+    :global(.scene-hero--scenic) + .hero {
+      position: relative;
+      z-index: 1;
+      margin-top: calc(-1 * var(--space-8));
+      padding-top: 0;
+    }
+    .hero__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      grid-template-rows: auto 1fr;
+      grid-template-areas: 'copy plan' 'controls plan';
+      column-gap: var(--space-8);
+      row-gap: var(--space-6);
+    }
+  }
+</style>

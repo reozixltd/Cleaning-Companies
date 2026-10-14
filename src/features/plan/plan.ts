@@ -71,6 +71,40 @@ function addRoom(s: Selection, kind: string): Selection {
   return s;
 }
 
+/**
+ * Runs `load` once the 3D model is worth downloading (spec §6.3): a viewport
+ * 768px or wider, motion allowed, Save-Data off, WebGL2 present, the plan within
+ * one viewport of the screen and the page finished loading. Otherwise the flat
+ * plan is all there is, exactly as before.
+ * ponytail: checked once, so a phone-width window that is later widened keeps the flat plan until reload.
+ */
+function whenModelAllowed(figure: HTMLElement, load: () => void): void {
+  const matches = (query: string) => window.matchMedia(query).matches;
+  if (!matches('(min-width: 768px)') || matches('(prefers-reduced-motion: reduce)')) return;
+  if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return;
+  if (!('IntersectionObserver' in window)) return;
+  // WebGL2 is asked for last, once the page has loaded: the question is a round trip to the GPU, and the estimator never waits for it (spec §6.4).
+  const loadIfWebGL2 = () => {
+    try {
+      const gl = document.createElement('canvas').getContext('webgl2');
+      gl?.getExtension('WEBGL_lose_context')?.loseContext(); // the model makes its own context
+      if (gl) load();
+    } catch {
+      // No model: the flat plan needs nothing from it.
+    }
+  };
+  const near = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      near.disconnect();
+      if (document.readyState === 'complete') loadIfWebGL2();
+      else window.addEventListener('load', loadIfWebGL2, { once: true });
+    },
+    { rootMargin: '100% 0px' },
+  );
+  near.observe(figure);
+}
+
 function initEditPlan(figure: HTMLElement): void {
   const controls = document.querySelector<HTMLElement>(`[data-plan-controls="${figure.dataset.plan}"]`);
   let s = loadSelection(storage, pricing, rooms.max) ?? DEFAULT_SELECTION;
@@ -88,6 +122,10 @@ function initEditPlan(figure: HTMLElement): void {
   draw(figure, s);
   if (controls) syncControls(controls, s);
   if (loadSelection(storage, pricing, rooms.max)) emitSelection(s);
+  whenModelAllowed(figure, () => {
+    // A failed download or start leaves the flat plan, which needs nothing from the model.
+    import('./scene3d').then((model) => model.start(figure, s)).catch(() => {});
+  });
 
   const pressRoom = (g: Element, viaKeyboard: boolean) => {
     const kind = (g as SVGGElement).dataset.kind!;

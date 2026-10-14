@@ -7,6 +7,7 @@ import ErrorSummary from '@/core/ui/ErrorSummary.astro';
 import Badge from '@/core/ui/Badge.astro';
 import Icon from '@/core/ui/Icon.astro';
 import Photo from '@/core/ui/Photo.astro';
+import Scene from '@/core/ui/Scene.astro';
 import { icons, type IconName } from '@/core/ui/icons';
 
 const themes = ['floorplan', 'eucalyptus'];
@@ -27,7 +28,6 @@ const themes = ['floorplan', 'eucalyptus'];
           <div class="wrap stack">
             <h1>{theme}</h1>
             <div class="row">
-              <Button variant="accent">Book a clean</Button>
               <Button>Book a clean</Button>
               <Button variant="secondary" icon="phone">07 5550 1234</Button>
               <Button variant="quiet">Add extras</Button>
@@ -48,6 +48,9 @@ const themes = ['floorplan', 'eucalyptus'];
               <Field name={`area-${theme}`} label="Floor area" type="select" options={[{ value: 'a', label: 'Under 200 m²' }]} />
             </form>
             <Photo slot="does-not-exist" alt="A sunlit living room after a clean" ratio="16 / 9" />
+            <div class="scene-demo">
+              <Scene slot="offices" portrait="service-regular" video="sample" />
+            </div>
           </div>
         </section>
       ))
@@ -56,6 +59,7 @@ const themes = ['floorplan', 'eucalyptus'];
       .sheet { padding-block: var(--space-7); background: var(--color-paper); }
       .stack { display: grid; gap: var(--space-5); }
       .row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+      .scene-demo { position: relative; aspect-ratio: 16 / 9; }
     </style>
   </body>
 </html>

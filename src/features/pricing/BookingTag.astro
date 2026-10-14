@@ -1,5 +1,5 @@
 ---
-/** Desktop: a compact copy of the price tag pinned under the header once the hero scrolls away. */
+/** Desktop: a compact copy of the price tag pinned under the header once the estimator and every price line (the hero's and the closing band's) are off screen. */
 ---
 
 <aside class="pin" data-booking-tag hidden aria-label="Your clean">
@@ -19,14 +19,11 @@
     gap: var(--space-3);
     padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
     background: var(--color-highlight);
-    border-radius: var(--radius-pill);
-    border: var(--hairline) solid var(--color-ink);
+    border-radius: var(--radius-control);
+    box-shadow: 0 8px 24px var(--color-shadow);
   }
   .pin[hidden] {
     display: none;
-  }
-  .pin {
-    color: var(--color-ink);
   }
   .pin__price {
     font-size: var(--text-18);
@@ -36,11 +33,10 @@
     align-items: center;
     min-height: var(--target);
     padding-inline: var(--space-4);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-control);
     background: var(--color-ink);
     color: var(--color-on-ink);
-    font-size: var(--text-14);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-medium);
     text-decoration: none;
   }
   @media (max-width: 767px) {

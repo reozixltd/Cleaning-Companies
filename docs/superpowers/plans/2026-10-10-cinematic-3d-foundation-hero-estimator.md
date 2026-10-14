@@ -2645,15 +2645,19 @@ Filled in by Task 1 (main) and Task 7 (plan 1). Lighthouse figures are the media
 
 | Check | main (`d5053fe`) | plan 1 |
 | --- | --- | --- |
-| Unit tests passing | | |
-| `astro check` errors | | |
-| E2E files and steps passing | | |
-| Heaviest page, eager JS | | |
-| `/` eager JS | | |
-| `/` lazy JS | 0 | |
-| `/book/` eager JS | | |
-| Lighthouse `/`: performance | | |
-| Lighthouse `/`: accessibility | | |
-| Lighthouse `/`: LCP, CLS, TBT | | |
-| Lighthouse `/book/`: performance | | |
-| Lighthouse `/book/`: accessibility | | |
+| Unit tests passing | 325 (38 files) | 334 (39 files) |
+| `astro check` errors | 0 | 0 |
+| E2E files and steps passing | 7 files, 96 steps (0 skipped) | 10 files, 132 steps (0 skipped) |
+| Heaviest page, eager JS | 15.7 KB (`/console/`) | 16.0 KB (`/console/`) |
+| `/` eager JS | 10.5 KB | 11.9 KB |
+| `/` lazy JS | 0 | 130.8 KB |
+| `/book/` eager JS | 15.3 KB | 15.6 KB |
+| Lighthouse `/`: performance | 99 | 99 |
+| Lighthouse `/`: accessibility | 100 | 100 |
+| Lighthouse `/`: LCP, CLS, TBT | 1.8 s, 0.026, 0 ms | 1.9 s, 0.026, 0 ms |
+| Lighthouse `/book/`: performance | 98 | 98 |
+| Lighthouse `/book/`: accessibility | 100 | 100 |
+
+Plan 1's Lighthouse runs used `--chrome-flags="--headless=new --disable-gpu"`, because plain headless Chrome hung after one run on this machine (that one run of `/`: performance 98, LCP 2.0 s); main's runs used `--headless=new` alone. The home page was measured before Task 8, with no hero photo or video, so its largest paint was the headline.
+
+The e2e count and `/` eager JS are from the final fix; at Task 7 they were 131 steps and 11.8 KB. That last e2e run used Chromium's headless shell with software rendering (`--use-angle=swiftshader`): by then this machine's GPU had stopped answering the test browser, and full headless Chrome hung whenever a link took focus, even on a blank page. Task 7's run was in full headless Chrome on the GPU. Lighthouse was not run again after the final fix, which changes only code that runs at 768px or wider. Lighthouse's phone profile is narrower than 768px, so none of these figures includes the 3D model: its start-up cost and frame rate on a desktop were not measured in plan 1.

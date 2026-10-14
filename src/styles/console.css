@@ -11,7 +11,7 @@
 }
 
 .console h1 {
-  font-size: var(--text-28);
+  font-size: var(--text-36);
 }
 
 /* ── Fields ─────────────────────────────────────────── */
@@ -68,7 +68,7 @@
   display: grid;
   gap: var(--space-2);
   padding: var(--space-4);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-control);
   background: var(--color-room);
 }
 .signin__demo dl {
@@ -206,7 +206,7 @@
   max-width: 100%;
   padding: var(--space-1);
   overflow-x: auto;
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-control);
   background: var(--color-room);
   scrollbar-width: none;
 }
@@ -256,7 +256,7 @@
   list-style: none;
   overflow: hidden;
   border: var(--hairline) solid var(--color-line);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-control);
   background: var(--color-surface);
 }
 .inbox__list:empty {
@@ -336,7 +336,7 @@
   gap: var(--space-2);
   padding: var(--space-6) var(--space-5);
   border: var(--hairline) dashed var(--color-line);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-control);
 }
 .inbox__empty a {
   justify-self: start;
@@ -373,7 +373,7 @@
   min-width: 0;
   padding: var(--space-5);
   border: var(--hairline) solid var(--color-line);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-control);
   background: var(--color-surface);
 }
 @media (max-width: 599px) {
@@ -484,7 +484,7 @@
   display: grid;
   gap: var(--space-2);
   padding: var(--space-4);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-control);
   background: var(--color-room);
 }
 .quote__lines {
@@ -566,7 +566,7 @@
 .timeline__channel {
   padding: 0 var(--space-2);
   border: var(--hairline) solid var(--color-ink);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-control);
   font-size: var(--text-14);
   font-weight: var(--weight-medium);
 }
@@ -582,7 +582,7 @@
   max-width: none;
   padding: var(--space-3) var(--space-4);
   border: var(--hairline) solid transparent;
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-control);
   background: var(--color-room);
   font-size: var(--text-16);
   overflow-wrap: anywhere;

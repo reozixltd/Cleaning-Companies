@@ -246,18 +246,21 @@ Sample `config/booking.ts`: Monday–Saturday, windows "Morning, arrive 8–10am
 ### 6.1 Home page
 
 1. Header (§3).
-2. Hero, two columns (stacked on mobile):
-   - Left: headline "Your home, priced room by room.", one supporting line, the suburb check.
-   - Right: the floor plan calculator. Steppers for bedrooms and bathrooms, toggles for study and laundry, a frequency choice, and add-ons behind "Add extras". Included rooms are filled tile yellow; dashed "available" slots can be clicked to add a room. The price tag beside the plan shows per-visit and, when different, first-visit price. **Choose a time** opens `/book` with the selection in the URL.
-3. Trust row: police-checked staff, public liability amount, re-clean promise, Google rating (labelled sample in demo mode). Values from `config/business.ts`.
-4. What's included, room by room: the same plan in read-only mode; selecting a room shows its checklist from `config/rooms.ts` for the chosen service.
-5. Services list (not a card grid): Regular, Deep, End of lease, Move in, each with a photo, one line, "from" price and link.
-6. Reviews (named, dated, star rating) beside a **Book a clean** button, and "Who comes to your home": vetting steps, same cleaner each visit, founder photo and note.
-7. How a booking works, numbered because it is a real sequence: choose a time, we confirm by SMS, reminder the day before, a review link after.
-8. Where we clean: coverage map and suburb list, linking to area pages.
-9. Offices band: one line to facility managers and **Request a walk-through**.
-10. FAQ (5 questions from `faqs.json` tagged `home`).
-11. Footer.
+2. Hero: a photo of a clean home fills the first screen; on screens 768px and wider a silent video loop fades in over it, with a pause button. In front of it a solid card holds the headline "Your home, priced room by room.", one supporting line, the live price, **Choose a time** and **Price your home**, which jumps to the estimator. On phones the photo sits above the card. With no `hero` photo the card stands alone on the page background.
+3. Estimator ("Price your home"), two columns (stacked on mobile), drawn from 768px as a raised card that overlaps a photo hero's lower edge from 1024px:
+   - Left: the heading, the suburb check and the controls.
+   - Right: the floor plan calculator. Steppers for bedrooms and bathrooms, toggles for study and laundry, a frequency choice, and add-ons behind "Add extras". Included rooms are filled tile yellow; dashed "available" slots can be clicked to add a room. The price tag beside the plan shows per-visit and, when different, first-visit price. **Choose a time** opens `/book` with the selection in the URL. On screens 768px and wider the plan stands up into a 3D model of the home as it scrolls into view (§7.4).
+4. Trust row: police-checked staff, public liability amount, re-clean promise, Google rating (labelled sample in demo mode). Values from `config/business.ts`.
+5. Services: Regular, Deep, End of lease, Move in as photo cards, two across from 900px, each with a photo, one line, "from" price and a link. On a fine pointer a card leans a few degrees toward the pointer.
+6. What's included, room by room: the same plan in read-only mode; selecting a room shows its checklist from `config/rooms.ts` for the chosen service. Under the plan, in the same column and with the checklist beside both, is a before-and-after stage for the kitchen, bathroom, bedroom and living room (§7.4, §9): the room before a clean, an action beat, a sweep that uncovers the room after, and the finished room with a **Book a clean** button. A room without both pictures has no stage.
+7. Reviews: quote cards (named, dated, star rating, no photos or faces) beside a **Book a clean** button.
+8. Team, "Who comes to your home": vetting steps, same cleaner each visit, a team picture, and the founder's picture and note. In the demo each picture is a generated illustration marked "Sample photo" (§9).
+9. How a booking works, numbered because it is a real sequence: choose a time, we confirm by SMS, reminder the day before, a review link after. A line runs past the four steps as the section scrolls.
+10. Where we clean: coverage map and suburb list, linking to area pages.
+11. Offices band: a photo, one line to facility managers and **Request a walk-through**.
+12. FAQ (5 questions from `faqs.json` tagged `home`).
+13. Closing band: a solid card over a picture of the home, holding the live price and the phone number. Without the `closing` picture it is the plain band. The pinned booking tag steps aside while this band, the hero's price or the estimator is on screen.
+14. Footer.
 
 ### 6.2 Booking request (`/book`)
 
@@ -276,7 +279,7 @@ Success screen: "Booking request sent. We'll confirm by SMS within 2 business ho
 
 ### 6.3 Booking tag
 
-Once a selection exists, a compact tag follows the visitor: "3 bed, 2 bath, fortnightly, $179 a visit" with **Choose a time**. Desktop: inside the hero, then pinned under the header after scrolling past the hero. Mobile: a sticky bar at the bottom (replacing Trades' call bar, with a call icon beside it). It never covers form fields on `/book`.
+Once a selection exists, a compact tag follows the visitor: "3 bed, 2 bath, fortnightly, $179 a visit" with **Choose a time**. Desktop: inside the estimator, then pinned under the header once the estimator and every price line (the hero's and the closing band's) have scrolled off screen. Mobile: a sticky bar at the bottom (replacing Trades' call bar, with a call icon beside it). It never covers form fields on `/book`.
 
 ### 6.4 Suburb check and areas
 
@@ -334,50 +337,50 @@ Full token reference goes in `docs/design-system.md`. Raw values live only in `s
 
 | Token | Hex | Role |
 |---|---|---|
-| `--color-paper` | `#ffffff` | Page canvas |
-| `--color-ink` | `#000000` | Headings, plan walls, primary button fill |
-| `--color-ink-muted` | `#333333` | Body text and captions |
-| `--color-room` | `#f7e1f7` | Quiet tint: selected rooms, hover |
-| `--color-highlight` | `#ffc5ee` | Strong tint: price tag, priced rooms; always with ink text |
-| `--color-card`, `--color-card-border` | `#fffcf6`, `#c4c9dd` | Cards |
-| `--color-line` | `#cccccc` | Hairlines (decorative) |
-| `--color-field-border` | `#8c8c8c` | Field outlines, 3:1 on paper, card and panel |
-| `--color-surface` | `#ffffff` | Form surfaces |
-| `--color-accent`, `--color-on-accent` | `#ff83da`, `#ffffff` | The one primary action per screen (approved 2.2:1 exception, see design-system.md) |
-| `--color-panel`, `--color-on-panel-muted` | `#161616`, `#cccccc` | Dark hero panel |
+| `--color-paper` | `#F4F7F8` | Page canvas |
+| `--color-ink` | `#17323F` | Text, plan walls, primary button fill |
+| `--color-ink-muted` | `#4E6874` | Secondary text (AA on paper and white) |
+| `--color-room` | `#DCEBE9` | Unselected rooms, quiet panels |
+| `--color-highlight` | `#F2C14E` | Selected rooms and the price tag only; always with ink text, never as a text colour |
+| `--color-line` | `#9FB6BF` | Hairlines (decorative) |
+| `--color-field-border` | `#6F8F9B` | Text field outlines, 3:1 on paper and surface (added in the build, §15) |
+| `--color-surface` | `#FFFFFF` | Form surfaces |
 
 Semantic success, warning and danger tokens follow the Trades set, checked for AA against paper.
 
-Theme `eucalyptus` (D12): paper `#ffffff`, ink `#142a22`, room `#dcebdf`, highlight `#cfe5d2`, accent `#2f7d5b`. Theme selection: `theme` in `config/business.ts`; in demo mode only, `?theme=` overrides it for the session.
+Theme `eucalyptus` (D12): paper `#F5F7F2`, ink `#1E3B30`, room `#DDE8DA`, highlight `#9CC5E8`. Theme selection: `theme` in `config/business.ts`; in demo mode only, `?theme=` overrides it for the session.
 
 ### 7.2 Type
 
-- Inter (variable, 400–900), self-hosted. One family.
-- Scale: 12, 13, 14, 16, 18, 20, 22, 28, 48; display headline `clamp(2.75rem, 6.5vw, 6rem)`.
-- Body 16px, line height 1.5, colour `#333`, line length up to 68ch.
-- Headlines 700 to 900 with negative tracking (−0.015em; −0.025em on the display headline).
+- Schibsted Grotesk (variable, 400–700), self-hosted, Latin subset. One family.
+- Scale: 14, 16, 18, 22, 28, 36; hero headline `clamp(2.5rem, 5vw, 3.5rem)`.
+- Body 17px, line height 1.6, line length up to 68ch.
+- Headlines 700 with negative tracking (−0.02em); nothing else uses that treatment.
 - Sentence case everywhere, left-aligned throughout.
 
 ### 7.3 Layout and shape
 
 - 12-column grid at ≥1024px, single column below 768px, 16px side gutter on mobile.
 - The plan is the one bold element: 2px ink "walls" are the only heavy lines on the site. Elsewhere: hairlines and white space.
-- Corners: 0 on the plan, 4px on cards and photos, 8px on controls, pills on buttons and tags.
-- Trust items, the four home services and reviews are cream cards; no shadows.
+- Corners: 0 on the plan, 6px on controls and photos.
+- Services are photo cards (two across from 900px) and reviews are quote cards, both on `--color-surface` with the soft shadow. Nothing else on the home page is a card grid; team and the process are rows.
 
 ### 7.4 Motion
 
-- One moment: when a room is added, its fill transitions to highlight in about 180ms. User-triggered only.
+- When a room is added, its fill transitions to highlight in about 180ms. User-triggered only.
 - Press feedback on buttons: `scale(0.97)` on `:active`, 160ms, custom ease-out (`cubic-bezier(0.23, 1, 0.32, 1)`). Only `transform`, `opacity` and colours are transitioned, never `all`.
-- No scroll-triggered entrances, no hover lifts. Any hover style is gated by `@media (hover: hover) and (pointer: fine)`.
-- `prefers-reduced-motion: reduce` removes movement (the press scale) and keeps the short colour fade, which helps people see what changed.
+- Scroll-linked motion is limited to named moments, moves only `transform`, `translate` and `opacity`, and never takes over scrolling: no wheel or touch listeners, no snapping. With a photo, from 768px, the home hero's photo scales from 1 to 1.12 and its card rises as the hero leaves the screen: `src/layouts/motion.ts` sets `--p` (0 to 1) on `[data-progress]` elements and CSS does the rest. The same `--p` makes service photos drift inside their cards, review cards drift at their own rates, the line through "How a booking works" fill, and the offices and closing pictures settle to full size. The estimator's plan tilts into a 3D model as it arrives; `scene3d.ts` follows the scroll position itself.
+- Reveal: a block marked `data-reveal` fades and rises once, the first time it shows (500ms; `--i` staggers a row). It is hidden only under `html.motion`, which `layouts/motion.ts` sets after marking the blocks already on screen as shown, so nothing on the first screen fades and a page where the script never runs reads in full. The hidden state sits under `.motion`, and every scroll-driven style added after the hero (the room stage, the closing band, the offices band, services, reviews and how-it-works) sits inside `@media screen`, so print shows every block finished. The hero's own rules (`HeroScene.astro`) are not under `@media screen`: they read `--p`, which stays 0 until the script moves it and is never moved under reduced motion.
+- The room stage in "What's included" is played by scroll: the action begins at 0.3 of its progress, the sweep at 0.6 and the finished room at 0.9. It pins in place for the scroll only at 1024px and wider, on screens at least 780px tall, with no reduced-motion preference, once its script is running, and in a browser that answers the CSS `scripting` media feature (an older one plays it unpinned); otherwise it plays as it crosses the screen. Without JavaScript and under reduced motion a visitor sees the finished room, its caption and the booking button. On screens under 768px the action beat is a still and the clip is never requested.
+- No hover lifts. The one pointer-following effect is the service cards' lean (at most 4°) with a soft sheen on the photo. Any hover style is gated by `@media (hover: hover) and (pointer: fine)`.
+- `prefers-reduced-motion: reduce` removes movement (the press scale, Reveal, scroll-linked motion, the stage's pinning and sweep, background video and the 3D model) and keeps the short colour fade, which helps people see what changed. Bare pages (`body.is-bare`, the console) get none of it, and `/book/` has no decorative motion and never loads three.js or video.
 
 ### 7.5 Anti-template checks (review before done)
 
 - No all-caps labels, no eyebrow text above headings, no 01/02/03 markers except the booking sequence, no "→" on buttons, no single highlighted word in headlines.
 - No middle-dot meta strings in UI copy.
 - No sky-blue + sparkle "cleaning" clichés, no stock "smiling cleaner with spray bottle" hero.
-- No identical-card grids with the same shadow.
+- No identical-card grids with the same shadow beyond the home page's two: services (told apart by photo) and reviews (by quote).
 - Copy names things the way a homeowner would; buttons say what happens ("Send booking request", not "Submit").
 
 ### 7.6 Quality floor
@@ -393,19 +396,19 @@ WCAG 2.2 AA: contrast, visible focus, 44px targets with 8px spacing, labelled fi
 - Terms page carries the cancellation (48 h), lockout, key and alarm-code policies; the booking step links to it before sending.
 - Marketing consent is separate, unticked and recorded with a timestamp (Spam Act).
 - Accessibility statement page names WCAG 2.2 AA as the target and gives a contact for problems.
-- Performance budget: hero photo preloaded as the LCP image, AVIF/WebP via `astro:assets`, total page JS under 30 KB gzipped, fonts self-hosted with `font-display: swap`. Mobile Lighthouse performance 90+ on home and `/book`.
+- Performance budget: hero photo preloaded as the LCP image, AVIF/WebP via `astro:assets`, page JS under 30 KB gzipped, plus at most 150 KB that loads only through a dynamic `import()` (the home page's 3D model, which screens narrower than 768px never download), videos 1920×1080 with no audio (H.264 MP4 at most 2.5 MB, VP9 WebM at most 1.5 MB) that screens narrower than 768px never request, fonts self-hosted with `font-display: swap`. Mobile Lighthouse performance 90+ on home and `/book`.
 
 ## 9. Photos
 
-Uses the Trades photo-slot system: each slot (hero, services, areas, team, founder) shows a labelled placeholder until `<slot>.jpg` exists in `src/assets/photos/`. `docs/photo-brief.md` lists every slot with the shot wanted. Demo photos may be licence-free stock of rooms (results), never of people presented as staff; credits go in `docs/photo-credits.md`.
+Uses the Trades photo-slot system: a slot is filled by `<slot>.jpg` in `src/assets/photos/`. Slots drawn through `Photo` (services, areas, offices and the founder) show a labelled placeholder until the file exists; the hero, room, action, team and closing slots leave their feature out instead (the plain hero, no stage, no clip, no team picture, the plain closing band). `docs/photo-brief.md` lists every slot with the shot wanted. Demo photos are licence-free stock or generated pictures of rooms (results). Pictures of people follow the people rule: in the demo they are generated illustrations (cleaners working or arriving, one founder portrait), each marked "Sample photo" on the page; never a face on a review, never a child, never a real person presented as staff, founder or client. The one real, credited photograph that shows a person (`area-chermside`, the Westfield Chermside atrium) has a single shopper, seen from behind. A live client replaces every one with real photographs before going live. "Before" pictures show an ordinary week, and the stage always carries "Illustration, not a client's home." Credits go in `docs/photo-credits.md`.
 
 ## 10. Checklist traceability (all Musts)
 
 | Research item | Where it lives |
 |---|---|
 | Click-to-call phone on every page | `layouts/Header.astro`, `layouts/MobileBookingBar.astro` (phone from `business.ts`) |
-| Quote/booking above the fold, dual CTAs | `sections/Hero.astro` + `features/plan/FloorPlan.astro` (Choose a time) and Header (Book a clean, phone) |
-| Service area stated clearly | `features/areas/SuburbCheck.astro` in the hero, `sections/Coverage.astro`, `/areas/*` |
+| Quote/booking above the fold, dual CTAs | `sections/HeroScene.astro` (Choose a time, Price your home), `sections/Estimator.astro` + `features/plan/FloorPlan.astro` (Choose a time) and Header (Book a clean, phone) |
+| Service area stated clearly | `features/areas/SuburbCheck.astro` in the estimator, `sections/Coverage.astro`, `/areas/*` |
 | Pricing signal | `features/pricing/PriceTag.astro`, `/prices`, "from" prices on services |
 | Trust row next to the CTA | `sections/TrustRow.astro` |
 | Real reviews with names and dates | `sections/Reviews.astro` from `content/reviews.json` |
@@ -448,6 +451,7 @@ Payments and deposits; real availability and calendar sync; real SMS/email sendi
 | End to end | Home: pick 3 bed / 2 bath / fortnightly → Choose a time → complete `/book` → success. Console: sign in, open the booking, confirm, see four message previews. Offices walk-through submits. | Playwright smoke (`npm run e2e`) |
 | Layout | No horizontal overflow at 375px and 1280px on every page | Playwright in the smoke run |
 | Accessibility | axe scan on `/`, `/book`, `/offices`, `/console` with no serious or critical issues | `@axe-core/playwright` |
+| Other browsers | The home page starts its motion, prices a change, reveals every block and finishes the room stage in Firefox and WebKit at 1280 and 390 wide, and a WebKit reload at 1280 lands back where it was; the check fails if motion never starts, and a browser that is not installed is reported as skipped and left out of the step count (the runner still ticks the file, so read the step lines) | Playwright (`tests/e2e/browsers.e2e.mjs`) |
 | Visual | Screenshots of home and `/book` at both widths, reviewed against §7.5 | `tools/shot.mjs` (from Trades) |
 
 ## 14. Setting up a real client
@@ -463,7 +467,9 @@ Payments and deposits; real availability and calendar sync; real SMS/email sendi
 
 Where the built site differs from this spec, and what the quality pass measured. Each difference has a ruling in the build ledger with its reasoning.
 
-- **No hero photo.** §6.1 makes the floor plan the hero, so §8's "hero photo preloaded" has nothing to preload; the unused `hero` photo slot was removed (10 slots remain). Pages that open with a photo (service, area, offices, about) load it eagerly with `fetchpriority="high"`.
+- **Hero photo.** The first build had none, because the floor plan was the hero. The cinematic redesign (`docs/superpowers/specs/2026-10-10-cinematic-3d-redesign-design.md`) brings back the `hero` slot and adds `hero-portrait` for phones (12 slots at that point). The hero's still loads eagerly with `fetchpriority="high"`, as do the photos that open service, area, offices and about pages.
+- **Photos.** The photo slots are 25 of 25 filled (`npm run photos:status`). The home page has a hero photo and clip, the eight room stills and the kitchen clip (`action-kitchen`, with its two stills), the founder and team pictures, the offices photo and the closing picture. The room stage lives in `src/features/stage/`; the living room fades instead of sweeping because its two stills are not from one camera position.
+- **Other browsers.** `tests/e2e/browsers.e2e.mjs` loads the home page in Firefox and WebKit at 1280 and 390 wide, checks that the page's motion started (`html.motion`, the stage live and at "before", some block still hidden), prices a change, scrolls the whole page and checks that every reveal block shows, the stage finishes and nothing scrolls sideways. A fifth check reloads the page in WebKit at 1280 and checks it lands within 60px of where it was. A browser Playwright does not have installed is reported as skipped and left out of the step count; the runner still ticks the file, so an all-skipped run reads "0/0 steps passed" beside a tick. `node tools/page-weight.mjs <url>` prints what the home page transfers.
 - **Reduced motion** keeps short colour fades (the room fill) and removes movement (button press scale), following the Emil Kowalski motion rules adopted in §7.4.
 - **Text fields** use a separate `--color-field-border` token so their outline reaches 3:1 (WCAG 1.4.11); `--color-line` stays for decorative hairlines. A new theme must set both.
 - **End-to-end tests** are one file per area (`tests/e2e/*.e2e.mjs`, run by `npm run e2e`) instead of one smoke file, plus `journey.e2e.mjs` (price on home, request on `/book/`, confirm in the console) and `quality.e2e.mjs` (axe, contrast of borders and focus rings, 44px targets, motion, photo loading).
@@ -476,13 +482,17 @@ Where the built site differs from this spec, and what the quality pass measured.
 - **Offices** has no mobile booking bar (it shows homeowner prices).
 - **Consent record**: only the booking form shows terms and marketing boxes. Enquiry forms (walk-through, waitlist, careers) record no agreement, and the console shows "not asked" for them rather than a timestamped agreement.
 
-Measured on the final build (local preview):
+Measured on 11 October 2026 on a fresh build (local preview):
 
 | Check | Result |
 |---|---|
-| Unit tests | 320 passing, boundaries clean |
+| Unit tests | 340 passing in 40 files, boundaries clean |
 | Types | `astro check`: 0 errors, 0 warnings, 0 hints |
-| End to end | 7 files, 96 steps passing, including a run with every photo slot filled |
+| End to end | 12 files, 194 steps passing, none skipped, including Firefox and WebKit at 1280 and 390 wide and a WebKit reload (5 of 5). Run with all 25 photo slots filled. Chromium was Playwright's own build, launched headless with no extra flags |
 | Accessibility | axe (WCAG 2.0 to 2.2 A/AA tags): no serious or critical issues on `/`, `/book/` (steps 1 and 4, with errors), `/offices/`, `/console/` in both themes at 375 and 1280 |
-| JavaScript | Heaviest page 15.7 KB gzipped (`/console/`), `/book/` 15.3 KB; budget 30 KB (`npm run budget`) |
-| Lighthouse mobile | Accessibility, best practices and SEO 100 on home and `/book/`. Performance: `/book/` 100 (LCP 1.4 s); home 99 to 100 across three runs (LCP 1.1 to 1.8 s). CLS 0 |
+| JavaScript | Heaviest page 16.1 KB gzipped (`/console/`), `/book/` 15.8 KB, `/` 13.7 KB plus 130.8 KB that loads only through `import()`; budgets 30 KB and 150 KB (`npm run budget`) |
+| Kitchen clip | `action-kitchen.mp4` 1,106,976 bytes (limit 2,500,000); `action-kitchen.webm` 723,771 bytes (limit 1,500,000) |
+| Home page transfer | In Chromium, counting every chunk of every response body (not headers), from `node tools/page-weight.mjs`. Phone, 375 wide at pixel ratio 1: 76 KB at load, 212 KB after scrolling the whole page. Phone, 375 wide at pixel ratio 3, which is what a current phone downloads: 97 KB at load, 491 KB after scrolling. Desktop, 1280 wide at pixel ratio 1: 1088 KB at load, 2052 KB after scrolling. At 1280 the growth after load is the kitchen clip (about 707 KB as WebM) plus about 257 KB of lazy pictures, 99 KB of them the room stills; phones never request either clip. A browser that takes the MP4 files would fetch more, and that has not been measured. All eight room stills load once the stage is near, although one room shows. |
+| Lighthouse mobile | Performance and accessibility only, median of three runs, headless Chromium with no extra flags: home 99 and 100 (LCP 2.0 s, CLS 0.026, TBT 0 ms); `/book/` 98 and 100 (LCP 1.8 s, CLS 0.074, TBT 0 ms), re-run on the final build. Neither page meets the target of 0 layout shift, and the hero is not the cause: at about 412px wide the demo ribbon's sentence (`src/layouts/DemoRibbon.astro`) fits on one line in the fallback font and wraps to two when the web font loads, pushing `main` down 22px on both pages (measured at 412 wide, 118px to 140px). There is no shift of note at 375 or 1280 wide. The ribbon renders only in demo mode; the shift predates the redesign and was left unchanged |
+
+The Lighthouse figures use its phone profile, which is narrower than 768px, so none of them includes the 3D model, the desktop hero clip or the pinned room stage. The model's start-up cost and frame rate on a desktop have not been measured. A real iPhone, a screen reader and 200% zoom have not been tried.

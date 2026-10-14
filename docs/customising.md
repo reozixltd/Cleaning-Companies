@@ -84,6 +84,7 @@ The site's address (canonical links, the sitemap, sharing links and structured d
 - "Sample prices." under the price tag and "(sample)" beside the rating go.
 - The trust row says "Read them on Google." instead of "Sample rating for this demo."
 - `business.rating` is published in the `LocalBusiness` JSON-LD as `aggregateRating`. Only publish a rating that is real and current. If the client has no public rating, the rating item in `src/sections/TrustRow.astro` and the score in `src/sections/Reviews.astro` have to come out (a component change).
+- The "Sample photo" marks on pictures of people disappear, so every picture of a person has to be replaced with a real photograph first.
 - The booking success screen stops showing a preview of the confirmation SMS.
 - In the owner console (`/console`), message rows stop saying "Preview, not sent". The console itself is still a demo (see [Going live](#going-live-checklist)).
 
@@ -93,7 +94,7 @@ The site's address (canonical links, the sitemap, sharing links and structured d
 
 ## Themes
 
-Two themes ship: `floorplan` (black ink, pink accent) and `eucalyptus` (green ink and accent). To use one, set `theme` in `business.ts`.
+Two themes ship: `floorplan` (navy ink, yellow highlight) and `eucalyptus` (green ink, blue highlight). To use one, set `theme` in `business.ts`.
 
 ### Add a client theme
 
@@ -107,22 +108,17 @@ Two themes ship: `floorplan` (black ink, pink accent) and `eucalyptus` (green in
      --color-ink-muted: #4f5a6e;
      --color-room: #e6e8ee;
      --color-highlight: #f4b9a0;
-     --color-card: #f7f6f2;
-     --color-card-border: #c9ccd6;
      --color-line: #aab1bf;
      --color-field-border: #6b768c;   /* text field outlines: 3:1 on paper and surface */
      --color-surface: #ffffff;
      --color-on-ink: #ffffff;
      --color-focus: #1f2a44;
-     --color-shade: rgb(31 42 68 / 0.06);  /* ink at 6% */
-     --color-accent: #1f2a44;
-     --color-on-accent: #ffffff;
-     --color-panel: #1f2a44;
-     --color-on-panel-muted: #c9ccd6;
+     --color-shade: rgb(31 42 68 / 0.08);  /* ink at 8% */
+     --color-shadow: rgb(31 42 68 / 0.12); /* ink at 12% */
    }
    ```
 
-   Set all eighteen colour tokens; the contrast test fails if a theme leaves one out, since it would quietly fall back to the floor plan colour. `--color-line` is for decorative hairlines and can be light; `--color-field-border` outlines text fields and must reach 3:1 against both `--color-paper` and `--color-surface`. Write colours as hex (the contrast test reads hex), except `--color-shade`, which is the ink colour as `rgb()` with transparency. The other tokens (semantic colours, type, space, radius, motion) are shared by every theme in the plain `:root` block further down the file. To change one for a client, edit it there: a value set in a theme block above it would be overridden.
+   Set all thirteen tokens; the contrast test fails if a theme leaves one out, since it would quietly fall back to the floor plan colour. `--color-line` is for decorative hairlines and can be light; `--color-field-border` outlines text fields and must reach 3:1 against both `--color-paper` and `--color-surface`. Write colours as hex (the contrast test reads hex), except `--color-shade` and `--color-shadow`, which are the ink colour as `rgb()` with transparency. The other tokens (semantic colours, type, space, radius, motion) are shared by every theme in the plain `:root` block further down the file. To change one for a client, edit it there: a value set in a theme block above it would be overridden.
 
 2. In `src/config/business.ts`, add the name to `ThemeName` and use it:
 
@@ -147,20 +143,20 @@ The theme is set before the first paint by an inline script in `src/layouts/Them
 
 ### Font
 
-The site uses one family, Inter Variable, self-hosted. To change it, install a Fontsource variable package, replace the import at the top of `src/styles/global.css`, and update `--font-sans` in `tokens.css`:
+The site uses one family, Schibsted Grotesk, self-hosted. To change it, install a Fontsource variable package, replace the import at the top of `src/styles/global.css`, and update `--font-sans` in `tokens.css`:
 
 ```bash
-npm install @fontsource-variable/manrope
+npm install @fontsource-variable/inter
 ```
 
 ```css
 /* src/styles/global.css */
-@import '@fontsource-variable/manrope';
+@import '@fontsource-variable/inter';
 ```
 
 ```css
 /* src/styles/tokens.css */
---font-sans: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+--font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 ```
 
 ## Prices and the first-visit rule
@@ -415,6 +411,7 @@ A few sentences are written in components rather than config. Each is a claim ab
 | `src/sections/OfficesBand.astro` | "send insurance certificates on request" |
 | `src/sections/TrustRow.astro` | "Police-checked cleaners" |
 | `src/features/pricing/PriceTag.astro` | "priced as a deep clean so we start from clean" |
+| `src/features/pricing/PriceLine.astro` | The same "priced as a deep clean so we start from clean" line, in the home hero and the closing band |
 | `src/pages/index.astro` | The home page description mentions "Brisbane's north" |
 
 The other pages (`/offices`, `/careers`, `/refer`, `/about`, `/book` and the end-of-lease service page) carry more of the same kind: the certificate turnaround, the careers pay range, the referral reward, the REIQ checklist, the 72-hour re-clean promise and the "Nothing to pay now" line beside the booking button. Read each page for claims before launch.
@@ -430,10 +427,53 @@ npm run photos:status -- --write   # also rewrite docs/photo-brief.md
 
 The status also lists files that match no slot, such as a misspelt name or an upper-case `.JPG`.
 
-- A live client uses their own photos. The `founder` slot is always the real person.
-- Demo photos are licence-free shots of rooms, never people presented as staff.
+- A live client uses their own photos.
+- Demo photos of rooms are licence-free or generated. Pictures of people follow one rule: in the demo they are generated illustrations (cleaners working or arriving, one founder portrait), each marked "Sample photo" on the page while `demoMode` is on; never a face on a review, never a child, never a real person presented as staff, founder or client. The one real, credited photograph that shows a person (`area-chermside`, the Westfield Chermside atrium, credited in [`photo-credits.md`](photo-credits.md)) has a single shopper, seen from behind. "Before" pictures show an ordinary week. Replace every image of a person with a real photograph before a real business goes live.
 - Record every file in [`photo-credits.md`](photo-credits.md). Remove the demo rows when the client's photos go in.
 - To change what a slot asks for, edit its `brief`, `search` and `alt`, then run `--write`.
+
+### The home hero: a still and a video
+
+The hero's backdrop is a `Scene` (`src/core/ui/Scene.astro`): a still, and optionally a silent loop over it.
+
+- `src/assets/photos/hero.jpg`: the wide still, 2880×1620. Keep the left 40% calm, because the headline card sits there.
+- `src/assets/photos/hero-portrait.jpg`: the upright crop phones get, 1440×2560. Without it phones get the wide still, cropped.
+- `src/assets/photos/closing-portrait.jpg`: the upright crop of `closing` that phones get for the closing band, 760×1350, cut from the same file. Without it phones get the wide picture, cropped and soft.
+- `public/media/hero-loop.mp4` and `public/media/hero-loop.webm`: the loop, 1920×1080, no audio, at most 2.5 MB and 1.5 MB. Its first frame should match the still. Encode a source clip with:
+
+```bash
+ffmpeg -i source.mp4 -an -map_metadata -1 -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080" -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -level:v 4.0 -movflags +faststart public/media/hero-loop.mp4
+ffmpeg -i source.mp4 -an -map_metadata -1 -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080" -c:v libvpx-vp9 -b:v 0 -crf 38 -row-mt 1 public/media/hero-loop.webm
+```
+
+With no `hero.jpg` the hero is its card alone. With no clip it is the still alone. The video is never requested on screens under 768px, under reduced motion, with Save-Data on, or on a 2G or 3G connection. `public/media/sample.*` is a two-second test clip for `/dev/ui/`; leave it in place.
+
+### The closing picture
+
+The `closing` slot (`src/assets/photos/closing.jpg`, 2400×1350) is the backdrop of the home page's closing band, where a solid card holds the live price and the phone number. Keep the left of the picture calm, because the card sits there. Without the file the home page's closing band is the plain band, which is also what inner pages use.
+
+### Room stage
+
+"What we clean, room by room" has a before-and-after stage (`src/features/stage/RoomStage.astro`) under the plan, in the same column, with the checklist beside both. It reads eight stills from `src/assets/photos/`, 1920×1080 each:
+
+- `room-kitchen-before`, `room-kitchen-after`
+- `room-bath-before`, `room-bath-after`
+- `room-bed-before`, `room-bed-after`
+- `room-living-before`, `room-living-after`
+
+Shoot or generate each pair from the same position, with the same framing, so the sweep lines up. A pair that is not from one camera position needs `fade: true` on its room in `src/features/stage/RoomStage.astro` (the living room has it), and then "after" fades in instead of sweeping. A room without both files has no stage: the checklist is all it shows, and with no rooms at all the stage is left out. "Before" pictures show an ordinary week. The stage's caption reads "Illustration, not a client's home.".
+
+The kitchen also has an action beat, a clip that plays between "before" and the sweep. To replace it, put the clip in `public/media/` as `action-kitchen.mp4` and `action-kitchen.webm`, 1920×1080, no audio, 8 seconds (it loops during its beat), at most 2.5 MB and 1.5 MB, with two stills in `src/assets/photos/`: `action-kitchen.jpg`, the clip's first frame (its poster, which should match `room-kitchen-before`), and `action-kitchen-still.jpg`, the frame phones show instead of the clip (under 768px the clip is never requested). Encode a source clip with:
+
+```bash
+VF="scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,format=yuv420p"
+ffmpeg -y -loglevel error -i source.mp4 -t 8 -an -map_metadata -1 -vf "$VF" -c:v libx264 -preset slow -crf 26 -level:v 4.0 -movflags +faststart public/media/action-kitchen.mp4
+ffmpeg -y -loglevel error -i source.mp4 -t 8 -an -map_metadata -1 -vf "$VF" -c:v libvpx-vp9 -b:v 0 -crf 38 -row-mt 1 public/media/action-kitchen.webm
+ffmpeg -y -loglevel error -i source.mp4 -frames:v 1 -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080" -q:v 2 src/assets/photos/action-kitchen.jpg
+ffmpeg -y -loglevel error -ss 4 -i source.mp4 -frames:v 1 -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080" -q:v 2 src/assets/photos/action-kitchen-still.jpg
+```
+
+If a file is over its limit, raise its `-crf` by 2 and encode again. Take the second still from the moment the cleaner is mid-wipe (4 seconds in, here). While `demoMode` is on the clip carries the "Sample photo" mark, because it shows a generated person.
 
 ## Production lead storage
 
@@ -581,6 +621,7 @@ Content and config:
 - [ ] Services, area pages, reviews, FAQs, team and policies replaced. No demo reviews, no sample rating.
 - [ ] Wording in components checked ([Wording that lives in components](#wording-that-lives-in-components)).
 - [ ] `npm run photos:status` shows every slot filled with the client's photos; `docs/photo-credits.md` updated.
+- [ ] Replace every picture of a person (`founder`, `team`, the kitchen clip and its two stills) with real photographs or remove them.
 
 Data and privacy:
 
@@ -601,7 +642,7 @@ Checks, all green:
 npm test             # boundaries, contrast, unit tests
 npm run check        # types and content schemas
 npm run build        # static site in dist/
-npm run budget       # JavaScript per page under 30 KB gzipped
+npm run budget       # JavaScript per page: 30 KB gzipped eager, 150 KB lazy
 npm run preview &    # serve dist/ on :4321
 npm run e2e          # Playwright smoke tests, axe scan, overflow checks
 ```
